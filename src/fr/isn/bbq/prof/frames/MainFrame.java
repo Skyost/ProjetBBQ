@@ -15,6 +15,7 @@ public class MainFrame extends JFrame {
 	public MainFrame() {
 		this.setTitle(ProjetBBQProf.APP_NAME + " v" + ProjetBBQProf.APP_VERSION);
 		this.setSize(100, 100);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
 }
