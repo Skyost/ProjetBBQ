@@ -2,6 +2,9 @@ package fr.isn.bbq.prof;
 
 import java.io.File;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import fr.isn.bbq.prof.frames.MainFrame;
 import fr.isn.bbq.prof.utils.Utils;
@@ -18,16 +21,28 @@ public class ProjetBBQProf {
 	public static AppSettings settings;
 	
 	/**
-	 * Première méthode exécutée par le programme.
+	 * PremiÃ¨re mÃ©thode exÃ©cutÃ©e par le programme.
 	 * 
-	 * @param args Arguments à passer.
+	 * @param args Arguments Ã  passer.
 	 */
 	
 	public static final void main(final String[] args) {
 		try {
-			settings = new AppSettings(new File(Utils.getParentFolder(), "settings.xml"));
-			settings.load();
-			new MainFrame().setVisible(true); // On créé la première fenêtre du programme et on la rend visible.
+			final File settings = new File(Utils.getParentFolder(), "settings.xml");
+			ProjetBBQProf.settings = new AppSettings();
+			if(!settings.exists()) {
+				Files.write(settings.toPath(), ProjetBBQProf.settings.toXML().getBytes());
+			}
+			else {
+				ProjetBBQProf.settings.load(new String(Files.readAllBytes(settings.toPath())));
+			}
+			if(ProjetBBQProf.settings.addSample) {
+				final Room room = new Room();
+				room.name = "Salle test";
+				room.computers = new ArrayList<Computer>(Arrays.asList(new Computer("PC 1", "192.168.0.1"), new Computer("PC 2", "192.168.0.2"), new Computer("PC 3", "192.168.0.3")));
+				Files.write(new File(getRoomDirectory(), "exemple.xml.test").toPath(), room.toXML().getBytes());
+			}
+			new MainFrame().setVisible(true); // On crÃ©Ã© la premiÃ¨re fenÃªtre du programme et on la rend visible.
 		}
 		catch(final Exception ex) {
 			ex.printStackTrace();

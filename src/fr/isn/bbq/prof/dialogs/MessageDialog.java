@@ -11,9 +11,11 @@ import javax.swing.SwingConstants;
 public class MessageDialog extends JDialog {
 	
 	private static final long serialVersionUID = 1L;
+	
+	private final JLabel message = new JLabel();
 
 	/**
-	 * PremiËre mÈthode exÈcutÈe par le dialogue.
+	 * Premi√®re m√©thode ex√©cut√©e par le dialogue.
 	 */
 	
 	public MessageDialog(final JFrame parent, final String message) {
@@ -22,10 +24,20 @@ public class MessageDialog extends JDialog {
 		this.setLocationRelativeTo(parent);
 		this.setAlwaysOnTop(true);
 		this.setResizable(false);
-		final JLabel labelMessage = new JLabel(message);
-		labelMessage.setHorizontalAlignment(SwingConstants.CENTER);
-		labelMessage.setFont(labelMessage.getFont().deriveFont(Font.ITALIC));
-		this.add(labelMessage, BorderLayout.CENTER);
+		this.add(this.message, BorderLayout.CENTER);
+		setMessage(message);
+	}
+	
+	/**
+	 * Change le message de la bo√Æte de dialogue.
+	 * 
+	 * @param message Le nouveau message √† afficher.
+	 */
+	
+	public final void setMessage(final String message) {
+		this.message.setText(message);
+		this.message.setHorizontalAlignment(SwingConstants.CENTER);
+		this.message.setFont(this.message.getFont().deriveFont(Font.ITALIC));
 		this.pack();
 		this.setSize(this.getWidth() + 50, this.getHeight() + 30);
 	}

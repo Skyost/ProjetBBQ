@@ -9,9 +9,9 @@ import java.net.Socket;
 public class ClientTest {
 	
 	/**
-	 * Première méthode exécutée par le programme.
+	 * PremiÃ¨re mÃ©thode exÃ©cutÃ©e par le programme.
 	 * 
-	 * @param args Arguments à passer.
+	 * @param args Arguments Ã  passer.
 	 */
 	
 	public static final void main(final String[] args) {
