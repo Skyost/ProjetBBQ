@@ -1,6 +1,7 @@
 package fr.isn.bbq.prof;
 
 import java.io.File;
+import java.net.URISyntaxException;
 
 import fr.isn.bbq.prof.frames.MainFrame;
 import fr.isn.bbq.prof.utils.Utils;
@@ -31,6 +32,18 @@ public class ProjetBBQProf {
 		catch(final Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+	
+	public static final File getRoomDirectory() throws URISyntaxException {
+		return getRoomDirectory(Utils.getParentFolder());
+	}
+	
+	public static final File getRoomDirectory(final File parent) {
+		final File rooms = new File(parent, settings.roomDir);
+		if(!rooms.exists()) {
+			rooms.mkdir();
+		}
+		return rooms;
 	}
 
 }
