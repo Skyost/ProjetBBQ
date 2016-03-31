@@ -20,9 +20,6 @@ public class RoomPane extends JPanel {
 	 */
 	
 	public RoomPane(final List<Computer> computers) {
-		for(final Computer computer : computers) {
-			System.out.println(computer.name);
-		}
 		final GridLayout gridLayout = new GridLayout();
 		final JScrollPane scrollPane = new JScrollPane(new JPanel(gridLayout));
 		final GroupLayout groupLayout = new GroupLayout(this);

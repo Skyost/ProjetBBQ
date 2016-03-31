@@ -26,7 +26,9 @@ import fr.isn.bbq.prof.utils.XMLSettings;
 public class AppSettings implements XMLSettings {
 	
 	public String roomDir = "Salles"; // Le répertoire des salles.
+	public String uuid; // L'UUID dont le logiciel a besoin pour se connecter aux postes.
 	public boolean addSample = true; // Si on doit ajouter un fichier d'exemple ou non.
+	public int refreshInterval = 5; // Le temps de rafraîchissement (en sec).
 	
 	@Override
 	public final boolean load(final String content) {
@@ -35,7 +37,9 @@ public class AppSettings implements XMLSettings {
 			final Document document = builder.parse(new InputSource(new StringReader(content)));
 			final Element root = document.getDocumentElement();
 			roomDir = root.getElementsByTagName("room-directory").item(0).getFirstChild().getNodeValue();
+			uuid = root.getElementsByTagName("uuid").item(0).getFirstChild().getNodeValue();
 			addSample = Boolean.valueOf(root.getElementsByTagName("add-sample").item(0).getFirstChild().getNodeValue());
+			refreshInterval = Integer.valueOf(root.getElementsByTagName("refresh-interval").item(0).getFirstChild().getNodeValue());
 			return true;
 		}
 		catch(final Exception ex) {
@@ -53,10 +57,16 @@ public class AppSettings implements XMLSettings {
 			document.appendChild(root);
 			final Node roomDir = document.createElement("room-directory");
 			roomDir.appendChild(document.createTextNode(this.roomDir));
+			final Node uuid = document.createElement("uuid");
+			uuid.appendChild(document.createTextNode(this.uuid));
 			final Node addSample = document.createElement("add-sample");
 			addSample.appendChild(document.createTextNode(String.valueOf(this.addSample)));
+			final Node refreshInterval = document.createElement("refresh-interval");
+			refreshInterval.appendChild(document.createTextNode(String.valueOf(this.refreshInterval)));
 			root.appendChild(roomDir);
+			root.appendChild(uuid);
 			root.appendChild(addSample);
+			root.appendChild(refreshInterval);
 			final Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml");

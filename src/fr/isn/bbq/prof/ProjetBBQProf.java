@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.UUID;
 
 import javax.swing.UIManager;
 
@@ -35,16 +36,20 @@ public class ProjetBBQProf {
 			ProjetBBQProf.settings = new AppSettings();
 			if(!settings.exists()) {
 				ProjetBBQProf.settings.roomDir = new File(Utils.getParentFolder(), "Salles").getPath();
+				ProjetBBQProf.settings.uuid = UUID.randomUUID().toString();
 				Files.write(settings.toPath(), ProjetBBQProf.settings.toXML().getBytes());
 			}
 			else {
 				ProjetBBQProf.settings.load(new String(Files.readAllBytes(settings.toPath())));
 			}
 			if(ProjetBBQProf.settings.addSample) {
-				final Room room = new Room();
-				room.name = "Salle test";
-				room.computers = new ArrayList<Computer>(Arrays.asList(new Computer("PC 1", "192.168.0.1"), new Computer("PC 2", "192.168.0.2"), new Computer("PC 3", "192.168.0.3")));
-				Files.write(new File(getRoomDirectory(), "exemple.xml.test").toPath(), room.toXML().getBytes());
+				final File testFile = new File(getRoomDirectory(), "exemple.xml.test");
+				if(!testFile.exists()) {
+					final Room room = new Room();
+					room.name = "Salle test";
+					room.computers = new ArrayList<Computer>(Arrays.asList(new Computer("PC 1", "192.168.0.1"), new Computer("PC 2", "192.168.0.2"), new Computer("PC 3", "192.168.0.3")));
+					Files.write(testFile.toPath(), room.toXML().getBytes());
+				}
 			}
 			new MainFrame().setVisible(true); // On créé la première fenêtre du programme et on la rend visible.
 		}

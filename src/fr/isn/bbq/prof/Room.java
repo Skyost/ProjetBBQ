@@ -40,7 +40,6 @@ public class Room implements XMLSettings {
 			name = root.getElementsByTagName("name").item(0).getFirstChild().getNodeValue();
 			this.computers = new ArrayList<Computer>();
 			final NodeList computers = root.getElementsByTagName("computers").item(0).getChildNodes();
-			System.out.println("computers : " + computers.getLength());
 			for(int i = 0; i != computers.getLength(); i++) {
 				final Node child = computers.item(i);
 				if(child.getNodeType() != Node.ELEMENT_NODE) {
