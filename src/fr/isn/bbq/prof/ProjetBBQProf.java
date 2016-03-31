@@ -6,6 +6,8 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.swing.UIManager;
+
 import fr.isn.bbq.prof.frames.MainFrame;
 import fr.isn.bbq.prof.utils.Utils;
 
@@ -28,6 +30,7 @@ public class ProjetBBQProf {
 	
 	public static final void main(final String[] args) {
 		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			final File settings = new File(Utils.getParentFolder(), "settings.xml");
 			ProjetBBQProf.settings = new AppSettings();
 			if(!settings.exists()) {
