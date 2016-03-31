@@ -39,12 +39,17 @@ public class Room implements XMLSettings {
 			final Element root = document.getDocumentElement();
 			name = root.getElementsByTagName("name").item(0).getFirstChild().getNodeValue();
 			this.computers = new ArrayList<Computer>();
-			final NodeList computers = root.getElementsByTagName("computers").item(0).getFirstChild().getChildNodes();
+			final NodeList computers = root.getElementsByTagName("computers").item(0).getChildNodes();
+			System.out.println("computers : " + computers.getLength());
 			for(int i = 0; i != computers.getLength(); i++) {
+				final Node child = computers.item(i);
+				if(child.getNodeType() != Node.ELEMENT_NODE) {
+					continue;
+				}
 				final Computer computer = new Computer();
-				final Element element = (Element)computers.item(i);
-				computer.name = element.getElementsByTagName("name").item(0).getNodeValue();
-				computer.ip = element.getElementsByTagName("ip").item(0).getNodeValue();
+				final Element element = (Element)child;
+				computer.name = element.getElementsByTagName("name").item(0).getFirstChild().getNodeValue();
+				computer.ip = element.getElementsByTagName("ip").item(0).getFirstChild().getNodeValue();
 				this.computers.add(computer);
 			}
 			return true;

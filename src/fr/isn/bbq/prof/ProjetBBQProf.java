@@ -34,6 +34,7 @@ public class ProjetBBQProf {
 			final File settings = new File(Utils.getParentFolder(), "settings.xml");
 			ProjetBBQProf.settings = new AppSettings();
 			if(!settings.exists()) {
+				ProjetBBQProf.settings.roomDir = new File(Utils.getParentFolder(), "Salles").getPath();
 				Files.write(settings.toPath(), ProjetBBQProf.settings.toXML().getBytes());
 			}
 			else {
@@ -53,15 +54,11 @@ public class ProjetBBQProf {
 	}
 	
 	public static final File getRoomDirectory() throws URISyntaxException {
-		return getRoomDirectory(Utils.getParentFolder());
-	}
-	
-	public static final File getRoomDirectory(final File parent) {
-		final File rooms = new File(parent, settings.roomDir);
+		final File rooms = new File(settings.roomDir);
 		if(!rooms.exists()) {
 			rooms.mkdir();
 		}
 		return rooms;
 	}
-
+	
 }
