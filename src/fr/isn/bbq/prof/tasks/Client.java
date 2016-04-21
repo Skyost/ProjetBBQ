@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 import fr.isn.bbq.prof.Computer;
+import fr.isn.bbq.prof.ProjetBBQProf;
 
 public class Client extends Thread {
 	
@@ -35,7 +36,7 @@ public class Client extends Thread {
 					System.out.println("Just connected to " + client.getRemoteSocketAddress());
 					OutputStream outToServer = client.getOutputStream();
 					DataOutputStream out = new DataOutputStream(outToServer);
-					out.writeUTF("Hello from " + client.getLocalSocketAddress());
+					out.writeUTF(request);
 					InputStream inFromServer = client.getInputStream();
 					DataInputStream in = new DataInputStream(inFromServer);
 					System.out.println("Server says " + in.readUTF());
@@ -44,6 +45,11 @@ public class Client extends Thread {
 				catch(final Exception ex) {
 					parent.onError(computer, ex);
 				}
+			}
+			try {
+				Thread.sleep(ProjetBBQProf.settings.refreshInterval*1000); // Le client se connecte à chaque serveur toutes les 5 secondes.
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 		}
 	}
