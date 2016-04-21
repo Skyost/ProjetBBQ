@@ -9,8 +9,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import fr.isn.bbq.prof.Computer;
+import fr.isn.bbq.prof.ProjetBBQProf;
 import fr.isn.bbq.prof.tasks.Client;
 import fr.isn.bbq.prof.tasks.Client.ClientInterface;
+import fr.isn.bbq.prof.tasks.ClientRequests;
+import fr.isn.bbq.prof.tasks.ClientRequests.RequestType;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -37,7 +40,7 @@ public class RoomPane extends JPanel implements ClientInterface {
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
 		);
-		client = new Client(this, "TODO: Request", computers.toArray(new Computer[computers.size()]));
+		client = new Client(this, ClientRequests.createRequest(RequestType.THUMBNAIL, ProjetBBQProf.settings.uuid), computers.toArray(new Computer[computers.size()]));
 		this.setLayout(groupLayout);
 		this.addComponentListener(new ComponentAdapter() {
 			
