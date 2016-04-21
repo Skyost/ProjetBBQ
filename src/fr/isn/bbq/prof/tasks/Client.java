@@ -36,7 +36,7 @@ public class Client extends Thread {
 					System.out.println("Just connected to " + client.getRemoteSocketAddress());
 					OutputStream outToServer = client.getOutputStream();
 					DataOutputStream out = new DataOutputStream(outToServer);
-					out.writeUTF(request);
+					out.writeUTF(request); //TODO : traiter chaque requête dans un Thread séparé
 					InputStream inFromServer = client.getInputStream();
 					DataInputStream in = new DataInputStream(inFromServer);
 					System.out.println("Server says " + in.readUTF());
