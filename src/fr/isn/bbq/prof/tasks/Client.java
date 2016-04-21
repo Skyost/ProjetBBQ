@@ -7,10 +7,12 @@ public class Client extends Thread {
 	private boolean running = false;
 	
 	private final ClientInterface parent;
+	private final String request;
 	private final Computer[] computers; // Les ordinateurs auxquels il faut envoyer un requête.
 	
-	public Client(final ClientInterface parent, final Computer... computers) {
+	public Client(final ClientInterface parent, final String request, final Computer... computers) {
 		this.parent = parent;
+		this.request = request;
 		this.computers = computers;
 	}
 	

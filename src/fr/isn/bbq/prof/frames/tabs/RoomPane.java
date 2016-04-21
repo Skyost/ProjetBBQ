@@ -37,7 +37,7 @@ public class RoomPane extends JPanel implements ClientInterface {
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
 		);
-		client = new Client(this, computers.toArray(new Computer[computers.size()]));
+		client = new Client(this, "TODO: Request", computers.toArray(new Computer[computers.size()]));
 		this.setLayout(groupLayout);
 		this.addComponentListener(new ComponentAdapter() {
 			
