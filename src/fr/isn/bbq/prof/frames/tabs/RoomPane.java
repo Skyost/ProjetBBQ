@@ -7,11 +7,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import fr.isn.bbq.prof.Computer;
+import fr.isn.bbq.prof.tasks.Client.ClientInterface;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 
-public class RoomPane extends JPanel {
+public class RoomPane extends JPanel implements ClientInterface {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -32,6 +33,22 @@ public class RoomPane extends JPanel {
 				.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
 		);
 		this.setLayout(groupLayout);
+	}
+
+	@Override
+	public final void connection(final Computer computer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public final void onSuccess(final Computer computer, final Object returned) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public final void onError(final Computer computer, final Exception ex) {
+		// TODO Auto-generated method stub
 	}
 	
 }

@@ -17,7 +17,7 @@ public class ClientTest {
 	public static final void main(final String[] args) {
 		try {
 			final String server = args[0];
-			final int port = 4444;
+			final int port = 5900;
 			System.out.println("Connecting to " + server + " on port " + port);
 			Socket client = new Socket(server, port);
 			System.out.println("Just connected to " + client.getRemoteSocketAddress());
