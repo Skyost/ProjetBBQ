@@ -4,7 +4,9 @@ import java.io.File;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 
 import fr.isn.bbq.prof.ProjetBBQProf;
 import fr.isn.bbq.prof.Room;
@@ -12,6 +14,7 @@ import fr.isn.bbq.prof.dialogs.MessageDialog;
 import fr.isn.bbq.prof.frames.tabs.RoomPane;
 
 import javax.swing.JTabbedPane;
+
 import java.awt.BorderLayout;
 
 public class MainFrame extends JFrame {
@@ -33,7 +36,7 @@ public class MainFrame extends JFrame {
 		getContentPane().add(tabbedPane, BorderLayout.CENTER);
 		loadRooms();
 		for(final Room room : rooms) {
-			tabbedPane.add(room.name, new RoomPane(room.computers));
+			tabbedPane.add(room.name, new JScrollPane(new RoomPane(room.computers)));
 		}
 	}
 	
@@ -47,6 +50,9 @@ public class MainFrame extends JFrame {
 		try {
 			rooms.clear();
 			for(final File roomFile : ProjetBBQProf.getRoomDirectory().listFiles()) {
+				if(!roomFile.getName().endsWith(".xml")) {
+					continue;
+				}
 				final Room room = new Room();
 				room.load(new String(Files.readAllBytes(roomFile.toPath())));
 				rooms.add(room); // On prends le nom du fichier sans l'extension.

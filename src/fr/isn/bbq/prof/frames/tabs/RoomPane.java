@@ -1,12 +1,17 @@
 package fr.isn.bbq.prof.frames.tabs;
 
-import java.awt.GridLayout;
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.util.HashMap;
 import java.util.List;
 
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 import fr.isn.bbq.prof.Computer;
 import fr.isn.bbq.prof.ProjetBBQProf;
@@ -15,33 +20,30 @@ import fr.isn.bbq.prof.tasks.Client.ClientInterface;
 import fr.isn.bbq.prof.tasks.ClientRequests;
 import fr.isn.bbq.prof.tasks.ClientRequests.RequestType;
 
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-
 public class RoomPane extends JPanel implements ClientInterface {
 	
 	private static final long serialVersionUID = 1L;
+	private static final short COLUMNS = 3;
 	
 	private final Client client;
+	private final HashMap<Computer, ComputerThumbnail> thumbnails = new HashMap<Computer, ComputerThumbnail>();
 	
 	/**
 	 * Première méthode exécutée par le panel.
 	 */
 	
 	public RoomPane(final List<Computer> computers) {
-		final GridLayout gridLayout = new GridLayout();
-		final JScrollPane scrollPane = new JScrollPane(new JPanel(gridLayout));
-		final GroupLayout groupLayout = new GroupLayout(this);
-		groupLayout.setHorizontalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addComponent(scrollPane, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE)
-		);
-		groupLayout.setVerticalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
-		);
 		client = new Client(this, ClientRequests.createRequest(RequestType.THUMBNAIL, ProjetBBQProf.settings.uuid), computers.toArray(new Computer[computers.size()]));
-		this.setLayout(groupLayout);
+		for(int i = 0, index = 0; i != COLUMNS; i++) {
+			final JPanel line = new JPanel();
+			for(int j = 0; j != computers.size() / COLUMNS; j++) {
+				final Computer computer = computers.get(index++);
+				final ComputerThumbnail thumbnail = new ComputerThumbnail(computer);
+				thumbnails.put(computer, thumbnail);
+				line.add(thumbnail);
+			}
+			this.add(line);
+		}
 		this.addComponentListener(new ComponentAdapter() {
 			
 			@Override
@@ -55,6 +57,7 @@ public class RoomPane extends JPanel implements ClientInterface {
 			}
 			
 		});
+		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 	}
 
 	@Override
@@ -71,6 +74,39 @@ public class RoomPane extends JPanel implements ClientInterface {
 	@Override
 	public final void onError(final Computer computer, final Exception ex) {
 		// TODO Auto-generated method stub
+	}
+	
+	public class ComputerThumbnail extends JPanel {
+
+		private static final long serialVersionUID = 1L;
+		
+		private final Computer computer;
+		private final JLabel thumbnail = new JLabel();
+		private final JLabel caption = new JLabel();
+		
+		public ComputerThumbnail(final Computer computer) {
+			this.computer = computer;
+			caption.setText(computer.name);
+			thumbnail.setBackground(Color.WHITE);
+			thumbnail.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+			setThumbnail(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/loading.gif")));
+			this.add(thumbnail, BorderLayout.CENTER);
+			this.add(caption, BorderLayout.SOUTH);
+			this.setSize(this.getPreferredSize());
+			this.validate();
+		}
+
+		public final Computer getComputer() {
+			return computer;
+		}
+		
+		public final void setThumbnail(final ImageIcon thumbnail) {
+			if(thumbnail.getIconHeight() > Client.THUMBNAIL_SIZE || thumbnail.getIconWidth() > Client.THUMBNAIL_SIZE) {
+				return;
+			}
+			this.thumbnail.setIcon(thumbnail);
+		}
+		
 	}
 	
 }

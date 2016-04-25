@@ -11,6 +11,8 @@ import fr.isn.bbq.prof.ProjetBBQProf;
 
 public class Client extends Thread {
 	
+	public static final short THUMBNAIL_SIZE = 100;
+	
 	private boolean running = false;
 	
 	private final ClientInterface parent;
