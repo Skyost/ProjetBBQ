@@ -32,6 +32,7 @@ public class Client extends Thread {
 			for(final Computer computer : computers) {
 				try {
 					parent.connection(computer);
+					//parent.onError(computer, null); // Test
 					final int port = 4444;
 					System.out.println("Connecting to " + computer.ip + " on port " + port);
 					Socket client = new Socket(computer.ip, port);
@@ -49,10 +50,9 @@ public class Client extends Thread {
 				}
 			}
 			try {
-				Thread.sleep(ProjetBBQProf.settings.refreshInterval*1000); // Le client se connecte à chaque serveur toutes les 5 secondes.
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+				Thread.sleep(ProjetBBQProf.settings.refreshInterval * 1000); // Le client se connecte à chaque serveur toutes les 5 secondes.
 			}
+			catch(final InterruptedException ex) {}
 		}
 	}
 	

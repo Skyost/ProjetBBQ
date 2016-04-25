@@ -2,16 +2,18 @@ package fr.isn.bbq.prof.frames.tabs;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
+import java.awt.Component;
+import java.awt.Image;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
@@ -21,14 +23,15 @@ import fr.isn.bbq.prof.tasks.Client;
 import fr.isn.bbq.prof.tasks.Client.ClientInterface;
 import fr.isn.bbq.prof.tasks.ClientRequests;
 import fr.isn.bbq.prof.tasks.ClientRequests.RequestType;
+import fr.isn.bbq.prof.utils.WrapLayout;
 
 public class RoomPane extends JPanel implements ClientInterface {
 	
 	private static final long serialVersionUID = 1L;
-	private static final short COLUMNS = 3;
 	
 	private final Client client;
 	private final HashMap<Computer, ComputerThumbnail> thumbnails = new HashMap<Computer, ComputerThumbnail>();
+	private ComputerThumbnail selected;
 	
 	/**
 	 * Première méthode exécutée par le panel.
@@ -36,36 +39,26 @@ public class RoomPane extends JPanel implements ClientInterface {
 	
 	public RoomPane(final List<Computer> computers) {
 		client = new Client(this, ClientRequests.createRequest(RequestType.THUMBNAIL, ProjetBBQProf.settings.uuid), computers.toArray(new Computer[computers.size()]));
-		for(int i = 0, index = 0; i != COLUMNS; i++) {
-			final JPanel line = new JPanel();
-			for(int j = 0; j != computers.size() / COLUMNS; j++) {
-				final Computer computer = computers.get(index++);
-				final ComputerThumbnail thumbnail = new ComputerThumbnail(computer);
-				thumbnails.put(computer, thumbnail);
-				line.add(thumbnail);
-			}
-			this.add(line);
+		for(final Computer computer : computers) {
+			final ComputerThumbnail thumbnail = new ComputerThumbnail(computer);
+			thumbnails.put(computer, thumbnail);
+			this.add(thumbnail);
 		}
-		this.addComponentListener(new ComponentAdapter() {
-			
-			@Override
-			public final void componentShown(final ComponentEvent event) {
-				client.start();
-			}
-			
-			@Override
-			public final void componentHidden(final ComponentEvent event) {
-				client.stopRequests();
-			}
-			
-		});
-		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		this.setLayout(new WrapLayout(WrapLayout.LEFT));
+		startRequests();
+	}
+	
+	public final void startRequests() {
+		client.start();
+	}
+	
+	public final void stopRequests() {
+		client.stopRequests();
 	}
 
 	@Override
 	public final void connection(final Computer computer) {
-		// TODO Auto-generated method stub
-		
+		thumbnails.get(computer).setThumbnail(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/loading.gif")));
 	}
 
 	@Override
@@ -75,7 +68,7 @@ public class RoomPane extends JPanel implements ClientInterface {
 
 	@Override
 	public final void onError(final Computer computer, final Exception ex) {
-		// TODO Auto-generated method stub
+		thumbnails.get(computer).setThumbnail(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/error.png")));
 	}
 	
 	public class ComputerThumbnail extends JPanel {
@@ -87,13 +80,44 @@ public class RoomPane extends JPanel implements ClientInterface {
 		
 		public ComputerThumbnail(final Computer computer) {
 			this.computer = computer;
-			thumbnail.setBackground(Color.WHITE);
 			setThumbnail(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/loading.gif")));
+			thumbnail.setBackground(Color.WHITE);
 			thumbnail.setText(computer.name);
+			thumbnail.setOpaque(true);
 			thumbnail.setHorizontalTextPosition(JLabel.CENTER);
 			thumbnail.setVerticalTextPosition(JLabel.BOTTOM);
 			thumbnail.setBorder(new CompoundBorder(BorderFactory.createLineBorder(Color.BLACK), new EmptyBorder(10,10,10,10)));
 			this.add(thumbnail, BorderLayout.CENTER);
+			this.addMouseListener(new MouseListener() {
+
+				@Override
+				public final void mouseClicked(final MouseEvent event) {
+					if(RoomPane.this.selected != null) {
+						RoomPane.this.selected.unselect();
+					}
+					System.out.println(computer.name);
+					if(event.getClickCount() == 2 && !event.isConsumed()) {
+						System.out.println("Double clic !");
+					}
+					ComputerThumbnail.this.select();
+				}
+
+				@Override
+				public final void mouseEntered(final MouseEvent event) {}
+
+				@Override
+				public final void mouseExited(final MouseEvent event) {}
+
+				@Override
+				public final void mousePressed(final MouseEvent event) {}
+
+				@Override
+				public final void mouseReleased(final MouseEvent event) {}
+				
+			});
+			for(final Component component : this.getComponents()) {
+				component.addMouseListener(this.getMouseListeners()[0]);
+			}
 		}
 
 		public final Computer getComputer() {
@@ -102,9 +126,19 @@ public class RoomPane extends JPanel implements ClientInterface {
 		
 		public final void setThumbnail(final ImageIcon thumbnail) {
 			if(thumbnail.getIconHeight() > Client.THUMBNAIL_SIZE || thumbnail.getIconWidth() > Client.THUMBNAIL_SIZE) {
-				return;
+				thumbnail.getImage().getScaledInstance(100, 100, Image.SCALE_DEFAULT);
 			}
 			this.thumbnail.setIcon(thumbnail);
+		}
+		
+		public final void select() {
+			RoomPane.this.selected = this;
+			this.setBackground(Color.BLUE);
+		}
+		
+		public final void unselect() {
+			RoomPane.this.selected = null;
+			this.setBackground(UIManager.getColor("Panel.background"));
 		}
 		
 	}
