@@ -12,6 +12,8 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
 
 import fr.isn.bbq.prof.Computer;
 import fr.isn.bbq.prof.ProjetBBQProf;
@@ -82,18 +84,16 @@ public class RoomPane extends JPanel implements ClientInterface {
 		
 		private final Computer computer;
 		private final JLabel thumbnail = new JLabel();
-		private final JLabel caption = new JLabel();
 		
 		public ComputerThumbnail(final Computer computer) {
 			this.computer = computer;
-			caption.setText(computer.name);
 			thumbnail.setBackground(Color.WHITE);
-			thumbnail.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 			setThumbnail(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/loading.gif")));
+			thumbnail.setText(computer.name);
+			thumbnail.setHorizontalTextPosition(JLabel.CENTER);
+			thumbnail.setVerticalTextPosition(JLabel.BOTTOM);
+			thumbnail.setBorder(new CompoundBorder(BorderFactory.createLineBorder(Color.BLACK), new EmptyBorder(10,10,10,10)));
 			this.add(thumbnail, BorderLayout.CENTER);
-			this.add(caption, BorderLayout.SOUTH);
-			this.setSize(this.getPreferredSize());
-			this.validate();
 		}
 
 		public final Computer getComputer() {
