@@ -7,7 +7,7 @@ import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -19,17 +19,21 @@ import javax.swing.border.EmptyBorder;
 
 import fr.isn.bbq.prof.Computer;
 import fr.isn.bbq.prof.ProjetBBQProf;
+import fr.isn.bbq.prof.Room;
 import fr.isn.bbq.prof.tasks.Client;
 import fr.isn.bbq.prof.tasks.Client.ClientInterface;
 import fr.isn.bbq.prof.tasks.ClientRequests;
 import fr.isn.bbq.prof.tasks.ClientRequests.RequestType;
+import fr.isn.bbq.prof.utils.StatusBar;
 import fr.isn.bbq.prof.utils.WrapLayout;
 
 public class RoomPane extends JPanel implements ClientInterface {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private final Client client;
+	private Client client;
+	private final String name;
+	private final StatusBar bar;
 	private final HashMap<Computer, ComputerThumbnail> thumbnails = new HashMap<Computer, ComputerThumbnail>();
 	private ComputerThumbnail selected;
 	
@@ -37,9 +41,10 @@ public class RoomPane extends JPanel implements ClientInterface {
 	 * Première méthode exécutée par le panel.
 	 */
 	
-	public RoomPane(final List<Computer> computers) {
-		client = new Client(this, ClientRequests.createRequest(RequestType.THUMBNAIL, ProjetBBQProf.settings.uuid), computers.toArray(new Computer[computers.size()]));
-		for(final Computer computer : computers) {
+	public RoomPane(final Room room, final StatusBar bar) {
+		name = room.name;
+		this.bar = bar;
+		for(final Computer computer : room.computers) {
 			final ComputerThumbnail thumbnail = new ComputerThumbnail(computer);
 			thumbnails.put(computer, thumbnail);
 			this.add(thumbnail);
@@ -49,26 +54,37 @@ public class RoomPane extends JPanel implements ClientInterface {
 	}
 	
 	public final void startRequests() {
+		final Set<Computer> computers = thumbnails.keySet();
+		client = new Client(this, ClientRequests.createRequest(RequestType.THUMBNAIL, ProjetBBQProf.settings.uuid), computers.toArray(new Computer[computers.size()]));
 		client.start();
 	}
 	
 	public final void stopRequests() {
 		client.stopRequests();
+		client = null;
 	}
 
 	@Override
 	public final void connection(final Computer computer) {
+		bar.setText("Connexion aux ordinateurs de la salle " + name + "...");
 		thumbnails.get(computer).setThumbnail(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/loading.gif")));
 	}
 
 	@Override
 	public final void onSuccess(final Computer computer, final Object returned) {
-		// TODO Auto-generated method stub
+		bar.setText("La miniature de l'ordinateur " + computer.name + " (" + computer.ip + ") a été récupérée avec succès.");
+		// TODO : On met l'image envoyée sur la miniature
 	}
 
 	@Override
 	public final void onError(final Computer computer, final Exception ex) {
+		bar.setText("L'ordinateur " + computer.name + "(" + computer.ip + ") n'a pas pu être joint.");
 		thumbnails.get(computer).setThumbnail(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/error.png")));
+	}
+	
+	@Override
+	public final void onWaiting() {
+		bar.setText("Attente de " + ProjetBBQProf.settings.refreshInterval + " avant de rafraîchir les miniatures...");
 	}
 	
 	public class ComputerThumbnail extends JPanel {
@@ -142,5 +158,5 @@ public class RoomPane extends JPanel implements ClientInterface {
 		}
 		
 	}
-	
+
 }
