@@ -40,9 +40,8 @@ public class Client extends Thread {
 						try {
 							parent.connection(computer, System.currentTimeMillis());
 							//parent.onError(computer, null); // Test.
-							final int port = 4444;
-							System.out.println("Connexion à l'ordinateur " + computer.name + " (" + computer.ip + ") sur le port " + port + "...");
-							final Socket client = new Socket(computer.ip, port);
+							System.out.println("Connexion à l'ordinateur " + computer.name + " (" + computer.ip + ") sur le port " + computer.port + "...");
+							final Socket client = new Socket(computer.ip, computer.port);
 							if(!running) {
 								parent.onInterrupted(computer, System.currentTimeMillis());
 							}

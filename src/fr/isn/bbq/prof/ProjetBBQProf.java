@@ -47,7 +47,10 @@ public class ProjetBBQProf {
 				if(!testFile.exists()) {
 					final Room room = new Room();
 					room.name = "Salle test";
-					room.computers = new ArrayList<Computer>(Arrays.asList(new Computer("PC 1", "192.168.0.1"), new Computer("PC 2", "192.168.0.2"), new Computer("PC 3", "192.168.0.3")));
+					room.computers = new ArrayList<Computer>(Arrays.asList(
+							new Computer("PC 1", "192.168.0.1", 4444),
+							new Computer("PC 2", "192.168.0.2", 4444),
+							new Computer("PC 3", "192.168.0.3", 4444)));
 					Files.write(testFile.toPath(), room.toXML().getBytes());
 				}
 			}

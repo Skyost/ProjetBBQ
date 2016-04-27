@@ -69,6 +69,7 @@ public class AppSettings implements XMLSettings {
 			root.appendChild(refreshInterval);
 			final Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
 			transformer.setOutputProperty(OutputKeys.ENCODING, StandardCharsets.UTF_8.displayName());
 			final StringWriter writer = new StringWriter();

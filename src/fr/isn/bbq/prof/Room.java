@@ -49,6 +49,7 @@ public class Room implements XMLSettings {
 				final Element element = (Element)child;
 				computer.name = element.getElementsByTagName("name").item(0).getFirstChild().getNodeValue();
 				computer.ip = element.getElementsByTagName("ip").item(0).getFirstChild().getNodeValue();
+				computer.port = Integer.valueOf(element.getElementsByTagName("port").item(0).getFirstChild().getNodeValue());
 				this.computers.add(computer);
 			}
 			return true;
@@ -75,14 +76,18 @@ public class Room implements XMLSettings {
 				computerName.appendChild(document.createTextNode(computer.name));
 				final Node computerIp = document.createElement("ip");
 				computerIp.appendChild(document.createTextNode(computer.ip));
+				final Node computerPort = document.createElement("port");
+				computerPort.appendChild(document.createTextNode(String.valueOf(computer.port)));
 				node.appendChild(computerName);
 				node.appendChild(computerIp);
+				node.appendChild(computerPort);
 				computers.appendChild(node);
 			}
 			root.appendChild(name);
 			root.appendChild(computers);
 			final Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
 			transformer.setOutputProperty(OutputKeys.ENCODING, StandardCharsets.UTF_8.displayName());
 			final StringWriter writer = new StringWriter();
