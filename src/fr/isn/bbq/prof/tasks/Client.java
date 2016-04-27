@@ -38,22 +38,37 @@ public class Client extends Thread {
 					@Override
 					public final void run() {
 						try {
-							parent.connection(computer);
-							//parent.onError(computer, null); // Test
+							parent.connection(computer, System.currentTimeMillis());
+							//parent.onError(computer, null); // Test.
 							final int port = 4444;
-							System.out.println("Connecting to " + computer.ip + " on port " + port);
-							Socket client = new Socket(computer.ip, port);
-							System.out.println("Just connected to " + client.getRemoteSocketAddress());
-							OutputStream outToServer = client.getOutputStream();
-							DataOutputStream out = new DataOutputStream(outToServer);
-							out.writeUTF(request); //TODO : traiter chaque requête dans un Thread séparé
-							InputStream inFromServer = client.getInputStream();
-							DataInputStream in = new DataInputStream(inFromServer);
-							System.out.println("Server says " + in.readUTF());
+							System.out.println("Connexion à l'ordinateur " + computer.name + " (" + computer.ip + ") sur le port " + port + "...");
+							final Socket client = new Socket(computer.ip, port);
+							if(!running) {
+								parent.onInterrupted(computer, System.currentTimeMillis());
+							}
+							System.out.println("Connexion réussie à " + client.getRemoteSocketAddress() + ".");
+							final OutputStream outToServer = client.getOutputStream();
+							final DataOutputStream out = new DataOutputStream(outToServer);
+							out.writeUTF(request);
+							if(!running) {
+								parent.onInterrupted(computer, System.currentTimeMillis());
+							}
+							final InputStream inFromServer = client.getInputStream();
+							final DataInputStream in = new DataInputStream(inFromServer);
+							System.out.println("Réponse du server \"" + in.readUTF() + "\".");
 							client.close();
+							if(running) {
+								/* 
+								 * final String message = returned.split(" ");
+								 * parent.onSuccess(computer, message[0], Long.valueOf(message[1]));
+								 */
+							}
+							else {
+								parent.onInterrupted(computer, System.currentTimeMillis());
+							}
 						}
 						catch(final Exception ex) {
-							parent.onError(computer, ex);
+							parent.onError(computer, ex, System.currentTimeMillis());
 						}
 						joinedComputers.add(computer);
 					}
@@ -81,9 +96,10 @@ public class Client extends Thread {
 	
 	public interface ClientInterface {
 		
-		public void connection(final Computer computer);
-		public void onSuccess(final Computer computer, final Object returned);
-		public void onError(final Computer computer, final Exception ex);
+		public void connection(final Computer computer, final long time);
+		public void onSuccess(final Computer computer, final Object returned, final long responseTime);
+		public void onError(final Computer computer, final Exception ex, final long responseTime);
+		public void onInterrupted(final Computer computer, final long time);
 		public void onWaiting();
 		
 	}

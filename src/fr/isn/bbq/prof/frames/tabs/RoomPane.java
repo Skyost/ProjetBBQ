@@ -65,21 +65,27 @@ public class RoomPane extends JPanel implements ClientInterface {
 	}
 
 	@Override
-	public final void connection(final Computer computer) {
+	public final void connection(final Computer computer, final long time) {
 		bar.setText("Connexion aux ordinateurs de la salle " + name + "...");
-		thumbnails.get(computer).setThumbnail(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/loading.gif")));
+		thumbnails.get(computer).setThumbnail(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/loading.gif")), time);
 	}
 
 	@Override
-	public final void onSuccess(final Computer computer, final Object returned) {
+	public final void onSuccess(final Computer computer, final Object returned, final long responseTime) {
 		bar.setText("La miniature de l'ordinateur " + computer.name + " (" + computer.ip + ") a été récupérée avec succès.");
 		// TODO : On met l'image envoyée sur la miniature
 	}
 
 	@Override
-	public final void onError(final Computer computer, final Exception ex) {
+	public final void onError(final Computer computer, final Exception ex, final long responseTime) {
 		bar.setText("L'ordinateur " + computer.name + "(" + computer.ip + ") n'a pas pu être joint.");
-		thumbnails.get(computer).setThumbnail(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/error.png")));
+		ex.printStackTrace();
+		onInterrupted(computer, responseTime);
+	}
+	
+	@Override
+	public final void onInterrupted(final Computer computer, final long time) {
+		thumbnails.get(computer).setThumbnail(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/error.png")), time);
 	}
 	
 	@Override
@@ -93,10 +99,10 @@ public class RoomPane extends JPanel implements ClientInterface {
 		
 		private final Computer computer;
 		private final JLabel thumbnail = new JLabel();
+		private long thumbnailTime;
 		
 		public ComputerThumbnail(final Computer computer) {
 			this.computer = computer;
-			setThumbnail(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/loading.gif")));
 			thumbnail.setBackground(Color.WHITE);
 			thumbnail.setText(computer.name);
 			thumbnail.setOpaque(true);
@@ -140,10 +146,14 @@ public class RoomPane extends JPanel implements ClientInterface {
 			return computer;
 		}
 		
-		public final void setThumbnail(final ImageIcon thumbnail) {
-			if(thumbnail.getIconHeight() > Client.THUMBNAIL_SIZE || thumbnail.getIconWidth() > Client.THUMBNAIL_SIZE) {
-				thumbnail.getImage().getScaledInstance(100, 100, Image.SCALE_DEFAULT);
+		public final void setThumbnail(final ImageIcon thumbnail, final long downloadedTime) {
+			if(downloadedTime <= thumbnailTime) {
+				return;
 			}
+			if(thumbnail.getIconHeight() > Client.THUMBNAIL_SIZE || thumbnail.getIconWidth() > Client.THUMBNAIL_SIZE) {
+				thumbnail.getImage().getScaledInstance(Client.THUMBNAIL_SIZE, Client.THUMBNAIL_SIZE, Image.SCALE_DEFAULT);
+			}
+			this.thumbnailTime = downloadedTime;
 			this.thumbnail.setIcon(thumbnail);
 		}
 		
