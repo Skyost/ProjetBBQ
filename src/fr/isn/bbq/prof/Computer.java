@@ -1,13 +1,27 @@
 package fr.isn.bbq.prof;
 
 /**
- * Représente une salle de classe.
+ * Représente un ordinateur.
  */
 
 public class Computer {
 	
+	/**
+	 * Le nom de l'ordinateur.
+	 */
+	
 	public String name;
+	
+	/**
+	 * L'IP de cet ordinateur.
+	 */
+	
 	public String ip;
+	
+	/**
+	 * Le port de cet ordinateur (pour s'y connecter).
+	 */
+	
 	public int port;
 	
 	public Computer() {

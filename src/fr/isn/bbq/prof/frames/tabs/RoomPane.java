@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -27,14 +28,42 @@ import fr.isn.bbq.prof.tasks.ClientRequests.RequestType;
 import fr.isn.bbq.prof.utils.StatusBar;
 import fr.isn.bbq.prof.utils.WrapLayout;
 
+/**
+ * L'onglet d'une salle de classe.
+ */
+
 public class RoomPane extends JPanel implements ClientInterface {
 	
 	private static final long serialVersionUID = 1L;
 	
+	/**
+	 * Le client utilisé pour formuler des requêtes au postes élèves.
+	 */
+	
 	private Client client;
+	
+	/**
+	 * Le nom de cette salle de classe.
+	 */
+	
 	private final String name;
+	
+	/**
+	 * La barre de statut, utilisée pour afficher des informations.
+	 */
+	
 	private final StatusBar bar;
+	
+	/**
+	 * La liste des miniatures.
+	 */
+	
 	private final HashMap<Computer, ComputerThumbnail> thumbnails = new HashMap<Computer, ComputerThumbnail>();
+	
+	/**
+	 * La miniature séléctionnée.
+	 */
+	
 	private ComputerThumbnail selected;
 	
 	/**
@@ -44,7 +73,7 @@ public class RoomPane extends JPanel implements ClientInterface {
 	public RoomPane(final Room room, final StatusBar bar) {
 		name = room.name;
 		this.bar = bar;
-		for(final Computer computer : room.computers) {
+		for(final Computer computer : room.computers) { // Pour chaque ordinateur de la salle, on créé une miniature.
 			final ComputerThumbnail thumbnail = new ComputerThumbnail(computer);
 			thumbnails.put(computer, thumbnail);
 			this.add(thumbnail);
@@ -53,11 +82,19 @@ public class RoomPane extends JPanel implements ClientInterface {
 		startRequests();
 	}
 	
+	/**
+	 * Démarre les requêtes.
+	 */
+	
 	public final void startRequests() {
 		final Set<Computer> computers = thumbnails.keySet();
 		client = new Client(this, ClientRequests.createRequest(RequestType.THUMBNAIL, ProjetBBQProf.settings.uuid), computers.toArray(new Computer[computers.size()]));
 		client.start();
 	}
+	
+	/**
+	 * Arrête les requêtes.
+	 */
 	
 	public final void stopRequests() {
 		client.stopRequests();
@@ -92,6 +129,10 @@ public class RoomPane extends JPanel implements ClientInterface {
 	public final void onWaiting() {
 		bar.setText("Attente de " + ProjetBBQProf.settings.refreshInterval + " avant de rafraîchir les miniatures...");
 	}
+	
+	/**
+	 * La miniature d'un ordinateur.
+	 */
 	
 	public class ComputerThumbnail extends JPanel {
 
@@ -141,10 +182,23 @@ public class RoomPane extends JPanel implements ClientInterface {
 				component.addMouseListener(this.getMouseListeners()[0]);
 			}
 		}
+		
+		/**
+		 * Permet d'obtenir l'ordinateur
+		 * 
+		 * @return L'ordinateur.
+		 */
 
 		public final Computer getComputer() {
 			return computer;
 		}
+		
+		/**
+		 * Permet de changer la miniature.
+		 * 
+		 * @param thumbnail La miniature.
+		 * @param downloadedTime La date en millisecondes.
+		 */
 		
 		public final void setThumbnail(final ImageIcon thumbnail, final long downloadedTime) {
 			if(downloadedTime <= thumbnailTime) {
@@ -157,14 +211,32 @@ public class RoomPane extends JPanel implements ClientInterface {
 			this.thumbnail.setIcon(thumbnail);
 		}
 		
+		/**
+		 * Permet de retourner la miniature actuelle.
+		 * 
+		 * @return La miniature actuelle.
+		 */
+		
+		public final Icon getThumbnail() {
+			return thumbnail.getIcon();
+		}
+		
+		/**
+		 * Sélectionne la miniature.
+		 */
+		
 		public final void select() {
 			RoomPane.this.selected = this;
 			this.setBackground(Color.BLUE);
 		}
 		
+		/**
+		 * Déselectionne la miniature.
+		 */
+		
 		public final void unselect() {
 			RoomPane.this.selected = null;
-			this.setBackground(UIManager.getColor("Panel.background"));
+			this.setBackground(UIManager.getColor("Panel.background")); // On remet la couleur par défaut.
 		}
 		
 	}

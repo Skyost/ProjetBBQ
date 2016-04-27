@@ -1,9 +1,7 @@
 package fr.isn.bbq.prof;
 
 import java.io.File;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -47,7 +45,7 @@ public class ProjetBBQProf {
 				if(!testFile.exists()) {
 					final Room room = new Room();
 					room.name = "Salle test";
-					room.computers = new ArrayList<Computer>(Arrays.asList(
+					room.computers.addAll(Arrays.asList(
 							new Computer("PC 1", "192.168.0.1", 4444),
 							new Computer("PC 2", "192.168.0.2", 4444),
 							new Computer("PC 3", "192.168.0.3", 4444)));
@@ -61,7 +59,13 @@ public class ProjetBBQProf {
 		}
 	}
 	
-	public static final File getRoomDirectory() throws URISyntaxException {
+	/**
+	 * Permet de retourner le fichier des salles de classe. Le créé si il n'existe pas.
+	 * 
+	 * @return Le fichier des salles de classe.
+	 */
+	
+	public static final File getRoomDirectory() {
 		final File rooms = new File(settings.roomDir);
 		if(!rooms.exists()) {
 			rooms.mkdir();

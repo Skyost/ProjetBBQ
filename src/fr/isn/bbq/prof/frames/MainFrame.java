@@ -29,13 +29,36 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * IHM principal du logiciel prof.
+ */
+
 public class MainFrame extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
 	
+	/**
+	 * Les différentes salles de classe.
+	 */
+	
 	private final List<Room> rooms = new ArrayList<Room>();
-	private final JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+	
+	/**
+	 * La barre de statut pour l'affichage de messages.
+	 */
+	
 	private final StatusBar bar = new StatusBar();
+	
+	/**
+	 * Le composant permettant d'afficher des onglets.
+	 */
+	
+	private final JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+	
+	/**
+	 * L'index actuel de l'onglet séléctionné. Actuellement -1 mais il est changé dès que les salles sont ajoutées.
+	 */
+	
 	private int currentIndex = -1;
 
 	/**
@@ -45,14 +68,14 @@ public class MainFrame extends JFrame {
 	public MainFrame() {
 		this.setTitle(ProjetBBQProf.APP_NAME + " v" + ProjetBBQProf.APP_VERSION);
 		this.setIconImage(Toolkit.getDefaultToolkit().getImage(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/app_icon.png")));
-		this.setSize(600, 400);
+		this.setSize(600, 400); // Par défaut, une taille de 600x400.
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLocationRelativeTo(null);
 		this.setJMenuBar(createMenuBar());
 		final Container content = this.getContentPane();
-		content.add(tabbedPane, BorderLayout.CENTER);
-		content.add(bar, BorderLayout.SOUTH);
-		loadRooms();
+		content.add(tabbedPane, BorderLayout.CENTER); // Les onglets au centre de l'IHM.
+		content.add(bar, BorderLayout.SOUTH); // La barre en bas.
+		loadRooms(); // On charge les salles.
 	}
 	
 	/**
@@ -60,54 +83,70 @@ public class MainFrame extends JFrame {
 	 */
 	
 	private final void loadRooms() {
-		final MessageDialog message = new MessageDialog(this, "Chargement des salles, veuillez patienter...");
+		final MessageDialog message = new MessageDialog(this, "Patientez...", "Chargement des salles, veuillez patienter..."); // Message d'attente.
 		message.setVisible(true);
-		try {
-			rooms.clear();
-			tabbedPane.removeAll();
-			for(final File roomFile : ProjetBBQProf.getRoomDirectory().listFiles()) {
-				if(!roomFile.getName().toLowerCase().endsWith(".xml")) {
+		rooms.clear(); // On enlève toutes les salles si il y en a.
+		tabbedPane.removeAll(); // On enlève également tous les onglets affichés si il y en a.
+		for(final File roomFile : ProjetBBQProf.getRoomDirectory().listFiles()) { // On regarde tous les fichiers contenus dans le dossier des salles de classe.
+			try {
+				if(!roomFile.getName().toLowerCase().endsWith(".xml")) { // On ne retient que les fichiers qui ont l'extension .xml.
 					continue;
 				}
-				final Room room = new Room();
-				room.load(new String(Files.readAllBytes(roomFile.toPath())));
-				rooms.add(room); // On prends le nom du fichier sans l'extension.
-			}
-			message.dispose();
-			if(rooms.size() == 0) {
-				JOptionPane.showMessageDialog(MainFrame.this, "Pas de salle valide ajoutée. Veuillez consulter l'aide en ligne.", "Erreur !", JOptionPane.ERROR_MESSAGE);
-				System.exit(1);
-			}
-			for(final Room room : rooms) {
-				final JScrollPane pane = new JScrollPane(new RoomPane(room, bar));
-				pane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-				pane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-				tabbedPane.add(room.name, pane);
-			}
-			tabbedPane.setSelectedIndex(0);
-			currentIndex = tabbedPane.getSelectedIndex();
-			tabbedPane.addChangeListener(new ChangeListener() {
-
-				@Override
-				public final void stateChanged(final ChangeEvent event) {
-					if(currentIndex != -1) {
-						((RoomPane)((JScrollPane)tabbedPane.getComponent(tabbedPane.getSelectedIndex())).getViewport().getView()).stopRequests();
-					}
-					currentIndex = tabbedPane.getSelectedIndex();
+				final Room room = new Room(); // On créé une salle de classe "blanche".
+				if(!room.load(new String(Files.readAllBytes(roomFile.toPath())))) { // On tente de la charger.
+					throw new IllegalArgumentException("Le fichier \"" + roomFile.getName() + "\" est invalide !"); // Si cela échoue, on déclenche une erreur.
 				}
-				
-			});
+				rooms.add(room); // Et on ajoute la classe chargée dans la liste des salles de classe.
+			}
+			catch(final Exception ex) {
+				ex.printStackTrace();
+				JOptionPane.showMessageDialog(MainFrame.this, "Le fichier \"" + roomFile.getName() + "\" n'est pas un fichier XML valide. Veuillez consulter l'aide en ligne.", "Erreur !", JOptionPane.ERROR_MESSAGE);
+			}
 		}
-		catch(final Exception ex) {
-			ex.printStackTrace();
-			message.setMessage(ex.getClass().getName()); // TODO: Meilleure gestion de l'erreur.
+		message.dispose(); // On ferme le dialogue.
+		if(rooms.size() == 0) { // Si il n'y a pas de salles de classe chargées, on affiche un message d'erreur.
+			JOptionPane.showMessageDialog(MainFrame.this, "Pas de salle valide ajoutée. Veuillez consulter l'aide en ligne.", "Erreur !", JOptionPane.ERROR_MESSAGE);
+			System.exit(1);
 		}
+		for(final Room room : rooms) { // Pour chaque salle de classe, on créé l'onglet correspondant.
+			final JScrollPane pane = new JScrollPane(new RoomPane(room, bar));
+			pane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+			pane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+			tabbedPane.add(room.name, pane);
+		}
+		tabbedPane.setSelectedIndex(0); // On va sur le premier onglet.
+		currentIndex = tabbedPane.getSelectedIndex();
+		tabbedPane.addChangeListener(new ChangeListener() {
+
+			/**
+			 * On écoute tous les changements d'onglet de la part de l'utilisateur.
+			 */
+			
+			@Override
+			public final void stateChanged(final ChangeEvent event) {
+				if(currentIndex != -1) { // Si l'index est défini, on annule toutes les requêtes.
+					((RoomPane)((JScrollPane)tabbedPane.getComponent(tabbedPane.getSelectedIndex())).getViewport().getView()).stopRequests();
+				}
+				currentIndex = tabbedPane.getSelectedIndex(); // Et on redéfini l'index au nouvel index.
+			}
+			
+		});
 	}
+	
+	/**
+	 * On créé le menu de cet IHM.
+	 * 
+	 * @return Le menu.
+	 */
 	
 	public final JMenuBar createMenuBar() {
 		final JMenuBar menu = new JMenuBar();
 		final JMenuItem refresh = new JMenuItem("Rafraîchir les miniatures");
 		refresh.addActionListener(new ActionListener() {
+			
+			/**
+			 * On stop les requêtes et on les redémarre.
+			 */
 
 			@Override
 			public final void actionPerformed(final ActionEvent event) {

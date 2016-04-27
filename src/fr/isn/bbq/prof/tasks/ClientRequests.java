@@ -1,6 +1,19 @@
 package fr.isn.bbq.prof.tasks;
 
+/**
+ * Utilisé pour formuler des requêtes aux logiciels élèves.
+ */
+
 public class ClientRequests {
+	
+	/**
+	 * Créé une requête.
+	 * 
+	 * @param type Le type de cette requête.
+	 * @param args Les arguments (voir l'aide en ligne).
+	 * 
+	 * @return La requête formattée.
+	 */
 	
 	public static final String createRequest(final RequestType type, final String... args) {
 		final String request;
@@ -18,9 +31,22 @@ public class ClientRequests {
 		return request;
 	}
 	
+	/**
+	 * Types de requête.
+	 */
+	
 	public enum RequestType {
 		
+		/**
+		 * On souhaite une miniature.
+		 */
+		
 		THUMBNAIL,
+		
+		/**
+		 * On souhaite une capture d'écran.
+		 */
+		
 		FULL_SCREENSHOT;
 		
 	}
