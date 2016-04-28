@@ -29,6 +29,7 @@ public class AppSettings implements XMLSettings {
 	public String uuid; // L'UUID dont le logiciel a besoin pour se connecter aux postes.
 	public boolean addSample = true; // Si on doit ajouter un fichier d'exemple ou non.
 	public int refreshInterval = 5; // Le temps de rafraîchissement (en sec).
+	public int timeOut = 5; // Le temps imparti pour que la socket se connecte.
 	
 	@Override
 	public final boolean load(final String content) {
@@ -40,6 +41,7 @@ public class AppSettings implements XMLSettings {
 			uuid = root.getElementsByTagName("uuid").item(0).getFirstChild().getNodeValue();
 			addSample = Boolean.valueOf(root.getElementsByTagName("add-sample").item(0).getFirstChild().getNodeValue());
 			refreshInterval = Integer.valueOf(root.getElementsByTagName("refresh-interval").item(0).getFirstChild().getNodeValue());
+			timeOut = Integer.valueOf(root.getElementsByTagName("time-out").item(0).getFirstChild().getNodeValue());
 			return true;
 		}
 		catch(final Exception ex) {
@@ -63,10 +65,13 @@ public class AppSettings implements XMLSettings {
 			addSample.appendChild(document.createTextNode(String.valueOf(this.addSample)));
 			final Node refreshInterval = document.createElement("refresh-interval");
 			refreshInterval.appendChild(document.createTextNode(String.valueOf(this.refreshInterval)));
+			final Node timeOut = document.createElement("time-out");
+			timeOut.appendChild(document.createTextNode(String.valueOf(this.timeOut)));
 			root.appendChild(roomDir); // Et on ajoute les différents noeuds au noeud principal.
 			root.appendChild(uuid);
 			root.appendChild(addSample);
 			root.appendChild(refreshInterval);
+			root.appendChild(timeOut);
 			final Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); // On indent le fichier XML (plus joli).
 			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2"); // Deux espaces par noeud.

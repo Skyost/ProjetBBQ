@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +68,8 @@ public class Client extends Thread {
 							parent.connection(computer, System.currentTimeMillis()); // On notifie le parent de la connexion.
 							//parent.onError(computer, null); // Test.
 							System.out.println("Connexion à l'ordinateur " + computer.name + " (" + computer.ip + ") sur le port " + computer.port + "...");
-							final Socket client = new Socket(computer.ip, computer.port); // On se connecte au poste élève.
+							final Socket client = new Socket();
+							client.connect(new InetSocketAddress(computer.ip, computer.port), ProjetBBQProf.settings.timeOut * 1000); // On se connecte au poste élève.
 							if(!running) { // Si le client n'est plus en fonctionnement, on interrompt tout.
 								parent.onInterrupted(computer, System.currentTimeMillis());
 								client.close();
