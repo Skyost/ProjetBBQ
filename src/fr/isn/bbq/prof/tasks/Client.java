@@ -48,10 +48,17 @@ public class Client extends Thread {
 	
 	private final Computer[] computers;
 	
+	private final boolean oneRequest;
+	
 	public Client(final ClientInterface parent, final String request, final Computer... computers) {
+		this(parent, request, computers, false);
+	}
+	
+	public Client(final ClientInterface parent, final String request, final Computer[] computers, final boolean oneRequest) {
 		this.parent = parent;
 		this.request = request;
 		this.computers = computers;
+		this.oneRequest = oneRequest;
 	}
 	
 	@Override
@@ -107,8 +114,12 @@ public class Client extends Thread {
 					
 				}.start();
 			}
+			if(oneRequest) {
+				stopRequests();
+				break;
+			}
 			try {
-				while(computers.length != joinedComputers.size()) { // Tant que tous les ordinateurs n'ont pas été joints.
+				while(computers.length != joinedComputers.size()) { // Tant que tous les ordinateurs n'ont pas tous été joints.
 					if(!running) {
 						return;
 					}

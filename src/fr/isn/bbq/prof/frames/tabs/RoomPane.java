@@ -21,6 +21,7 @@ import javax.swing.border.EmptyBorder;
 import fr.isn.bbq.prof.Computer;
 import fr.isn.bbq.prof.ProjetBBQProf;
 import fr.isn.bbq.prof.Room;
+import fr.isn.bbq.prof.frames.ComputerFrame;
 import fr.isn.bbq.prof.tasks.Client;
 import fr.isn.bbq.prof.tasks.Client.ClientInterface;
 import fr.isn.bbq.prof.tasks.ClientRequests;
@@ -160,7 +161,7 @@ public class RoomPane extends JPanel implements ClientInterface {
 					}
 					System.out.println(computer.name);
 					if(event.getClickCount() == 2 && !event.isConsumed()) {
-						System.out.println("Double clic !");
+						new ComputerFrame(computer).setVisible(true);
 					}
 					ComputerThumbnail.this.select();
 				}
