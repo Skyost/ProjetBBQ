@@ -29,7 +29,7 @@ public class AppSettings implements XMLSettings {
 	public String uuid; // L'UUID dont le logiciel a besoin pour se connecter aux postes.
 	public boolean addSample = true; // Si on doit ajouter un fichier d'exemple ou non.
 	public int refreshInterval = 5; // Le temps de rafraîchissement (en sec).
-	public int timeOut = 5; // Le temps imparti pour que la socket se connecte.
+	public int timeOut = 10; // Le temps imparti pour que la socket se connecte.
 	
 	@Override
 	public final boolean load(final String content) {

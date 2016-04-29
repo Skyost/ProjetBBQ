@@ -1,5 +1,6 @@
 package fr.isn.bbq.prof.frames;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -21,6 +22,7 @@ import fr.isn.bbq.prof.utils.ClientRequests.RequestType;
 
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.Toolkit;
 
 import javax.swing.JLabel;
@@ -30,6 +32,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,7 +77,6 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 
 	@Override
 	public final void connection(final Computer computer, final long time) {
-		stopRefreshingScreenshot();
 		if(time < refreshTime) {
 			return;
 		}
@@ -88,7 +90,10 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 		if(responseTime < refreshTime) {
 			return;
 		}
-		// TODO On ajoute la capture d'écran.
+		if(!(returned instanceof Image)) {
+			return;
+		}
+		lblScreenshot.setIcon(new ImageIcon((BufferedImage)returned));
 	}
 
 	@Override

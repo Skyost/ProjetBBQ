@@ -6,6 +6,7 @@ import java.awt.Component;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -110,8 +111,11 @@ public class RoomPane extends JPanel implements ClientInterface {
 
 	@Override
 	public final void onSuccess(final Computer computer, final Object returned, final long responseTime) {
+		if(!(returned instanceof Image)) {
+			return;
+		}
 		bar.setText("La miniature de l'ordinateur " + computer.name + " (" + computer.ip + ") a été récupérée avec succès.");
-		// TODO : On met l'image envoyée sur la miniature
+		thumbnails.get(computer).setThumbnail(new ImageIcon((BufferedImage)returned), responseTime);
 	}
 
 	@Override

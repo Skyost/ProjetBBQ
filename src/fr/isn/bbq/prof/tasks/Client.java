@@ -9,6 +9,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.imageio.ImageIO;
+
 import fr.isn.bbq.prof.Computer;
 import fr.isn.bbq.prof.ProjetBBQProf;
 
@@ -83,6 +85,7 @@ public class Client extends Thread {
 								return;
 							}
 							System.out.println("Connexion réussie à " + client.getRemoteSocketAddress() + ".");
+							System.out.println("Envoi de la requête \"" + request + "\"...");
 							final OutputStream outToServer = client.getOutputStream();
 							final DataOutputStream out = new DataOutputStream(outToServer);
 							out.writeUTF(request); // On envoie la requête.
@@ -93,18 +96,22 @@ public class Client extends Thread {
 							}
 							final InputStream inFromServer = client.getInputStream();
 							final DataInputStream in = new DataInputStream(inFromServer);
-							System.out.println("Réponse du server \"" + in.readUTF() + "\"."); // in.readUTF() permet d'obtenir la réponse du serveur.
-							client.close();
+							final String response = in.readUTF();
+							System.out.println("Réponse du server \"" + response + "\"."); // in.readUTF() permet d'obtenir la réponse du serveur.
 							if(running) { // Si le client n'est plus en fonctionnement, on interrompt tout.
-								/* 
-								 * final String message = returned.split(" ");
-								 * parent.onSuccess(computer, message[0], Long.valueOf(message[1]));
-								 */
+								final String[] parts = response.split(" ");
+								if(parts[0].equals("0")) {
+									parent.onSuccess(computer, ImageIO.read(client.getInputStream()), Long.valueOf(parts[parts.length - 1]));
+								}
+								else {
+									parent.onError(computer, new Exception("Bad response : \"" + response + "\""), Long.valueOf(parts[parts.length - 1]));
+								}
 							}
 							else {
 								parent.onInterrupted(computer, System.currentTimeMillis());
-								return;
 							}
+							System.out.println("Fermeture du client...");
+							client.close();
 						}
 						catch(final Exception ex) {
 							parent.onError(computer, ex, System.currentTimeMillis());
@@ -114,17 +121,18 @@ public class Client extends Thread {
 					
 				}.start();
 			}
-			if(oneRequest) {
-				stopRequests();
-				break;
-			}
 			try {
+				if(oneRequest) {
+					return;
+				}
 				while(computers.length != joinedComputers.size()) { // Tant que tous les ordinateurs n'ont pas tous été joints.
 					if(!running) {
 						return;
 					}
+					System.out.println("Attente des ordinateurs...");
 					Thread.sleep(1000);
 				}
+				System.out.println("Attente de " + ProjetBBQProf.settings.refreshInterval + " sec...");
 				parent.onWaiting();
 				Thread.sleep(ProjetBBQProf.settings.refreshInterval * 1000); // Le client se connecte à chaque serveur toutes les 5 secondes.
 			}
