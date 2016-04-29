@@ -1,4 +1,4 @@
-package fr.isn.bbq.prof.tasks;
+package fr.isn.bbq.prof.utils;
 
 /**
  * Utilisé pour formuler des requêtes aux logiciels élèves.

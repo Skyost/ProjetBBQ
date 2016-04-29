@@ -16,8 +16,8 @@ import fr.isn.bbq.prof.Computer;
 import fr.isn.bbq.prof.ProjetBBQProf;
 import fr.isn.bbq.prof.tasks.Client;
 import fr.isn.bbq.prof.tasks.Client.ClientInterface;
-import fr.isn.bbq.prof.tasks.ClientRequests;
-import fr.isn.bbq.prof.tasks.ClientRequests.RequestType;
+import fr.isn.bbq.prof.utils.ClientRequests;
+import fr.isn.bbq.prof.utils.ClientRequests.RequestType;
 
 import java.awt.Component;
 import java.awt.Font;

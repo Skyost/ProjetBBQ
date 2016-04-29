@@ -24,10 +24,10 @@ import fr.isn.bbq.prof.Room;
 import fr.isn.bbq.prof.frames.ComputerFrame;
 import fr.isn.bbq.prof.tasks.Client;
 import fr.isn.bbq.prof.tasks.Client.ClientInterface;
-import fr.isn.bbq.prof.tasks.ClientRequests;
-import fr.isn.bbq.prof.tasks.ClientRequests.RequestType;
+import fr.isn.bbq.prof.utils.ClientRequests;
 import fr.isn.bbq.prof.utils.StatusBar;
 import fr.isn.bbq.prof.utils.WrapLayout;
+import fr.isn.bbq.prof.utils.ClientRequests.RequestType;
 
 /**
  * L'onglet d'une salle de classe.
