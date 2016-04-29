@@ -11,14 +11,12 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.nio.file.Files;
-import java.util.Base64;
 
 import javax.imageio.ImageIO;
 
@@ -91,7 +89,7 @@ public class ServerTest {
 						/*
 						 * Converting Image byte array into Base64 String 
 						 */
-						imageDataString = encodeImage(Files.readAllBytes(new File(fileName).toPath()));
+						imageDataString = Pouin.encodeImage(Files.readAllBytes(new File(fileName).toPath()));
 						
 						System.out.println(imageDataString);
 						
@@ -144,9 +142,6 @@ public class ServerTest {
 			
 		}.start();
 	}
-	public static String encodeImage(byte[] imageByteArray){		
-		return Base64.getEncoder().encodeToString(imageByteArray);		
-		}
 	
 
 }

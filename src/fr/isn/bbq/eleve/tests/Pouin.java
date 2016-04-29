@@ -10,9 +10,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Base64;
 
 import javax.imageio.ImageIO;
+import javax.xml.bind.DatatypeConverter;
 
 public class Pouin {
 	
@@ -69,7 +69,7 @@ try {
 * @return String a {@link java.lang.String}
 */
 public static String encodeImage(byte[] imageByteArray){		
-return Base64.getEncoder().encodeToString(imageByteArray);		
+return DatatypeConverter.printBase64Binary(imageByteArray);		
 }
 
 /**
@@ -78,6 +78,6 @@ return Base64.getEncoder().encodeToString(imageByteArray);
 * @return byte array
 */
 public static byte[] decodeImage(String imageDataString) {		
-return Base64.getDecoder().decode(imageDataString);
+return DatatypeConverter.parseBase64Binary(imageDataString);
 }
 }
