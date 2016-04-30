@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.UUID;
 
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import fr.isn.bbq.prof.frames.MainFrame;
@@ -29,18 +30,18 @@ public class ProjetBBQProf {
 	
 	public static final void main(final String[] args) {
 		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			final File settings = new File(Utils.getParentFolder(), "settings.xml");
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); // Le style par défaut de l'application.
+			final File settings = new File(Utils.getParentFolder(), "settings.xml"); // Le fichier de paramètres XML.
 			ProjetBBQProf.settings = new AppSettings();
-			if(!settings.exists()) {
+			if(!settings.exists()) { // Si il n'existe pas, on le créé et on applique des paramètres par défaut.
 				ProjetBBQProf.settings.roomDir = new File(Utils.getParentFolder(), "Salles").getPath();
 				ProjetBBQProf.settings.uuid = UUID.randomUUID().toString();
 				Files.write(settings.toPath(), ProjetBBQProf.settings.toXML().getBytes());
 			}
-			else {
+			else { // Sinon on le charge.
 				ProjetBBQProf.settings.load(new String(Files.readAllBytes(settings.toPath())));
 			}
-			if(ProjetBBQProf.settings.addSample) {
+			if(ProjetBBQProf.settings.addSample) { // Paramètres relatifs au fichier d'exemple.
 				final File testFile = new File(getRoomDirectory(), "exemple.xml.test");
 				if(!testFile.exists()) {
 					final Room room = new Room();
@@ -56,6 +57,7 @@ public class ProjetBBQProf {
 		}
 		catch(final Exception ex) {
 			ex.printStackTrace();
+			JOptionPane.showMessageDialog(null, ex.getClass().getName(), "Erreur durant le démarrage !", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
