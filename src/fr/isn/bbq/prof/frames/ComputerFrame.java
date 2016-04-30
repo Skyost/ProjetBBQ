@@ -15,10 +15,11 @@ import javax.swing.SpinnerNumberModel;
 
 import fr.isn.bbq.prof.Computer;
 import fr.isn.bbq.prof.ProjetBBQProf;
+import fr.isn.bbq.prof.dialogs.MessageDialog;
 import fr.isn.bbq.prof.tasks.Client;
 import fr.isn.bbq.prof.tasks.Client.ClientInterface;
-import fr.isn.bbq.prof.utils.ClientRequests;
-import fr.isn.bbq.prof.utils.ClientRequests.RequestType;
+import fr.isn.bbq.prof.utils.Request;
+import fr.isn.bbq.prof.utils.Request.RequestType;
 
 import java.awt.Component;
 import java.awt.Font;
@@ -35,6 +36,8 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.SwingConstants;
 import javax.swing.text.NumberFormatter;
@@ -47,10 +50,35 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 	
 	private static final long serialVersionUID = 1L;
 	
+	/**
+	 * Le client utilisé pour demander des captures d'écran.
+	 */
+	
 	private Client client;
+	
+	/**
+	 * L'ordinateur affiché par cet IHM.
+	 */
+	
 	private final Computer computer;
+	
+	/**
+	 * Utilisé pour afficher la capture d'écran.
+	 */
+	
 	private final JLabel lblScreenshot = new JLabel();
+	
+	/**
+	 * La dernière fois que la capture d'écran a été rafraichie.
+	 */
+	
 	private long refreshTime;
+	
+	/**
+	 * Construction de cet IHM.
+	 * 
+	 * @param computer L'ordinateur correspondant.
+	 */
 	
 	public ComputerFrame(final Computer computer) {
 		this.computer = computer;
@@ -63,7 +91,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			
 			@Override
 			public final void windowClosing(final WindowEvent windowEvent) {
-				stopRefreshingScreenshot();
+				stopRefreshingScreenshot(); // On annule la requête si l'IHM est fermé.
 			}
 		});
 		this.setJMenuBar(createMenuBar());
@@ -99,7 +127,11 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 	@Override
 	public final void onError(final Computer computer, final Exception ex, final long responseTime) {
 		ex.printStackTrace();
-		onInterrupted(computer, responseTime);
+		if(responseTime < refreshTime) {
+			return;
+		}
+		lblScreenshot.setIcon(null);
+		lblScreenshot.setText("Impossible de charger la capture d'écran !" + System.lineSeparator() + ex.getMessage());
 	}
 
 	@Override
@@ -109,16 +141,27 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			return;
 		}
 		lblScreenshot.setIcon(null);
-		lblScreenshot.setText("Impossible de charger la capture d'écran !");
+		lblScreenshot.setText("Chargement annulé.");
 	}
-
+	
 	@Override
 	public final void onWaiting() {} // Jamais appelé quand il n'y a qu'un ordinateur à joindre.
 	
+	/**
+	 * Rafraîchit la capture d'écran.
+	 */
+	
 	private final void refreshScreenshot() {
-		client = new Client(this, ClientRequests.createRequest(RequestType.FULL_SCREENSHOT, ProjetBBQProf.settings.uuid), new Computer[]{computer}, true);
+		if(client != null) {
+			stopRefreshingScreenshot();
+		}
+		client = new Client(this, new Request(RequestType.FULL_SCREENSHOT, ProjetBBQProf.settings.uuid), new Computer[]{computer}, true);
 		client.start();
 	}
+	
+	/**
+	 * Arrête le rafraichissement de la capture d'écran.
+	 */
 	
 	private final void stopRefreshingScreenshot() {
 		if(client != null) {
@@ -150,26 +193,72 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			
 			@Override
 			public final void actionPerformed(final ActionEvent event) {
+				final JTextField textField = new JTextField();
 				final JSpinner spinner = new JSpinner();
-				final List<Component> components = new ArrayList<Component>();
+				final List<Component> components = new ArrayList<Component>(); // Composants de la boîte de dialogue.
 				components.add(new JLabel("Message :"));
-				components.add(new JTextField());
+				components.add(textField);
 				components.add(new JLabel("Durée d'affichage (en secondes) :"));
 				components.add(spinner);
 				spinner.setModel(new SpinnerNumberModel(5, 1, Integer.MAX_VALUE, 1));
 				final JFormattedTextField field = ((NumberEditor)spinner.getEditor()).getTextField();
 				((NumberFormatter)field.getFormatter()).setAllowsInvalid(false);
 				if(JOptionPane.showConfirmDialog(ComputerFrame.this, components.toArray(new Object[components.size()]), "Envoyer un message", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION) {
-					// TODO: On envoie le message
+					new Client(new ClientInterface() {
+						
+						public static final int DIALOG_TIME = 5;
+						
+						private final MessageDialog dialog = new MessageDialog(ComputerFrame.this, "Envoi du message", "Connexion à l'ordinateur...");
+
+						@Override
+						public final void connection(final Computer computer, final long time) {
+							dialog.setVisible(true);
+						}
+
+						@Override
+						public final void onSuccess(final Computer computer, final Object returned, final long responseTime) {
+							dialog.setMessage("Envoi effectué !" + System.lineSeparator() + "Ce message se fermera dans " + DIALOG_TIME + " secondes.");
+							closeDialog();
+						}
+
+						@Override
+						public final void onError(final Computer computer, final Exception ex, final long responseTime) {
+							dialog.setMessage(ex.getMessage() + System.lineSeparator() + "Ce message se fermera dans " + DIALOG_TIME + " secondes.");
+							closeDialog();
+						}
+
+						@Override
+						public final void onInterrupted(final Computer computer, final long time) {
+							dialog.setMessage("Envoi interrompu." + System.lineSeparator() + "Ce message se fermera dans " + DIALOG_TIME + " secondes.");
+							closeDialog();
+						}
+
+						@Override
+						public final void onWaiting() {}
+						
+						/**
+						 * Ferme la boîte de dialogue en attendant.
+						 */
+						
+						private final void closeDialog() {
+							new Timer().schedule(new TimerTask() {
+								
+								@Override
+								public final void run() {
+									dialog.dispose();
+								}
+									
+							}, DIALOG_TIME * 1000);
+						}
+						
+					}, new Request(RequestType.MESSAGE, textField.getText(), String.valueOf(spinner.getValue())), new Computer[]{computer}, true);
 				}
 			}
 			
 		});
-		final JMenu edit = new JMenu("Édition");
-		edit.add(refresh);
 		final JMenu computer = new JMenu(this.computer.name);
+		computer.add(refresh);
 		computer.add(sendMessage);
-		menu.add(edit);
 		menu.add(computer);
 		return menu;
 	}

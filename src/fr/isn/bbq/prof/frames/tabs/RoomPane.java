@@ -3,6 +3,7 @@ package fr.isn.bbq.prof.frames.tabs;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -25,10 +26,10 @@ import fr.isn.bbq.prof.Room;
 import fr.isn.bbq.prof.frames.ComputerFrame;
 import fr.isn.bbq.prof.tasks.Client;
 import fr.isn.bbq.prof.tasks.Client.ClientInterface;
-import fr.isn.bbq.prof.utils.ClientRequests;
+import fr.isn.bbq.prof.utils.Request;
 import fr.isn.bbq.prof.utils.StatusBar;
 import fr.isn.bbq.prof.utils.WrapLayout;
-import fr.isn.bbq.prof.utils.ClientRequests.RequestType;
+import fr.isn.bbq.prof.utils.Request.RequestType;
 
 /**
  * L'onglet d'une salle de classe.
@@ -90,7 +91,7 @@ public class RoomPane extends JPanel implements ClientInterface {
 	
 	public final void startRequests() {
 		final Set<Computer> computers = thumbnails.keySet();
-		client = new Client(this, ClientRequests.createRequest(RequestType.THUMBNAIL, ProjetBBQProf.settings.uuid), computers.toArray(new Computer[computers.size()]));
+		client = new Client(this, new Request(RequestType.THUMBNAIL, ProjetBBQProf.settings.uuid), computers.toArray(new Computer[computers.size()]));
 		client.start();
 	}
 	
@@ -163,9 +164,8 @@ public class RoomPane extends JPanel implements ClientInterface {
 					if(RoomPane.this.selected != null) {
 						RoomPane.this.selected.unselect();
 					}
-					System.out.println(computer.name);
 					if(event.getClickCount() == 2 && !event.isConsumed()) {
-						new ComputerFrame(computer).setVisible(true);
+						new ComputerFrame(computer).setVisible(true); // Si il y a un double clic, on ouvre l'IHM de l'ordinateur correspondant.
 					}
 					ComputerThumbnail.this.select();
 				}
@@ -205,12 +205,16 @@ public class RoomPane extends JPanel implements ClientInterface {
 		 * @param downloadedTime La date en millisecondes.
 		 */
 		
-		public final void setThumbnail(final ImageIcon thumbnail, final long downloadedTime) {
+		public final void setThumbnail(ImageIcon thumbnail, final long downloadedTime) {
 			if(downloadedTime <= thumbnailTime) {
 				return;
 			}
-			if(thumbnail.getIconHeight() > Client.THUMBNAIL_SIZE || thumbnail.getIconWidth() > Client.THUMBNAIL_SIZE) {
-				thumbnail.getImage().getScaledInstance(Client.THUMBNAIL_SIZE, Client.THUMBNAIL_SIZE, Image.SCALE_DEFAULT);
+			if(thumbnail.getIconHeight() != Client.THUMBNAIL_SIZE || thumbnail.getIconWidth() != Client.THUMBNAIL_SIZE) {
+				final BufferedImage resized = new BufferedImage(Client.THUMBNAIL_SIZE, Client.THUMBNAIL_SIZE, BufferedImage.TYPE_INT_RGB);
+				final Graphics graphics = resized.createGraphics();
+				graphics.drawImage(thumbnail.getImage(), 0, 0, Client.THUMBNAIL_SIZE, Client.THUMBNAIL_SIZE, null);
+				graphics.dispose();
+				thumbnail = new ImageIcon(resized);
 			}
 			this.thumbnailTime = downloadedTime;
 			this.thumbnail.setIcon(thumbnail);

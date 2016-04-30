@@ -28,8 +28,8 @@ import fr.isn.bbq.prof.utils.XMLSettings;
 
 public class Room implements XMLSettings {
 	
-	public String name;
-	public final List<Computer> computers = new ArrayList<Computer>();
+	public String name; // Le nom de la salle.
+	public final List<Computer> computers = new ArrayList<Computer>(); // Les ordinateurs qui composent la salle.
 	
 	@Override
 	public final boolean load(final String content) {

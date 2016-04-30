@@ -20,6 +20,25 @@ public class Utils {
 	}
 	
 	/**
+	 * Permet de vérifier si une chaîne de caractère est numérique.
+	 * 
+	 * @param string La chaîne de caractère.
+	 * 
+	 * @return <b>true</b> Si la chaîne est numérique.
+	 * <br><b>false/<b> Autrement.
+	 */
+	
+	public static boolean isNumeric(final String string) {
+		for(char charr : string.toCharArray()) {
+			if(Character.isDigit(charr)) {
+				continue;
+			}
+			return false;
+		}
+		return true;
+	}
+	
+	/**
 	 * Joindre un tableau de chaînes de caractère.
 	 * 
 	 * @param joiner Le séparateur.

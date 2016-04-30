@@ -2,17 +2,18 @@ package fr.isn.bbq.prof.tasks;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.imageio.ImageIO;
 
 import fr.isn.bbq.prof.Computer;
 import fr.isn.bbq.prof.ProjetBBQProf;
+import fr.isn.bbq.prof.utils.Request;
+import fr.isn.bbq.prof.utils.Utils;
 
 /**
  * Le client utilisé pour formuler des requêtes aux logiciels élèves.
@@ -42,7 +43,7 @@ public class Client extends Thread {
 	 * La requête formulée aux logiciels élèves.
 	 */
 	
-	private final String request;
+	private final Request request;
 	
 	/**
 	 * Les logiciels élèves représentés par des objets "Computer".
@@ -50,13 +51,34 @@ public class Client extends Thread {
 	
 	private final Computer[] computers;
 	
+	/**
+	 * Si on ne souhaite pas répéter la requête.
+	 */
+	
 	private final boolean oneRequest;
 	
-	public Client(final ClientInterface parent, final String request, final Computer... computers) {
+	/**
+	 * Création d'un nouveau client.
+	 * 
+	 * @param parent Le parent (pour renvoyer des réponses).
+	 * @param request La requête.
+	 * @param computers Les ordinateurs auxquels il faut envoyer une requête.
+	 */
+	
+	public Client(final ClientInterface parent, final Request request, final Computer... computers) {
 		this(parent, request, computers, false);
 	}
 	
-	public Client(final ClientInterface parent, final String request, final Computer[] computers, final boolean oneRequest) {
+	/**
+	 * Création d'un nouveau client.
+	 * 
+	 * @param parent Le parent (pour renvoyer des réponses).
+	 * @param request La requête.
+	 * @param computers Les ordinateurs auxquels il faut envoyer une requête.
+	 * @param oneRequest Si il ne faut pas répéter la requête.
+	 */
+	
+	public Client(final ClientInterface parent, final Request request, final Computer[] computers, final boolean oneRequest) {
 		this.parent = parent;
 		this.request = request;
 		this.computers = computers;
@@ -86,25 +108,31 @@ public class Client extends Thread {
 							}
 							System.out.println("Connexion réussie à " + client.getRemoteSocketAddress() + ".");
 							System.out.println("Envoi de la requête \"" + request + "\"...");
-							final OutputStream outToServer = client.getOutputStream();
-							final DataOutputStream out = new DataOutputStream(outToServer);
-							out.writeUTF(request); // On envoie la requête.
+							final DataOutputStream output = new DataOutputStream(client.getOutputStream());
+							output.writeUTF(request.toString()); // On envoie la requête.
 							if(!running) { // Si le client n'est plus en fonctionnement, on interrompt tout.
 								parent.onInterrupted(computer, System.currentTimeMillis());
 								client.close();
 								return;
 							}
-							final InputStream inFromServer = client.getInputStream();
-							final DataInputStream in = new DataInputStream(inFromServer);
-							final String response = in.readUTF();
+							final DataInputStream input = new DataInputStream(client.getInputStream());
+							final String response = input.readUTF();
 							System.out.println("Réponse du server \"" + response + "\"."); // in.readUTF() permet d'obtenir la réponse du serveur.
 							if(running) { // Si le client n'est plus en fonctionnement, on interrompt tout.
-								final String[] parts = response.split(" ");
-								if(parts[0].equals("0")) {
-									parent.onSuccess(computer, ImageIO.read(client.getInputStream()), Long.valueOf(parts[parts.length - 1]));
+								final String[] parts = response.split(" "); // On sépare la réponse UTF à l'espace.
+								if(parts[0].equals("0")) { // Si la première partie est 0 (soit valide) alors, on renvoi un succès.
+									switch(request.getType()) { // En fonction de ce que l'on a demandé on execute ou non une action.
+									case THUMBNAIL:
+									case FULL_SCREENSHOT:
+										parent.onSuccess(computer, ImageIO.read(client.getInputStream()), Long.valueOf(parts[parts.length - 1]));
+										break;
+									default:
+										parent.onSuccess(computer, true, Long.valueOf(parts[parts.length - 1]));
+										break;
+									}
 								}
 								else {
-									parent.onError(computer, new Exception("Bad response : \"" + response + "\""), Long.valueOf(parts[parts.length - 1]));
+									parent.onError(computer, new Exception(Utils.join(" ", Arrays.copyOfRange(parts, 1, parts.length - 1))), Long.valueOf(parts[parts.length - 1]));
 								}
 							}
 							else {
@@ -123,6 +151,7 @@ public class Client extends Thread {
 			}
 			try {
 				if(oneRequest) {
+					System.out.println();
 					return;
 				}
 				while(computers.length != joinedComputers.size()) { // Tant que tous les ordinateurs n'ont pas tous été joints.
@@ -135,6 +164,7 @@ public class Client extends Thread {
 				System.out.println("Attente de " + ProjetBBQProf.settings.refreshInterval + " sec...");
 				parent.onWaiting();
 				Thread.sleep(ProjetBBQProf.settings.refreshInterval * 1000); // Le client se connecte à chaque serveur toutes les 5 secondes.
+				System.out.println();
 			}
 			catch(final InterruptedException ex) {}
 		}

@@ -16,6 +16,10 @@ public class MessageDialog extends JDialog {
 	
 	private static final long serialVersionUID = 1L;
 	
+	/**
+	 * Le message contenu par ce dialogue.
+	 */
+	
 	private final JLabel message = new JLabel();
 
 	/**
