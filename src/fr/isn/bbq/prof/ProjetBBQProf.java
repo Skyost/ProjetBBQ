@@ -57,7 +57,7 @@ public class ProjetBBQProf {
 		}
 		catch(final Exception ex) {
 			ex.printStackTrace();
-			JOptionPane.showMessageDialog(null, ex.getClass().getName(), "Erreur durant le démarrage !", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, ex.getClass().getName(), "Erreur durant le démarrage ! Peut-être que la configuration est invalide, veuillez consulter l'aide en ligne.", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
