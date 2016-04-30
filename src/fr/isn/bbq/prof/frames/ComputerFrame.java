@@ -131,7 +131,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			return;
 		}
 		lblScreenshot.setIcon(null);
-		lblScreenshot.setText("Impossible de charger la capture d'écran !" + System.lineSeparator() + ex.getMessage());
+		lblScreenshot.setText("<html>Impossible de charger la capture d'écran !<br/>Raison : " + ex.getMessage() + "</html>");
 	}
 
 	@Override
@@ -217,19 +217,19 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 
 						@Override
 						public final void onSuccess(final Computer computer, final Object returned, final long responseTime) {
-							dialog.setMessage("Envoi effectué !" + System.lineSeparator() + "Ce message se fermera dans " + DIALOG_TIME + " secondes.");
+							dialog.setMessage("<html>Envoi effectué !<br/>Ce message se fermera dans " + DIALOG_TIME + " secondes.</html>");
 							closeDialog();
 						}
 
 						@Override
 						public final void onError(final Computer computer, final Exception ex, final long responseTime) {
-							dialog.setMessage(ex.getMessage() + System.lineSeparator() + "Ce message se fermera dans " + DIALOG_TIME + " secondes.");
+							dialog.setMessage("<html>" + ex.getMessage() + "<br/>Ce message se fermera dans " + DIALOG_TIME + " secondes.</html>");
 							closeDialog();
 						}
 
 						@Override
 						public final void onInterrupted(final Computer computer, final long time) {
-							dialog.setMessage("Envoi interrompu." + System.lineSeparator() + "Ce message se fermera dans " + DIALOG_TIME + " secondes.");
+							dialog.setMessage("<html>Envoi interrompu.<br/>Ce message se fermera dans " + DIALOG_TIME + " secondes.</html>");
 							closeDialog();
 						}
 

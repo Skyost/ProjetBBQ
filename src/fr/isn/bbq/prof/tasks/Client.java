@@ -108,7 +108,8 @@ public class Client extends Thread {
 							System.out.println("Connexion réussie à " + client.getRemoteSocketAddress() + ".");
 							System.out.println("Envoi de la requête \"" + request + "\"...");
 							final DataOutputStream output = new DataOutputStream(client.getOutputStream());
-							output.writeUTF(request.toString()); // On envoie la requête.
+							output.writeUTF(request.toString()); // On prépare l'envoi.
+							output.flush(); // On envoie la requête.
 							if(!running) { // Si le client n'est plus en fonctionnement, on interrompt tout.
 								parent.onInterrupted(computer, System.currentTimeMillis());
 								client.close();

@@ -133,7 +133,7 @@ public class RoomPane extends JPanel implements ClientInterface {
 	
 	@Override
 	public final void onWaiting() {
-		bar.setText("Attente de " + ProjetBBQProf.settings.refreshInterval + " avant de rafraîchir les miniatures...");
+		bar.setText("Attente de " + ProjetBBQProf.settings.refreshInterval + " secondes avant de rafraîchir les miniatures...");
 	}
 	
 	/**
