@@ -188,6 +188,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			}
 			
 		});
+		refresh.setIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_refresh.png")));
 		final JMenuItem sendMessage = new JMenuItem("Envoyer un message...");
 		sendMessage.addActionListener(new ActionListener() {
 			
@@ -256,6 +257,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			}
 			
 		});
+		sendMessage.setIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_sendmessage.png")));
 		final JMenu computer = new JMenu(this.computer.name);
 		computer.add(refresh);
 		computer.add(sendMessage);

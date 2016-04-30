@@ -107,7 +107,7 @@ public class RoomPane extends JPanel implements ClientInterface {
 	@Override
 	public final void connection(final Computer computer, final long time) {
 		bar.setText("Connexion aux ordinateurs de la salle " + name + "...");
-		thumbnails.get(computer).setThumbnail(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/loading.gif")), time);
+		thumbnails.get(computer).setThumbnail(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/thumbnails/thumbnail_loading.gif")), time);
 	}
 
 	@Override
@@ -128,7 +128,7 @@ public class RoomPane extends JPanel implements ClientInterface {
 	
 	@Override
 	public final void onInterrupted(final Computer computer, final long time) {
-		thumbnails.get(computer).setThumbnail(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/error.png")), time);
+		thumbnails.get(computer).setThumbnail(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/thumbnails/thumbnail_error.png")), time);
 	}
 	
 	@Override

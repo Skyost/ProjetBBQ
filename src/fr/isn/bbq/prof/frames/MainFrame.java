@@ -1,10 +1,12 @@
 package fr.isn.bbq.prof.frames;
 
 import java.io.File;
+import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -25,6 +27,7 @@ import javax.swing.event.ChangeListener;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Desktop;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -156,9 +159,43 @@ public class MainFrame extends JFrame {
 			}
 			
 		});
+		refresh.setIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_refresh.png")));
 		final JMenu edit = new JMenu("Édition");
 		edit.add(refresh);
+		final JMenuItem onlineHelp = new JMenuItem("Aide en ligne...");
+		onlineHelp.addActionListener(new ActionListener() {
+			
+			@Override
+			public final void actionPerformed(final ActionEvent event) {
+				if(!Desktop.isDesktopSupported()) {
+					return;
+				}
+				try {
+					Desktop.getDesktop().browse(new URL("https://github.com/Skyost/ProjetBBQ/wiki").toURI());
+				}
+				catch(final Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+			
+		});
+		onlineHelp.setIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_onlinehelp.png")));
+		final JMenuItem about = new JMenuItem("À propos...");
+		about.addActionListener(new ActionListener() {
+			
+			@Override
+			public final void actionPerformed(final ActionEvent event) {
+				// TODO: IHM "À propos"
+			}
+			
+		});
+		about.setIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_about.png")));
+		final JMenu help = new JMenu("Aide");
+		help.add(onlineHelp);
+		help.addSeparator();
+		help.add(about);
 		menu.add(edit);
+		menu.add(help);
 		return menu;
 	}
 
