@@ -35,6 +35,7 @@ public class AppSettings implements XMLSettings {
 	public List<String> uuids = new ArrayList<String>(Arrays.asList(
 			"f03b4a82-1791-4b25-9e37-26e10d186c95"
 	)); // Liste des UUIDs autorisés.
+	public String imageType = "JPG";
 	
 	@Override
 	public final boolean load(final String content) {
@@ -47,13 +48,14 @@ public class AppSettings implements XMLSettings {
 			port = Integer.valueOf(root.getElementsByTagName("port").item(0).getFirstChild().getNodeValue());
 			timeOut = Integer.valueOf(root.getElementsByTagName("time-out").item(0).getFirstChild().getNodeValue());
 			final NodeList uuids = ((Element)root.getElementsByTagName("uuids").item(0)).getElementsByTagName("uuid");
-			for(int i = 0; i != uuids.getLength(); i++) { // On parse chaque élément du noeud <computers>.
+			for(int i = 0; i != uuids.getLength(); i++) { // On parse chaque élément du noeud <uuids> qui est <uuid>.
 				final Node child = uuids.item(i);
 				if(child.getNodeType() != Node.ELEMENT_NODE) {
 					continue;
 				}
 				this.uuids.add(child.getTextContent());
 			}
+			imageType = root.getElementsByTagName("image-type").item(0).getFirstChild().getNodeValue();
 			return true;
 		}
 		catch(final Exception ex) {
@@ -77,14 +79,17 @@ public class AppSettings implements XMLSettings {
 			timeOut.appendChild(document.createTextNode(String.valueOf(this.timeOut)));
 			final Node uuids = document.createElement("uuids");
 			for(final String uuid : this.uuids) { // On parse chaque UUID.
-				final Node node = document.createElement("uuid"); // On créé l'élément <computer>.
+				final Node node = document.createElement("uuid"); // On créé l'élément <uuid>.
 				node.appendChild(document.createTextNode(uuid));
 				uuids.appendChild(node);
 			}
+			final Node imageType = document.createElement("image-type");
+			imageType.appendChild(document.createTextNode(String.valueOf(this.imageType)));
 			root.appendChild(ip);
 			root.appendChild(port);
 			root.appendChild(timeOut);
 			root.appendChild(uuids);
+			root.appendChild(imageType);
 			final Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); // On indent le fichier XML (plus joli).
 			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2"); // Deux espaces par noeud.

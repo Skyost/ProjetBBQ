@@ -8,8 +8,6 @@ import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 
@@ -20,6 +18,10 @@ import fr.isn.bbq.eleve.utils.ServerUtils;
 import fr.isn.bbq.eleve.utils.Utils;
 import fr.isn.bbq.eleve.utils.ServerUtils.RequestType;
 
+/**
+ * Permet de servir un client.
+ */
+
 public class HandleClient extends Thread {
 	
 	/**
@@ -28,7 +30,17 @@ public class HandleClient extends Thread {
 	
 	public static final short THUMBNAIL_SIZE = 100;
 	
+	/**
+	 * Le client.
+	 */
+	
 	private final Socket client;
+	
+	/**
+	 * Création d'un thread permettant de servir le client (il faut encore le démarrer avec <b>start()</b>).
+	 * 
+	 * @param client Le client.
+	 */
 	
 	public HandleClient(final Socket client) {
 		this.client = client;
@@ -39,35 +51,36 @@ public class HandleClient extends Thread {
 		try {
 			System.out.println("Connecté à " + client.getRemoteSocketAddress() + ".");
 			final DataInputStream input = new DataInputStream(client.getInputStream());
-			final String message = input.readUTF();
+			final String message = input.readUTF(); // On récupère le contenu de la requête.
 			System.out.println("Message reçu : \"" + message + "\".");
-			final String[] parts = message.split(" ");
-			if(parts.length < 2) {
-				sendMessage(client, ServerUtils.createResponse(false, "Message invalide (doit être de type \"<index> <arguments>\"."));
+			final String[] parts = message.split(" "); // On sépare la requête à l'espace.
+			if(parts.length < 2) { // Il faut qu'il y ai au moins deux arguments (l'index et l'UUID).
+				ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "Message invalide (doit être de type \"<index> <uuid> <arguments>\"."));
 				return;
 			}
 			RequestType type = null;
-			if(!Utils.isNumeric(parts[0]) || (type = RequestType.getFromIndex(Integer.valueOf(parts[0]))) == null) {
-				sendMessage(client, ServerUtils.createResponse(false, "L'index est invalide."));
+			if(!Utils.isNumeric(parts[0]) || (type = RequestType.getFromIndex(Integer.valueOf(parts[0]))) == null) { // Si l'index n'est pas numérique ou est invalide, on renvoie une erreur.
+				ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "L'index est invalide."));
 				return;
 			}
-			if(!ProjetBBQEleve.settings.uuids.contains(parts[1])) {
-				sendMessage(client, ServerUtils.createResponse(false, "Non autorisé."));
+			if(!ProjetBBQEleve.settings.uuids.contains(parts[1])) { // Si l'UUID n'est pas dans la liste, on renvoie une erreur.
+				ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "Non autorisé."));
 				return;
 			}
-			final OutputStream output = client.getOutputStream();
+			final OutputStream output = client.getOutputStream(); // Pour renvoyer des messages au client.
 			switch(type) {
 			case THUMBNAIL:
+				/* Méthode permettant de redimensionner une image. */
 				final BufferedImage resized = new BufferedImage(THUMBNAIL_SIZE, THUMBNAIL_SIZE, BufferedImage.TYPE_INT_RGB);
 				final Graphics graphics = resized.createGraphics();
 				graphics.drawImage(screenshot(), 0, 0, THUMBNAIL_SIZE, THUMBNAIL_SIZE, null);
 				graphics.dispose();
-				sendMessage(client, ServerUtils.createResponse(true), output, false);
-				ImageIO.write(resized, "JPG", output);
+				ServerUtils.sendMessage(client, ServerUtils.createResponse(true), output, false); // On envoie d'abord la réponse "true" sans fermer l'OutputStream.
+				ImageIO.write(resized, ProjetBBQEleve.settings.imageType, output); // Puis on envoie l'image redimensionnée.
 				break;
 			case FULL_SCREENSHOT:
-				sendMessage(client, ServerUtils.createResponse(true), output, false);
-				ImageIO.write(screenshot(), "JPG", output);
+				ServerUtils.sendMessage(client, ServerUtils.createResponse(true), output, false); // Idem ici.
+				ImageIO.write(screenshot(), ProjetBBQEleve.settings.imageType, output);
 				break;
 			case MESSAGE:
 				// TODO: Message avec IHM, temps d'affichage, ...
@@ -75,33 +88,23 @@ public class HandleClient extends Thread {
 			default:
 				break;
 			}
-			client.close();
+			System.out.println("Fermeture de la connexion avec le client...");
+			client.close(); // On ferme la connexion au client.
+			System.out.println();
 		}
 		catch(final Exception ex) {
 			ex.printStackTrace();
 		}
 	}
 	
-	private static final void sendMessage(final Socket client, final String message) throws IOException {
-		sendMessage(client, message, client.getOutputStream());
-	}
-	
-	private static final void sendMessage(final Socket client, final String message, final OutputStream output) throws IOException {
-		sendMessage(client, message, output, true);
-	}
-	
-	private static final void sendMessage(final Socket client, final String message, final OutputStream output, final boolean close) throws IOException {
-		System.out.println("Envoi de la réponse...");
-		System.out.println(message);
-		final DataOutputStream dataOutput = new DataOutputStream(output);
-		dataOutput.writeUTF(message);
-		if(close) {
-			client.close();
-		}
-		else {
-			dataOutput.flush();
-		}
-	}
+	/**
+	 * Prise d'une capture d'écran.
+	 * 
+	 * @return La capture d'écran.
+	 * 
+	 * @throws HeadlessException Si une exception se produit.
+	 * @throws AWTException Si une exception se produit.
+	 */
 	
 	private static final BufferedImage screenshot() throws HeadlessException, AWTException {
 		return new Robot().createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));

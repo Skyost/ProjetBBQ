@@ -33,33 +33,33 @@ public class ProjetBBQEleve {
 	public static final void main(final String[] args) {
 		ServerSocket server = null;
 		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			final File settings = new File(Utils.getParentFolder(), "settings.xml");
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); // Le style par défaut de l'application.
+			final File settings = new File(Utils.getParentFolder(), "settings.xml"); // Le fichier de paramètres XML.
 			ProjetBBQEleve.settings = new AppSettings();
-			if(!settings.exists()) {
+			if(!settings.exists()) { // Si il n'existe pas, on le créé et on applique des paramètres par défaut.
 				Files.write(settings.toPath(), ProjetBBQEleve.settings.toXML().getBytes());
 			}
-			else {
+			else { // Sinon on le charge.
 				ProjetBBQEleve.settings.load(new String(Files.readAllBytes(settings.toPath())));
 			}
-			server = new ServerSocket(ProjetBBQEleve.settings.port, 50, InetAddress.getByName(ProjetBBQEleve.settings.ip));
-			server.setSoTimeout(ProjetBBQEleve.settings.timeOut * 1000);
+			server = new ServerSocket(ProjetBBQEleve.settings.port, 50, InetAddress.getByName(ProjetBBQEleve.settings.ip)); // On créé le serveur en fonction des paramètres XML.
+			server.setSoTimeout(ProjetBBQEleve.settings.timeOut * 1000); // Et on change le timeout.
 		}
 		catch(final Exception ex) {
 			ex.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Impossible de démarrer " + APP_NAME + " en tâche de fond !", "Erreur !", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "<html>Impossible de démarrer " + APP_NAME + " en tâche de fond !<br/>Raison : " + ex.getMessage() + "</html>", "Erreur !", JOptionPane.ERROR_MESSAGE);
 		}
-		if(server == null) {
+		if(server == null) { // Si il y a une erreur durant l'initialisation de l'application, on s'en va.
 			return;
 		}
-		while(true) {
+		while(true) { // Le serveur boucle infiniment.
 			try {
 				System.out.println("En attente de client sur " + server.getInetAddress().getHostAddress() + ":" + server.getLocalPort() + "...");
-				final Socket client = server.accept();
-				new HandleClient(client).start();
+				final Socket client = server.accept(); // On attend pendant la durée de timeout si un client se connecte.
+				new HandleClient(client).start(); // Un thread par client.
 			}
 			catch(final SocketTimeoutException timeOut) {
-				continue;
+				continue; // Si il n'y a personne : nouveau tour.
 			}
 			catch(final Exception ex) {
 				ex.printStackTrace();
@@ -67,7 +67,7 @@ public class ProjetBBQEleve {
 			}
 		}
 		try {
-			server.close();
+			server.close(); // On ferme le serveur de sockets.
 		}
 		catch(final Exception ex) {
 			ex.printStackTrace();
