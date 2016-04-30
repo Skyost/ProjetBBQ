@@ -25,7 +25,7 @@ public class ProjetBBQEleve {
 	public static AppSettings settings;
 	
 	/**
-	* Première méthode exécutée par le programme. TODO: Commenter le code.
+	* Première méthode exécutée par le programme.
 	* 
 	* @param args Arguments à passer.
 	*/
