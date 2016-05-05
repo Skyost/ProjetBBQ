@@ -71,6 +71,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 	
 	/**
 	 * Utilisé pour afficher la capture d'écran.
+	 * <br>Moyen pour accélerer le défilement dans le panel : http://stackoverflow.com/questions/5583495/how-do-i-speed-up-the-scroll-speed-in-a-jscrollpane-when-using-the-mouse-wheel.
 	 */
 	
 	private final JLabel lblScreenshot = new JLabel();
