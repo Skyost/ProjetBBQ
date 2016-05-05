@@ -52,12 +52,12 @@ public class ProjetBBQEleve {
 		if(server == null) { // Si il y a une erreur durant l'initialisation de l'application, on s'en va.
 			return;
 		}
-		boolean waitingMessageDisplayed = true; // On n'affiche le message qu'une fois.
+		boolean waitingMessageDisplayed = false; // On n'affiche le message qu'une fois.
 		while(true) { // Le serveur boucle infiniment.
 			try {
 				if(!waitingMessageDisplayed) {
 					System.out.println("En attente de client sur " + server.getInetAddress().getHostAddress() + ":" + server.getLocalPort() + "...");
-					waitingMessageDisplayed = false;
+					waitingMessageDisplayed = true;
 				}
 				final Socket client = server.accept(); // On attend pendant la durée de timeout si un client se connecte.
 				new HandleClient(client).start(); // Un thread par client.
