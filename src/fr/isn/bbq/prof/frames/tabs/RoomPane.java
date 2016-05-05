@@ -259,7 +259,7 @@ public class RoomPane extends JPanel implements ClientInterface {
 		
 		public final void select() {
 			RoomPane.this.selected = this;
-			this.setBackground(SmartLookAndFeel.getWindowTitleBackground());
+			this.setBackground(SmartLookAndFeel.getWindowTitleBackground().darker());
 		}
 		
 		/**
