@@ -1,12 +1,16 @@
 package fr.isn.bbq.prof.frames;
 
+import javax.imageio.ImageIO;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JSpinner.NumberEditor;
@@ -23,6 +27,7 @@ import fr.isn.bbq.prof.utils.Request.RequestType;
 
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
 
@@ -34,12 +39,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.swing.SwingConstants;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.NumberFormatter;
 
 /**
@@ -95,11 +102,12 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			}
 		});
 		this.setJMenuBar(createMenuBar());
-		
 		lblScreenshot.setFont(lblScreenshot.getFont().deriveFont(Font.ITALIC));
 		lblScreenshot.setHorizontalAlignment(SwingConstants.CENTER);
+		if(ImageIO.getWriterFormatNames().length > 0) { // Si il n'est pas possible d'enregistrer une image, on n'ajoute pas de menu popup.
+			lblScreenshot.setComponentPopupMenu(createScreenshotMenu());
+		}
 		getContentPane().add(new JScrollPane(lblScreenshot), BorderLayout.CENTER);
-		
 		refreshScreenshot();
 	}
 
@@ -122,6 +130,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			return;
 		}
 		lblScreenshot.setIcon(new ImageIcon((BufferedImage)returned));
+		lblScreenshot.setText(null);
 	}
 
 	@Override
@@ -263,6 +272,59 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 		computer.add(sendMessage);
 		menu.add(computer);
 		return menu;
+	}
+	
+	public final JPopupMenu createScreenshotMenu() {
+		final JPopupMenu popup = new JPopupMenu();
+		final JMenuItem save = new JMenuItem("Enregistrer la capture d'écran...");
+		save.addActionListener(new ActionListener() {
+			
+			@Override
+			public final void actionPerformed(final ActionEvent event) {
+				final String[] availableWriters = ImageIO.getWriterFormatNames();
+				final List<String> addedWriters = new ArrayList<String>();
+				final JFileChooser chooser = new JFileChooser();
+				for(int i = 0; i != availableWriters.length; i++) {
+					final String extension = availableWriters[i].toLowerCase();
+					if(addedWriters.contains(extension)) { // Si l'extension est déjà ajoutée, on ne l'ajoute pas à nouveau.
+						continue;
+					}
+					if(i == 0) { // On ajoute la première extension comme extension par défaut, les autres sont ajoutées après.
+						chooser.setFileFilter(new FileNameExtensionFilter("Image " + extension.toUpperCase(), extension));
+					}
+					else {
+						chooser.addChoosableFileFilter(new FileNameExtensionFilter("Image " + extension.toUpperCase(), extension));
+					}
+					addedWriters.add(extension); // On ajoute l'extension.
+				}
+				chooser.removeChoosableFileFilter(chooser.getAcceptAllFileFilter()); // On n'accepte pas tous les fichiers.
+				chooser.setMultiSelectionEnabled(false); // Une seule selection.
+				if(chooser.showSaveDialog(ComputerFrame.this) == JFileChooser.APPROVE_OPTION) {
+					try {
+						final String extension = ((FileNameExtensionFilter)chooser.getFileFilter()).getExtensions()[0]; // Récupération, de l'extension.
+						File output = chooser.getSelectedFile();
+						if(!output.getName().endsWith("." + extension)) { // Si l'extension n'est pas ajoutée à la fin du fichier, on l'ajoute.
+							output = new File(output.getPath() + "." + extension);
+						}
+						/* Transformation de l'Icon du JLabel en BufferedImage : */
+						final Icon screenshot = lblScreenshot.getIcon();
+						final BufferedImage image = new BufferedImage(screenshot.getIconWidth(), screenshot.getIconHeight(), BufferedImage.TYPE_INT_RGB);
+						final Graphics graphics = image.createGraphics();
+						screenshot.paintIcon(null, graphics, 0, 0);
+						graphics.dispose();
+						ImageIO.write(image, extension, output); // Puis on enregistre le tout.
+					}
+					catch(final Exception ex) {
+						ex.printStackTrace();
+						JOptionPane.showMessageDialog(ComputerFrame.this, "Impossible d'enregistrer la capture d'écran.", "Erreur !", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
+			
+		});
+		save.setIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_save.png")));
+		popup.add(save);
+		return popup;
 	}
 
 }
