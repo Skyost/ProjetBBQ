@@ -3,6 +3,7 @@ package fr.isn.bbq.prof;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.Properties;
 import java.util.UUID;
 
 import javax.swing.JOptionPane;
@@ -32,6 +33,9 @@ public class ProjetBBQProf {
 	
 	public static final void main(final String[] args) {
 		try {
+			final Properties properties = new Properties();
+			properties.put("logoString", APP_NAME); // On change la chaîne de caractères dans le menu.
+			SmartLookAndFeel.setTheme(properties);
 			UIManager.setLookAndFeel(new SmartLookAndFeel()); // Le style par défaut de l'application.
 			final File settings = new File(Utils.getParentFolder(), "settings.xml"); // Le fichier de paramètres XML.
 			ProjetBBQProf.settings = new AppSettings();

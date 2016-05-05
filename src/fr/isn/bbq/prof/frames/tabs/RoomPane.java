@@ -16,9 +16,10 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.UIManager;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
+
+import com.jtattoo.plaf.smart.SmartLookAndFeel;
 
 import fr.isn.bbq.prof.Computer;
 import fr.isn.bbq.prof.ProjetBBQProf;
@@ -82,6 +83,28 @@ public class RoomPane extends JPanel implements ClientInterface {
 			this.add(thumbnail);
 		}
 		this.setLayout(new WrapLayout(WrapLayout.LEFT));
+		this.addMouseListener(new MouseListener() {
+			
+			@Override
+			public final void mouseClicked(final MouseEvent event) {
+				if(RoomPane.this.selected != null) {
+					RoomPane.this.selected.unselect();
+				}
+			}
+
+			@Override
+			public final void mouseEntered(final MouseEvent event) {}
+
+			@Override
+			public final void mouseExited(final MouseEvent event) {}
+
+			@Override
+			public final void mousePressed(final MouseEvent event) {}
+
+			@Override
+			public final void mouseReleased(final MouseEvent event) {}
+			
+		});
 		startRequests();
 	}
 	
@@ -236,7 +259,7 @@ public class RoomPane extends JPanel implements ClientInterface {
 		
 		public final void select() {
 			RoomPane.this.selected = this;
-			this.setBackground(Color.BLUE);
+			this.setBackground(SmartLookAndFeel.getWindowTitleBackground());
 		}
 		
 		/**
@@ -245,7 +268,7 @@ public class RoomPane extends JPanel implements ClientInterface {
 		
 		public final void unselect() {
 			RoomPane.this.selected = null;
-			this.setBackground(UIManager.getColor("Panel.background")); // On remet la couleur par défaut.
+			this.setBackground(SmartLookAndFeel.getBackgroundColor()); // On remet la couleur par défaut.
 		}
 		
 	}

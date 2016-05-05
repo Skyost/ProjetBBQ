@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -75,6 +76,7 @@ public class MainFrame extends JFrame {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLocationRelativeTo(null);
 		this.setJMenuBar(createMenuBar());
+		tabbedPane.setBorder(BorderFactory.createEmptyBorder());
 		final Container content = this.getContentPane();
 		content.add(tabbedPane, BorderLayout.CENTER); // Les onglets au centre de l'IHM.
 		content.add(bar, BorderLayout.SOUTH); // La barre en bas.
