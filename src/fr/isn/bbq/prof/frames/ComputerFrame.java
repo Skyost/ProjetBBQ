@@ -274,6 +274,12 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 		return menu;
 	}
 	
+	/**
+	 * On créé le popup menu de la capture d'écran.
+	 * 
+	 * @return Le popup menu.
+	 */
+	
 	public final JPopupMenu createScreenshotMenu() {
 		final JPopupMenu popup = new JPopupMenu();
 		final JMenuItem save = new JMenuItem("Enregistrer la capture d'écran...");
