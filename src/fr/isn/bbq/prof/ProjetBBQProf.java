@@ -8,6 +8,8 @@ import java.util.UUID;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
+import com.jtattoo.plaf.smart.SmartLookAndFeel;
+
 import fr.isn.bbq.prof.frames.MainFrame;
 import fr.isn.bbq.prof.utils.Utils;
 
@@ -30,7 +32,7 @@ public class ProjetBBQProf {
 	
 	public static final void main(final String[] args) {
 		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); // Le style par défaut de l'application.
+			UIManager.setLookAndFeel(new SmartLookAndFeel()); // Le style par défaut de l'application.
 			final File settings = new File(Utils.getParentFolder(), "settings.xml"); // Le fichier de paramètres XML.
 			ProjetBBQProf.settings = new AppSettings();
 			if(!settings.exists()) { // Si il n'existe pas, on le créé et on applique des paramètres par défaut.
