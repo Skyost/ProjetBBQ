@@ -3,12 +3,13 @@ package fr.isn.bbq.prof.tasks;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
 
 import fr.isn.bbq.prof.Computer;
 import fr.isn.bbq.prof.ProjetBBQProf;
@@ -98,7 +99,8 @@ public class Client extends Thread {
 						try {
 							parent.connection(computer, System.currentTimeMillis()); // On notifie le parent de la connexion.
 							System.out.println("Connexion à l'ordinateur " + computer.name + " (" + computer.ip + ") sur le port " + computer.port + "...");
-							final Socket client = new Socket();
+							final SSLSocket client = (SSLSocket)SSLSocketFactory.getDefault().createSocket();
+							client.setEnabledCipherSuites(getEnabledCipherSuites(client));
 							client.connect(new InetSocketAddress(computer.ip, computer.port), ProjetBBQProf.settings.timeOut * 1000); // On se connecte au poste élève.
 							if(!running) { // Si le client n'est plus en fonctionnement, on interrompt tout.
 								parent.onInterrupted(computer, System.currentTimeMillis());
@@ -187,6 +189,25 @@ public class Client extends Thread {
 	
 	public final void stopRequests() {
 		running = false;
+	}
+	
+	/**
+	 * Permet d'obtenir les cipher suites disponibles.
+	 * 
+	 * @param server Le serveur.
+	 * 
+	 * @return Les cipher suites disponibles.
+	 */
+	
+	private static final String[] getEnabledCipherSuites(final SSLSocket server) {
+		final List<String> suites = new ArrayList<String>();
+		for(final String suite : server.getSupportedCipherSuites()) {
+			if(!suite.toLowerCase().contains("_anon_")) {
+				continue;
+			}
+			suites.add(suite);
+		}
+		return suites.toArray(new String[suites.size()]);
 	}
 	
 	public interface ClientInterface {
