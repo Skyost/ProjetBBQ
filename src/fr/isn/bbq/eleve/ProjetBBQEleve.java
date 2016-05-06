@@ -2,11 +2,14 @@ package fr.isn.bbq.eleve;
 
 import java.io.File;
 import java.net.InetAddress;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLServerSocketFactory;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
@@ -31,7 +34,7 @@ public class ProjetBBQEleve {
 	*/
 	
 	public static final void main(final String[] args) {
-		ServerSocket server = null;
+		SSLServerSocket server = null;
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); // Le style par défaut de l'application.
 			final File settings = new File(Utils.getParentFolder(), "settings.xml"); // Le fichier de paramètres XML.
@@ -42,8 +45,9 @@ public class ProjetBBQEleve {
 			else { // Sinon on le charge.
 				ProjetBBQEleve.settings.load(new String(Files.readAllBytes(settings.toPath())));
 			}
-			server = new ServerSocket(ProjetBBQEleve.settings.port, ProjetBBQEleve.settings.backlog, InetAddress.getByName(ProjetBBQEleve.settings.ip)); // On créé le serveur en fonction des paramètres XML.
+			server = (SSLServerSocket)SSLServerSocketFactory.getDefault().createServerSocket(ProjetBBQEleve.settings.port, ProjetBBQEleve.settings.backlog, InetAddress.getByName(ProjetBBQEleve.settings.ip)); // On créé le serveur en fonction des paramètres XML.
 			server.setSoTimeout(ProjetBBQEleve.settings.timeOut * 1000); // Et on change le timeout.
+			server.setEnabledCipherSuites(getEnabledCipherSuites(server));
 		}
 		catch(final Exception ex) {
 			ex.printStackTrace();
@@ -76,6 +80,25 @@ public class ProjetBBQEleve {
 		catch(final Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Permet d'obtenir les cipher suites disponibles.
+	 * 
+	 * @param server Le serveur.
+	 * 
+	 * @return Les cipher suites disponibles.
+	 */
+	
+	private static final String[] getEnabledCipherSuites(final SSLServerSocket server) {
+		final List<String> suites = new ArrayList<String>();
+		for(final String suite : server.getSupportedCipherSuites()) {
+			if(!suite.toLowerCase().contains("_anon_")) {
+				continue;
+			}
+			suites.add(suite);
+		}
+		return suites.toArray(new String[suites.size()]);
 	}
 	
 }
