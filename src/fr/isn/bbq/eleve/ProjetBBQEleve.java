@@ -42,7 +42,7 @@ public class ProjetBBQEleve {
 			else { // Sinon on le charge.
 				ProjetBBQEleve.settings.load(new String(Files.readAllBytes(settings.toPath())));
 			}
-			server = new ServerSocket(ProjetBBQEleve.settings.port, 50, InetAddress.getByName(ProjetBBQEleve.settings.ip)); // On créé le serveur en fonction des paramètres XML.
+			server = new ServerSocket(ProjetBBQEleve.settings.port, ProjetBBQEleve.settings.backlog, InetAddress.getByName(ProjetBBQEleve.settings.ip)); // On créé le serveur en fonction des paramètres XML.
 			server.setSoTimeout(ProjetBBQEleve.settings.timeOut * 1000); // Et on change le timeout.
 		}
 		catch(final Exception ex) {

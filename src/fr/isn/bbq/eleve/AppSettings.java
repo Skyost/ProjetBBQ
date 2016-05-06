@@ -30,6 +30,7 @@ import fr.isn.bbq.eleve.utils.XMLSettings;
 public class AppSettings implements XMLSettings {
 	
 	public String ip = "192.168.0.1"; // L'IP de cet ordinateur.
+	public int backlog = 50; // Le nombre de clients simultanés supportés.
 	public int port = 4444; // Le port de connexion au logiciel élève.
 	public int timeOut = 10; // Le temps imparti pour que la socket se connecte.
 	public List<String> uuids = new ArrayList<String>(Arrays.asList(
@@ -45,6 +46,7 @@ public class AppSettings implements XMLSettings {
 			final Document document = builder.parse(new InputSource(new StringReader(content))); // On parse le contenu XML.
 			final Element root = document.getDocumentElement();
 			ip = root.getElementsByTagName("ip").item(0).getFirstChild().getNodeValue(); // Le premier enfant du premier élément <ip>.
+			backlog = Integer.valueOf(root.getElementsByTagName("backlog").item(0).getFirstChild().getNodeValue());
 			port = Integer.valueOf(root.getElementsByTagName("port").item(0).getFirstChild().getNodeValue());
 			timeOut = Integer.valueOf(root.getElementsByTagName("time-out").item(0).getFirstChild().getNodeValue());
 			final NodeList uuids = ((Element)root.getElementsByTagName("uuids").item(0)).getElementsByTagName("uuid");
@@ -73,6 +75,8 @@ public class AppSettings implements XMLSettings {
 			document.appendChild(root);
 			final Node ip = document.createElement("ip");
 			ip.appendChild(document.createTextNode(this.ip));
+			final Node backlog = document.createElement("backlog");
+			backlog.appendChild(document.createTextNode(String.valueOf(this.backlog)));
 			final Node port = document.createElement("port");
 			port.appendChild(document.createTextNode(String.valueOf(this.port)));
 			final Node timeOut = document.createElement("time-out");
@@ -86,6 +90,7 @@ public class AppSettings implements XMLSettings {
 			final Node imageType = document.createElement("image-type");
 			imageType.appendChild(document.createTextNode(String.valueOf(this.imageType)));
 			root.appendChild(ip);
+			root.appendChild(backlog);
 			root.appendChild(port);
 			root.appendChild(timeOut);
 			root.appendChild(uuids);
