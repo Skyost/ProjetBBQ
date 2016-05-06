@@ -3,11 +3,10 @@ package fr.isn.bbq.prof.frames;
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -15,6 +14,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JSpinner.NumberEditor;
 import javax.swing.JTextField;
+import javax.swing.JToolBar;
 import javax.swing.SpinnerNumberModel;
 
 import fr.isn.bbq.prof.Computer;
@@ -26,6 +26,7 @@ import fr.isn.bbq.prof.utils.Request;
 import fr.isn.bbq.prof.utils.Request.RequestType;
 
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -101,14 +102,16 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			public final void windowClosing(final WindowEvent windowEvent) {
 				stopRefreshingScreenshot(); // On annule la requête si l'IHM est fermé.
 			}
+			
 		});
-		this.setJMenuBar(createMenuBar());
 		lblScreenshot.setFont(lblScreenshot.getFont().deriveFont(Font.ITALIC));
 		lblScreenshot.setHorizontalAlignment(SwingConstants.CENTER);
 		if(ImageIO.getWriterFormatNames().length > 0) { // Si il n'est pas possible d'enregistrer une image, on n'ajoute pas de menu popup.
 			lblScreenshot.setComponentPopupMenu(createScreenshotMenu());
 		}
-		getContentPane().add(new JScrollPane(lblScreenshot), BorderLayout.CENTER);
+		final Container container = this.getContentPane();
+		container.add(createToolbar(), BorderLayout.NORTH);
+		container.add(new JScrollPane(lblScreenshot), BorderLayout.CENTER);
 		refreshScreenshot();
 	}
 
@@ -181,14 +184,15 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 	}
 	
 	/**
-	 * On créé le menu de cet IHM.
+	 * On créé le toolbar de cet IHM.
 	 * 
-	 * @return Le menu.
+	 * @return Le toolbar.
 	 */
 	
-	public final JMenuBar createMenuBar() {
-		final JMenuBar menu = new JMenuBar();
-		final JMenuItem refresh = new JMenuItem("Rafraîchir la capture d'écran");
+	public final JToolBar createToolbar() {
+		final JToolBar toolbar = new JToolBar();
+		toolbar.setFloatable(false);
+		final JButton refresh = new JButton(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_refresh.png")));
 		refresh.addActionListener(new ActionListener() {
 			
 			@Override
@@ -198,8 +202,8 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			}
 			
 		});
-		refresh.setIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_refresh.png")));
-		final JMenuItem sendMessage = new JMenuItem("Envoyer un message...");
+		refresh.setToolTipText("Rafraîchir la capture d'écran");
+		final JButton sendMessage = new JButton(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_sendmessage.png")));
 		sendMessage.addActionListener(new ActionListener() {
 			
 			@Override
@@ -267,12 +271,10 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			}
 			
 		});
-		sendMessage.setIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_sendmessage.png")));
-		final JMenu computer = new JMenu(this.computer.name);
-		computer.add(refresh);
-		computer.add(sendMessage);
-		menu.add(computer);
-		return menu;
+		sendMessage.setToolTipText("Envoyer un message");
+		toolbar.add(refresh);
+		toolbar.add(sendMessage);
+		return toolbar;
 	}
 	
 	/**

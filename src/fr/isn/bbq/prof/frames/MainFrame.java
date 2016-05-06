@@ -29,6 +29,7 @@ import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Desktop;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -161,7 +162,7 @@ public class MainFrame extends JFrame {
 			}
 			
 		});
-		refresh.setIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_refresh.png")));
+		refresh.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_refresh.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
 		final JMenu edit = new JMenu("Édition");
 		edit.add(refresh);
 		final JMenuItem onlineHelp = new JMenuItem("Aide en ligne...");
@@ -200,5 +201,5 @@ public class MainFrame extends JFrame {
 		menu.add(help);
 		return menu;
 	}
-
+	
 }

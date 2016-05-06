@@ -154,11 +154,11 @@ public class Client extends Thread {
 					System.out.println();
 					return;
 				}
+				System.out.println("Attente des ordinateurs...");
 				while(computers.length != joinedComputers.size()) { // Tant que tous les ordinateurs n'ont pas tous été joints.
 					if(!running) {
 						return;
 					}
-					System.out.println("Attente des ordinateurs...");
 					Thread.sleep(1000);
 				}
 				System.out.println("Attente de " + ProjetBBQProf.settings.refreshInterval + " sec...");
