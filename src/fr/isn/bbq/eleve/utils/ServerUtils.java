@@ -80,7 +80,7 @@ public class ServerUtils {
 	 */
 	
 	public static final String createResponse(final boolean success, final String message) {
-		return (success ? "0 " : "1 ") + (message == null ? "" : message + " ") + System.currentTimeMillis();
+		return (success ? "0 " : "1 ") + (message == null ? "" : message + " ") + System.getProperty("user.name").replace(" ", "-") + " " + System.currentTimeMillis();
 	}
 	
 	/**
