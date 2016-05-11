@@ -126,10 +126,10 @@ public class Client extends Thread {
 									switch(request.getType()) { // En fonction de ce que l'on a demandé on execute ou non une action.
 									case THUMBNAIL:
 									case FULL_SCREENSHOT:
-										parent.onSuccess(computer, ImageIO.read(client.getInputStream()), Long.valueOf(parts[parts.length - 1]));
+										parent.onSuccess(computer, ImageIO.read(client.getInputStream()), parts[1], Long.valueOf(parts[parts.length - 1]));
 										break;
 									default:
-										parent.onSuccess(computer, true, Long.valueOf(parts[parts.length - 1]));
+										parent.onSuccess(computer, true, parts[1], Long.valueOf(parts[parts.length - 1]));
 										break;
 									}
 								}
@@ -225,11 +225,10 @@ public class Client extends Thread {
 		 * Appelé lorsque le logiciel élève renvoie une réponse.
 		 * 
 		 * @param computer L'ordinateur.
-		 * @param returned La réponse (peut être parsée par le client).
-		 * @param responseTime La date à laquelle la réponse à été envoyée, en millisecondes et définie par le client.
+		 * @param returned La réponse (peut être parsée par le client) avec l'objet, le nom d'utilisateur et le temps de réponse en millisecondes.
 		 */
 		
-		public void onSuccess(final Computer computer, final Object returned, final long responseTime);
+		public void onSuccess(final Computer computer, final Object... returned);
 		
 		/**
 		 * Appelé lorsqu'une erreur intervient lorsque l'on tente de joindre un ordinateur.

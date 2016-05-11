@@ -134,24 +134,28 @@ public class RoomPane extends JPanel implements ClientInterface {
 	}
 
 	@Override
-	public final void onSuccess(final Computer computer, final Object returned, final long responseTime) {
-		if(!(returned instanceof Image)) {
+	public final void onSuccess(final Computer computer, final Object... returned) {
+		if(!(returned[0] instanceof Image)) {
 			return;
 		}
-		bar.setText("La miniature de l'ordinateur " + computer.name + " (" + computer.ip + ") a été récupérée avec succès.");
-		thumbnails.get(computer).setThumbnail(new ImageIcon((BufferedImage)returned), responseTime);
+		bar.setText("La miniature de l'ordinateur " + computer.name + " (" + computer.ip + ":" + computer.port + ") a été récupérée avec succès.");
+		final ComputerThumbnail thumbnail = thumbnails.get(computer);
+		thumbnail.setThumbnail(new ImageIcon((BufferedImage)returned[0]), (long)returned[returned.length - 1]);
+		thumbnail.setTitle(computer.name + System.lineSeparator() + "(" + returned[1] + ")");
 	}
 
 	@Override
 	public final void onError(final Computer computer, final Exception ex, final long responseTime) {
-		bar.setText("L'ordinateur " + computer.name + "(" + computer.ip + ") n'a pas pu être joint.");
+		bar.setText("L'ordinateur " + computer.name + "(" + computer.ip + ":" + computer.port + ") n'a pas pu être joint.");
 		ex.printStackTrace();
 		onInterrupted(computer, responseTime);
 	}
 	
 	@Override
 	public final void onInterrupted(final Computer computer, final long time) {
-		thumbnails.get(computer).setThumbnail(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/thumbnails/thumbnail_error.png")), time);
+		final ComputerThumbnail thumbnail = thumbnails.get(computer);
+		thumbnail.setThumbnail(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/thumbnails/thumbnail_error.png")), time);
+		thumbnail.setTitle(computer.name);
 	}
 	
 	@Override
@@ -174,11 +178,11 @@ public class RoomPane extends JPanel implements ClientInterface {
 		public ComputerThumbnail(final Computer computer) {
 			this.computer = computer;
 			thumbnail.setBackground(Color.WHITE);
-			thumbnail.setText(computer.name);
 			thumbnail.setOpaque(true);
 			thumbnail.setHorizontalTextPosition(JLabel.CENTER);
 			thumbnail.setVerticalTextPosition(JLabel.BOTTOM);
-			thumbnail.setBorder(new CompoundBorder(BorderFactory.createLineBorder(Color.BLACK), new EmptyBorder(10,10,10,10)));
+			thumbnail.setBorder(new CompoundBorder(BorderFactory.createLineBorder(Color.BLACK), new EmptyBorder(10, 10, 10, 10)));
+			setTitle(computer.name);
 			this.add(thumbnail, BorderLayout.CENTER);
 			this.addMouseListener(new MouseListener() {
 
@@ -241,6 +245,16 @@ public class RoomPane extends JPanel implements ClientInterface {
 			}
 			this.thumbnailTime = downloadedTime;
 			this.thumbnail.setIcon(thumbnail);
+		}
+		
+		/**
+		 * Changement du titre de la miniature.
+		 * 
+		 * @param title Le nouveau titre.
+		 */
+		
+		public final void setTitle(final String title) {
+			thumbnail.setText("<html><div style=text-align:\"center\";>" + title.replace(System.lineSeparator(), "<br>") + "</div></html>");
 		}
 		
 		/**

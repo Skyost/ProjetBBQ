@@ -91,7 +91,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 	
 	public ComputerFrame(final Computer computer) {
 		this.computer = computer;
-		this.setTitle(computer.name + " (" + computer.ip + ":" + computer.port + ")");
+		this.setTitle(buildTitle(null));
 		this.setIconImage(Toolkit.getDefaultToolkit().getImage(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/app_icon.png")));
 		this.setSize(600, 400); // Par défaut, une taille de 600x400.
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -125,16 +125,18 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 	}
 
 	@Override
-	public final void onSuccess(final Computer computer, final Object returned, final long responseTime) {
+	public final void onSuccess(final Computer computer, final Object... returned) {
 		stopRefreshingScreenshot();
+		final long responseTime = (long)returned[returned.length - 1];
 		if(responseTime < refreshTime) {
 			return;
 		}
-		if(!(returned instanceof Image)) {
+		if(!(returned[0] instanceof Image)) {
 			return;
 		}
-		lblScreenshot.setIcon(new ImageIcon((BufferedImage)returned));
+		lblScreenshot.setIcon(new ImageIcon((BufferedImage)returned[0]));
 		lblScreenshot.setText(null);
+		this.setTitle(buildTitle(returned[1].toString()));
 	}
 
 	@Override
@@ -181,6 +183,18 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			client.stopRequests();
 			client = null;
 		}
+	}
+	
+	/**
+	 * Permet de formatter le titre de l'IHM.
+	 * 
+	 * @param username Le nom d'utilisateur envoyé par l'ordinateur distant.
+	 * 
+	 * @return Le titre formatté.
+	 */
+	
+	private final String buildTitle(final String username) {
+		return computer.name + " (" + computer.ip + ":" + computer.port + ")" + (username == null ? "" : " → " + username);
 	}
 	
 	/**
@@ -231,7 +245,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 						}
 
 						@Override
-						public final void onSuccess(final Computer computer, final Object returned, final long responseTime) {
+						public final void onSuccess(final Computer computer, final Object... returned) {
 							dialog.setMessage("<html>Envoi effectué !<br/>Ce message se fermera dans " + DIALOG_TIME + " secondes.</html>");
 							closeDialog();
 						}

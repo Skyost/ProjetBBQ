@@ -81,7 +81,14 @@ public class MainFrame extends JFrame {
 		final Container content = this.getContentPane();
 		content.add(tabbedPane, BorderLayout.CENTER); // Les onglets au centre de l'IHM.
 		content.add(bar, BorderLayout.SOUTH); // La barre en bas.
-		loadRooms(); // On charge les salles.
+		new Thread() {
+			
+			@Override
+			public final void run() {
+				loadRooms(); // On charge les salles.
+			}
+			
+		}.start();
 	}
 	
 	/**
