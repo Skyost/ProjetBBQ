@@ -115,7 +115,15 @@ public class Request {
 		 * On souhaite envoyer un message.
 		 */
 		
-		MESSAGE(2);
+		MESSAGE(2),
+		
+		SCREENLOCK(3),
+		
+		SHUTDOWN(4),
+		
+		RESTART(5),
+		
+		LOGOUT(6);
 		
 		/**
 		 * Index a envoyer dans la requête.

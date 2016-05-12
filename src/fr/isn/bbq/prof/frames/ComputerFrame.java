@@ -286,8 +286,68 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			
 		});
 		sendMessage.setToolTipText("Envoyer un message");
+		
+		final JButton shutdown = new JButton(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_refresh.png")));
+		shutdown.addActionListener(new ActionListener() {
+			
+			@Override
+			public final void actionPerformed(final ActionEvent event) {
+				new Client(new ClientInterface() {
+						
+					public static final int DIALOG_TIME = 5;
+						
+					private final MessageDialog dialog = new MessageDialog(ComputerFrame.this, "Envoi du message", "Connexion à l'ordinateur...");
+
+					@Override
+					public final void connection(final Computer computer, final long time) {
+						dialog.setVisible(true);
+					}
+
+					@Override
+					public final void onSuccess(final Computer computer, final Object... returned) {
+						dialog.setMessage("<html>Envoi effectué !<br/>Ce message se fermera dans " + DIALOG_TIME + " secondes.</html>");
+						closeDialog();
+					}
+
+					@Override
+					public final void onError(final Computer computer, final Exception ex, final long responseTime) {
+						dialog.setMessage("<html>" + ex.getMessage() + "<br/>Ce message se fermera dans " + DIALOG_TIME + " secondes.</html>");
+						closeDialog();
+					}
+
+					@Override
+					public final void onInterrupted(final Computer computer, final long time) {
+						dialog.setMessage("<html>Envoi interrompu.<br/>Ce message se fermera dans " + DIALOG_TIME + " secondes.</html>");
+						closeDialog();
+					}
+
+					@Override
+					public final void onWaiting() {}
+						
+					/**
+					 * Ferme la boîte de dialogue en attendant.
+					 */
+						
+					private final void closeDialog() {
+						new Timer().schedule(new TimerTask() {
+								
+							@Override
+							public final void run() {
+								dialog.dispose();
+							}
+									
+						}, DIALOG_TIME * 1000);
+					}
+						
+				}, new Request(RequestType.SHUTDOWN, ProjetBBQProf.settings.uuid), new Computer[]{computer}, true).start();
+			}
+			
+		});
+		shutdown.setToolTipText("Eteindre le PC");
+		
 		toolbar.add(refresh);
 		toolbar.add(sendMessage);
+		toolbar.add(shutdown);
 		return toolbar;
 	}
 	
