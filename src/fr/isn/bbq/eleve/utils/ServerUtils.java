@@ -111,7 +111,9 @@ public class ServerUtils {
 		
 		SHUTDOWN(4),
 		
-		RESTART(5);
+		RESTART(5),
+		
+		LOGOUT(6);
 		
 		
 		

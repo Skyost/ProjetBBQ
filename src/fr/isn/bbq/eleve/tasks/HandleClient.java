@@ -105,6 +105,13 @@ public class HandleClient extends Thread {
 				 Runtime.getRuntime().exec(commande2);
 		          System.exit(0);
 				break;
+			case LOGOUT:
+				String commande3;
+				commande3 = "shutdown.exe -l";
+				// -s pour l'arret; -f pour le forcer; -t pour le temps.
+				 Runtime.getRuntime().exec(commande3);
+		          System.exit(0);
+				break;
 			
 			default:
 				break;
