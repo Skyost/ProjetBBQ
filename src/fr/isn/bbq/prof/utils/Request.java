@@ -83,8 +83,8 @@ public class Request {
 			if(args.length < 2) {
 				throw new IllegalArgumentException("Not enough arguments.");
 			}
-			if(!Utils.isNumeric(args[1])) {
-				throw new IllegalArgumentException("\"" + args[1] + "\" is not a number.");
+			if(!Utils.isNumeric(args[2])) {
+				throw new IllegalArgumentException("\"" + args[2] + "\" is not a number.");
 			}
 			break;
 		default:

@@ -280,7 +280,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 							}, DIALOG_TIME * 1000);
 						}
 						
-					}, new Request(RequestType.MESSAGE, textField.getText(), String.valueOf(spinner.getValue())), new Computer[]{computer}, true);
+					}, new Request(RequestType.MESSAGE, ProjetBBQProf.settings.uuid, textField.getText(), String.valueOf(spinner.getValue())), new Computer[]{computer}, true).start();
 				}
 			}
 			
