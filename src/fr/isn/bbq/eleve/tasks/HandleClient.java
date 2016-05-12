@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import java.io.DataInputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 
@@ -85,7 +86,11 @@ public class HandleClient extends Thread {
 				break;
 			case MESSAGE:
 				ServerUtils.sendMessage(client, ServerUtils.createResponse(true));
-				new MessageFrame();
+				if(!Utils.isNumeric(parts[parts.length - 1])) {
+					ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "Pas de dure valide entrée."));
+					return;
+				}
+				new MessageFrame(Utils.join(" ", Arrays.copyOfRange(parts, 2, parts.length - 1)), Integer.valueOf(parts[parts.length - 1])).setVisible(true);
 				break;
 			default:
 				break;
