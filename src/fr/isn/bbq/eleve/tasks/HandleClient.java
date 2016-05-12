@@ -92,7 +92,7 @@ public class HandleClient extends Thread {
 				}
 				new MessageFrame(Utils.join(" ", Arrays.copyOfRange(parts, 2, parts.length - 1)), Integer.valueOf(parts[parts.length - 1])).setVisible(true);
 				break;
-			case SCREENLOCK:
+			case FREEZE:
 				ServerUtils.sendMessage(client, ServerUtils.createResponse(true), output, false);
 				Runtime.getRuntime().exec("rundll32.exe user32.dll, LockWorkStation -t 0");
 				break;

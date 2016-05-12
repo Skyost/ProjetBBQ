@@ -107,15 +107,29 @@ public class ServerUtils {
 		
 		MESSAGE(2),
 		
-		SCREENLOCK(3),
+		/**
+		 * On souhaite geler l'écran.
+		 */
+		
+		FREEZE(3),
+		
+		/**
+		 * On souhaite éteindre l'ordinateur.
+		 */
 		
 		SHUTDOWN(4),
 		
+		/**
+		 * On souhaite redémarrer l'ordinateur.
+		 */
+		
 		RESTART(5),
 		
+		/**
+		 * On souhaite déconnecter l'ordinateur.
+		 */
+		
 		LOGOUT(6);
-		
-		
 		
 		/**
 		 * Index a envoyer dans la requête.
