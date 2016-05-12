@@ -93,33 +93,24 @@ public class HandleClient extends Thread {
 				new MessageFrame(Utils.join(" ", Arrays.copyOfRange(parts, 2, parts.length - 1)), Integer.valueOf(parts[parts.length - 1])).setVisible(true);
 				break;
 			case SCREENLOCK:
-				String commande1;
-				commande1 = "rundll32.exe user32.dll, LockWorkStation -t 0";
-				 Runtime.getRuntime().exec(commande1);
-		          System.exit(0);
+				ServerUtils.sendMessage(client, ServerUtils.createResponse(true), output, false);
+				Runtime.getRuntime().exec("rundll32.exe user32.dll, LockWorkStation -t 0");
 				break;
 			case SHUTDOWN:
-				 String commande;
-				commande = "shutdown.exe -s -f -t 0";
+				ServerUtils.sendMessage(client, ServerUtils.createResponse(true), output, false);
 				// -s pour l'arret; -f pour le forcer; -t pour le temps.
-				 Runtime.getRuntime().exec(commande);
-		          System.exit(0);
+				Runtime.getRuntime().exec("shutdown.exe -s -f -t 0");
 				break;
 			case RESTART:
-				String commande2;
-				commande2 = "shutdown.exe -r -f -t  0";
+				ServerUtils.sendMessage(client, ServerUtils.createResponse(true), output, false);
 				// -s pour l'arret; -f pour le forcer; -t pour le temps.
-				 Runtime.getRuntime().exec(commande2);
-		          System.exit(0);
+				 Runtime.getRuntime().exec("shutdown.exe -r -f -t  0");
 				break;
 			case LOGOUT:
-				String commande3;
-				commande3 = "shutdown.exe -l";
+				ServerUtils.sendMessage(client, ServerUtils.createResponse(true), output, false);
 				// -s pour l'arret; -f pour le forcer; -t pour le temps.
-				 Runtime.getRuntime().exec(commande3);
-		          System.exit(0);
+				 Runtime.getRuntime().exec("shutdown.exe -l");
 				break;
-			
 			default:
 				break;
 			}
