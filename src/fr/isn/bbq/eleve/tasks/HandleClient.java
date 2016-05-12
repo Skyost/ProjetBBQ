@@ -14,6 +14,7 @@ import java.net.Socket;
 import javax.imageio.ImageIO;
 
 import fr.isn.bbq.eleve.ProjetBBQEleve;
+import fr.isn.bbq.eleve.frames.MessageFrame;
 import fr.isn.bbq.eleve.utils.ServerUtils;
 import fr.isn.bbq.eleve.utils.Utils;
 import fr.isn.bbq.eleve.utils.ServerUtils.RequestType;
@@ -83,7 +84,8 @@ public class HandleClient extends Thread {
 				ImageIO.write(screenshot(), ProjetBBQEleve.settings.imageType, output);
 				break;
 			case MESSAGE:
-				// TODO: Message avec IHM, temps d'affichage, ...
+				ServerUtils.sendMessage(client, ServerUtils.createResponse(true));
+				new MessageFrame();
 				break;
 			default:
 				break;
