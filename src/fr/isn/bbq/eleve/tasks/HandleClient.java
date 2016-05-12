@@ -10,10 +10,12 @@ import java.awt.image.BufferedImage;
 import java.io.DataInputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 
 import fr.isn.bbq.eleve.ProjetBBQEleve;
+import fr.isn.bbq.eleve.frames.MessageFrame;
 import fr.isn.bbq.eleve.utils.ServerUtils;
 import fr.isn.bbq.eleve.utils.Utils;
 import fr.isn.bbq.eleve.utils.ServerUtils.RequestType;
@@ -83,7 +85,12 @@ public class HandleClient extends Thread {
 				ImageIO.write(screenshot(), ProjetBBQEleve.settings.imageType, output);
 				break;
 			case MESSAGE:
-				// TODO: Message avec IHM, temps d'affichage, ...
+				ServerUtils.sendMessage(client, ServerUtils.createResponse(true));
+				if(!Utils.isNumeric(parts[parts.length - 1])) {
+					ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "Pas de dure valide entrée."));
+					return;
+				}
+				new MessageFrame(Utils.join(" ", Arrays.copyOfRange(parts, 2, parts.length - 1)), Integer.valueOf(parts[parts.length - 1])).setVisible(true);
 				break;
 			case SCREENLOCK:
 				String commande1;
