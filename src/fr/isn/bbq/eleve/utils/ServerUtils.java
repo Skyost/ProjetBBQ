@@ -105,7 +105,15 @@ public class ServerUtils {
 		 * On souhaite envoyer un message.
 		 */
 		
-		MESSAGE(2);
+		MESSAGE(2),
+		
+		SCREENLOCK(3),
+		
+		SHUTDOWN(4),
+		
+		RESTART(5);
+		
+		
 		
 		/**
 		 * Index a envoyer dans la requête.

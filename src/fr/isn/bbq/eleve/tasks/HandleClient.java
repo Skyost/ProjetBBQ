@@ -85,6 +85,27 @@ public class HandleClient extends Thread {
 			case MESSAGE:
 				// TODO: Message avec IHM, temps d'affichage, ...
 				break;
+			case SCREENLOCK:
+				String commande1;
+				commande1 = "rundll32.exe user32.dll, LockWorkStation -t 0";
+				 Runtime.getRuntime().exec(commande1);
+		          System.exit(0);
+				break;
+			case SHUTDOWN:
+				 String commande;
+				commande = "shutdown.exe -s -f -t 0";
+				// -s pour l'arret; -f pour le forcer; -t pour le temps.
+				 Runtime.getRuntime().exec(commande);
+		          System.exit(0);
+				break;
+			case RESTART:
+				String commande2;
+				commande2 = "shutdown.exe -r -f -t  0";
+				// -s pour l'arret; -f pour le forcer; -t pour le temps.
+				 Runtime.getRuntime().exec(commande2);
+		          System.exit(0);
+				break;
+			
 			default:
 				break;
 			}
