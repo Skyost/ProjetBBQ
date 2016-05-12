@@ -69,16 +69,6 @@ public class Request {
 	@Override
 	public final String toString() {
 		switch(type) {
-		case THUMBNAIL:
-			if(args.length < 1) {
-				throw new IllegalArgumentException("Not enough arguments.");
-			}
-			break;
-		case FULL_SCREENSHOT:
-			if(args.length < 1) {
-				throw new IllegalArgumentException("Not enough arguments.");
-			}
-			break;
 		case MESSAGE:
 			if(args.length < 2) {
 				throw new IllegalArgumentException("Not enough arguments.");
@@ -88,7 +78,10 @@ public class Request {
 			}
 			break;
 		default:
-			throw new IllegalArgumentException("Type inconnu.");
+			if(args.length < 1) {
+				throw new IllegalArgumentException("Not enough arguments.");
+			}
+			break;
 		}
 		return type.getIndex() + " " + Utils.join(" ", args);
 	}
@@ -117,11 +110,27 @@ public class Request {
 		
 		MESSAGE(2),
 		
-		SCREENLOCK(3),
+		/**
+		 * On souhaite geler l'écran.
+		 */
+		
+		FREEZE(3),
+		
+		/**
+		 * On souhaite éteindre l'ordinateur.
+		 */
 		
 		SHUTDOWN(4),
 		
+		/**
+		 * On souhaite redémarrer l'ordinateur.
+		 */
+		
 		RESTART(5),
+		
+		/**
+		 * On souhaite déconnecter l'ordinateur.
+		 */
 		
 		LOGOUT(6);
 		

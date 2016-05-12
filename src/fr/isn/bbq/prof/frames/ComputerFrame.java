@@ -104,6 +104,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			}
 			
 		});
+		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		lblScreenshot.setFont(lblScreenshot.getFont().deriveFont(Font.ITALIC));
 		lblScreenshot.setHorizontalAlignment(SwingConstants.CENTER);
 		if(ImageIO.getWriterFormatNames().length > 0) { // Si il n'est pas possible d'enregistrer une image, on n'ajoute pas de menu popup.
@@ -233,121 +234,59 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 				final JFormattedTextField field = ((NumberEditor)spinner.getEditor()).getTextField();
 				((NumberFormatter)field.getFormatter()).setAllowsInvalid(false);
 				if(JOptionPane.showConfirmDialog(ComputerFrame.this, components.toArray(new Object[components.size()]), "Envoyer un message", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION) {
-					new Client(new ClientInterface() {
-						
-						public static final int DIALOG_TIME = 5;
-						
-						private final MessageDialog dialog = new MessageDialog(ComputerFrame.this, "Envoi du message", "Connexion à l'ordinateur...");
-
-						@Override
-						public final void connection(final Computer computer, final long time) {
-							dialog.setVisible(true);
-						}
-
-						@Override
-						public final void onSuccess(final Computer computer, final Object... returned) {
-							dialog.setMessage("<html>Envoi effectué !<br/>Ce message se fermera dans " + DIALOG_TIME + " secondes.</html>");
-							closeDialog();
-						}
-
-						@Override
-						public final void onError(final Computer computer, final Exception ex, final long responseTime) {
-							dialog.setMessage("<html>" + ex.getMessage() + "<br/>Ce message se fermera dans " + DIALOG_TIME + " secondes.</html>");
-							closeDialog();
-						}
-
-						@Override
-						public final void onInterrupted(final Computer computer, final long time) {
-							dialog.setMessage("<html>Envoi interrompu.<br/>Ce message se fermera dans " + DIALOG_TIME + " secondes.</html>");
-							closeDialog();
-						}
-
-						@Override
-						public final void onWaiting() {}
-						
-						/**
-						 * Ferme la boîte de dialogue en attendant.
-						 */
-						
-						private final void closeDialog() {
-							new Timer().schedule(new TimerTask() {
-								
-								@Override
-								public final void run() {
-									dialog.dispose();
-								}
-									
-							}, DIALOG_TIME * 1000);
-						}
-						
-					}, new Request(RequestType.MESSAGE, ProjetBBQProf.settings.uuid, textField.getText(), String.valueOf(spinner.getValue())), new Computer[]{computer}, true).start();
+					createClientDialog(new Request(RequestType.MESSAGE, ProjetBBQProf.settings.uuid, textField.getText(), String.valueOf(spinner.getValue())));
 				}
 			}
 			
 		});
 		sendMessage.setToolTipText("Envoyer un message");
-		
-		final JButton shutdown = new JButton(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_refresh.png")));
+		final JButton freeze = new JButton(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_freeze.png")));
+		freeze.addActionListener(new ActionListener() {
+			
+			@Override
+			public final void actionPerformed(final ActionEvent event) {
+				createClientDialog(new Request(RequestType.SHUTDOWN, ProjetBBQProf.settings.uuid));
+			}
+			
+		});
+		freeze.setToolTipText("Geler le PC");
+		final JButton shutdown = new JButton(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_shutdown.png")));
 		shutdown.addActionListener(new ActionListener() {
 			
 			@Override
 			public final void actionPerformed(final ActionEvent event) {
-				new Client(new ClientInterface() {
-						
-					public static final int DIALOG_TIME = 5;
-						
-					private final MessageDialog dialog = new MessageDialog(ComputerFrame.this, "Envoi du message", "Connexion à l'ordinateur...");
-
-					@Override
-					public final void connection(final Computer computer, final long time) {
-						dialog.setVisible(true);
-					}
-
-					@Override
-					public final void onSuccess(final Computer computer, final Object... returned) {
-						dialog.setMessage("<html>Envoi effectué !<br/>Ce message se fermera dans " + DIALOG_TIME + " secondes.</html>");
-						closeDialog();
-					}
-
-					@Override
-					public final void onError(final Computer computer, final Exception ex, final long responseTime) {
-						dialog.setMessage("<html>" + ex.getMessage() + "<br/>Ce message se fermera dans " + DIALOG_TIME + " secondes.</html>");
-						closeDialog();
-					}
-
-					@Override
-					public final void onInterrupted(final Computer computer, final long time) {
-						dialog.setMessage("<html>Envoi interrompu.<br/>Ce message se fermera dans " + DIALOG_TIME + " secondes.</html>");
-						closeDialog();
-					}
-
-					@Override
-					public final void onWaiting() {}
-						
-					/**
-					 * Ferme la boîte de dialogue en attendant.
-					 */
-						
-					private final void closeDialog() {
-						new Timer().schedule(new TimerTask() {
-								
-							@Override
-							public final void run() {
-								dialog.dispose();
-							}
-									
-						}, DIALOG_TIME * 1000);
-					}
-						
-				}, new Request(RequestType.SHUTDOWN, ProjetBBQProf.settings.uuid), new Computer[]{computer}, true).start();
+				createClientDialog(new Request(RequestType.SHUTDOWN, ProjetBBQProf.settings.uuid));
 			}
 			
 		});
-		shutdown.setToolTipText("Eteindre le PC");
-		
+		shutdown.setToolTipText("Éteindre le PC");
+		final JButton restart = new JButton(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_restart.png")));
+		restart.addActionListener(new ActionListener() {
+			
+			@Override
+			public final void actionPerformed(final ActionEvent event) {
+				createClientDialog(new Request(RequestType.RESTART, ProjetBBQProf.settings.uuid));
+			}
+			
+		});
+		restart.setToolTipText("Redémarrer le PC");
+		final JButton logout = new JButton(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_logout.png")));
+		logout.addActionListener(new ActionListener() {
+			
+			@Override
+			public final void actionPerformed(final ActionEvent event) {
+				createClientDialog(new Request(RequestType.LOGOUT, ProjetBBQProf.settings.uuid));
+			}
+			
+		});
+		logout.setToolTipText("Déconnecter le PC");
 		toolbar.add(refresh);
 		toolbar.add(sendMessage);
+		toolbar.addSeparator();
+		toolbar.add(freeze);
 		toolbar.add(shutdown);
+		toolbar.add(restart);
+		toolbar.add(logout);
 		return toolbar;
 	}
 	
@@ -408,6 +347,58 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 		save.setIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_save.png")));
 		popup.add(save);
 		return popup;
+	}
+	
+	private final void createClientDialog(final Request request) {
+		new Client(new ClientInterface() {
+			
+			private static final int DIALOG_TIME = 5;
+			private static final String CLOSING_MESSAGE = "Ce message se fermera dans " + DIALOG_TIME +" seconde(s)...";
+			
+			private final MessageDialog dialog = new MessageDialog(ComputerFrame.this, "Envoi du message", "Connexion à l'ordinateur...");
+
+			@Override
+			public final void connection(final Computer computer, final long time) {
+				dialog.setVisible(true);
+			}
+
+			@Override
+			public final void onSuccess(final Computer computer, final Object... returned) {
+				dialog.setMessage("<html>Action effectuée !<br/>" + CLOSING_MESSAGE + "</html>");
+				closeDialog();
+			}
+
+			@Override
+			public final void onError(final Computer computer, final Exception ex, final long responseTime) {
+				dialog.setMessage("<html>" + ex.getMessage() + "<br/>" + CLOSING_MESSAGE + "</html>");
+				closeDialog();
+			}
+
+			@Override
+			public final void onInterrupted(final Computer computer, final long time) {
+				dialog.setMessage("<html>Envoi interrompu.<br/>" + CLOSING_MESSAGE + "</html>");
+				closeDialog();
+			}
+
+			@Override
+			public final void onWaiting() {}
+			
+			/**
+			 * Ferme la boîte de dialogue en attendant.
+			 */
+			
+			private final void closeDialog() {
+				new Timer().schedule(new TimerTask() {
+					
+					@Override
+					public final void run() {
+						dialog.dispose();
+					}
+						
+				}, DIALOG_TIME * 1000);
+			}
+			
+		}, request, new Computer[]{computer}, true).start();
 	}
 
 }
