@@ -129,7 +129,7 @@ public class MainFrame extends JFrame {
 		}
 		message.dispose(); // On ferme le dialogue.
 		if(rooms.size() == 0) { // Si il n'y a pas de salles de classe chargées, on affiche un message d'erreur.
-			JOptionPane.showMessageDialog(MainFrame.this, "Pas de salle valide ajoutée. Veuillez consulter l'aide en ligne.", "Erreur !", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(MainFrame.this, "Pas de salle valide ajout�e. Veuillez consulter l'aide en ligne.", "Erreur !", JOptionPane.ERROR_MESSAGE);
 			System.exit(1);
 		}
 		for(final Room room : rooms) { // Pour chaque salle de classe, on créé l'onglet correspondant.
