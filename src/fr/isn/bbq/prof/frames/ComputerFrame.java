@@ -240,16 +240,6 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			
 		});
 		sendMessage.setToolTipText("Envoyer un message");
-		final JButton freeze = new JButton(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_freeze.png")));
-		freeze.addActionListener(new ActionListener() {
-			
-			@Override
-			public final void actionPerformed(final ActionEvent event) {
-				createClientDialog(new Request(RequestType.SHUTDOWN, ProjetBBQProf.settings.uuid));
-			}
-			
-		});
-		freeze.setToolTipText("Geler le PC");
 		final JButton shutdown = new JButton(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_shutdown.png")));
 		shutdown.addActionListener(new ActionListener() {
 			
@@ -280,13 +270,35 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			
 		});
 		logout.setToolTipText("Déconnecter le PC");
+		final JButton lock = new JButton(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_lock.png")));
+		lock.addActionListener(new ActionListener() {
+			
+			@Override
+			public final void actionPerformed(final ActionEvent event) {
+				createClientDialog(new Request(RequestType.LOCK, ProjetBBQProf.settings.uuid));
+			}
+			
+		});
+		lock.setToolTipText("Verrouiller le PC");
+		final JButton unlock = new JButton(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_unlock.png")));
+		unlock.addActionListener(new ActionListener() {
+			
+			@Override
+			public final void actionPerformed(final ActionEvent event) {
+				createClientDialog(new Request(RequestType.UNLOCK, ProjetBBQProf.settings.uuid));
+			}
+			
+		});
+		unlock.setToolTipText("Déverrouiller le PC");
 		toolbar.add(refresh);
 		toolbar.add(sendMessage);
 		toolbar.addSeparator();
-		toolbar.add(freeze);
 		toolbar.add(shutdown);
 		toolbar.add(restart);
 		toolbar.add(logout);
+		toolbar.addSeparator();
+		toolbar.add(lock);
+		toolbar.add(unlock);
 		return toolbar;
 	}
 	
@@ -355,7 +367,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			private static final int DIALOG_TIME = 5;
 			private static final String CLOSING_MESSAGE = "Ce message se fermera dans " + DIALOG_TIME +" seconde(s)...";
 			
-			private final MessageDialog dialog = new MessageDialog(ComputerFrame.this, "Envoi du message", "Connexion à l'ordinateur...");
+			private final MessageDialog dialog = new MessageDialog(ComputerFrame.this, "Envoi de la requête", "Connexion à l'ordinateur...");
 
 			@Override
 			public final void connection(final Computer computer, final long time) {
