@@ -114,29 +114,31 @@ public class Request {
 		 * On souhaite geler l'écran.
 		 */
 		
-		FREEZE(3),
+		LOCK(3),
+		
+		/**
+		 * On souhaite dégeler l'écran.
+		 */
+		
+		UNLOCK(4),
 		
 		/**
 		 * On souhaite éteindre l'ordinateur.
 		 */
 		
-		SHUTDOWN(4),
+		SHUTDOWN(5),
 		
 		/**
 		 * On souhaite redémarrer l'ordinateur.
 		 */
 		
-		RESTART(5),
+		RESTART(6),
 		
 		/**
 		 * On souhaite déconnecter l'ordinateur.
 		 */
 		
-		LOGOUT(6);
-		
-		/**
-		 * Index a envoyer dans la requête.
-		 */
+		LOGOUT(7);
 		
 		private final int index;
 		
