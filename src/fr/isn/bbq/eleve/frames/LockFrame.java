@@ -76,5 +76,5 @@ public class LockFrame extends JFrame {
 			ex.printStackTrace();
 		}
 	}
-
+	
 }

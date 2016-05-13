@@ -39,7 +39,7 @@ public class HandleClient extends Thread {
 	
 	private final Socket client;
 	
-	private LockFrame lockFrame;
+	private static LockFrame lockFrame = null;
 	
 	/**
 	 * Création d'un thread permettant de servir le client (il faut encore le démarrer avec <b>start()</b>).
