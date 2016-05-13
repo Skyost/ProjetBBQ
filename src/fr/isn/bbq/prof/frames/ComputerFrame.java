@@ -42,6 +42,7 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -362,12 +363,16 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 	}
 	
 	private final void createClientDialog(final Request request) {
+		createClientDialog(request, ComputerFrame.this, new ArrayList<Computer>(Arrays.asList(computer)));
+	}
+	
+	public static final void createClientDialog(final Request request, final JFrame parent, final List<Computer> computers) {
 		new Client(new ClientInterface() {
 			
 			private static final int DIALOG_TIME = 5;
 			private static final String CLOSING_MESSAGE = "Ce message se fermera dans " + DIALOG_TIME +" seconde(s)...";
 			
-			private final MessageDialog dialog = new MessageDialog(ComputerFrame.this, "Envoi de la requête", "Connexion à l'ordinateur...");
+			private final MessageDialog dialog = new MessageDialog(parent, "Envoi de la requête", "Connexion à l'ordinateur...");
 
 			@Override
 			public final void connection(final Computer computer, final long time) {
@@ -410,7 +415,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 				}, DIALOG_TIME * 1000);
 			}
 			
-		}, request, new Computer[]{computer}, true).start();
+		}, request, computers.toArray(new Computer[computers.size()]), true).start();
 	}
 
 }

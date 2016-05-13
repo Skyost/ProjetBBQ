@@ -8,25 +8,36 @@ import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 
+import fr.isn.bbq.prof.Computer;
 import fr.isn.bbq.prof.ProjetBBQProf;
 import fr.isn.bbq.prof.Room;
 import fr.isn.bbq.prof.dialogs.MessageDialog;
 import fr.isn.bbq.prof.frames.tabs.RoomPane;
+import fr.isn.bbq.prof.utils.Request;
 import fr.isn.bbq.prof.utils.StatusBar;
+import fr.isn.bbq.prof.utils.Request.RequestType;
 
 import javax.swing.JTabbedPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.JSpinner.NumberEditor;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.text.NumberFormatter;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Desktop;
 import java.awt.Image;
@@ -153,6 +164,12 @@ public class MainFrame extends JFrame {
 	 */
 	
 	public final JMenuBar createMenuBar() {
+		final List<Computer> computers = new ArrayList<Computer>();
+		for(final Room room : rooms) {
+			for(final Computer computer : room.computers) {
+				computers.add(computer);
+			}
+		}
 		final JMenuBar menu = new JMenuBar();
 		final JMenuItem refresh = new JMenuItem("Rafraîchir les miniatures");
 		refresh.addActionListener(new ActionListener() {
@@ -170,8 +187,78 @@ public class MainFrame extends JFrame {
 			
 		});
 		refresh.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_refresh.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
-		final JMenu edit = new JMenu("Édition");
-		edit.add(refresh);
+		final JMenuItem sendMessage = new JMenuItem("Envoyer un message");
+		sendMessage.addActionListener(new ActionListener() {
+			
+			@Override
+			public final void actionPerformed(final ActionEvent event) {
+				final JTextField textField = new JTextField();
+				final JSpinner spinner = new JSpinner();
+				final List<Component> components = new ArrayList<Component>(); // Composants de la boîte de dialogue.
+				components.add(new JLabel("Message :"));
+				components.add(textField);
+				components.add(new JLabel("Durée d'affichage (en secondes) :"));
+				components.add(spinner);
+				spinner.setModel(new SpinnerNumberModel(5, 1, Integer.MAX_VALUE, 1));
+				final JFormattedTextField field = ((NumberEditor)spinner.getEditor()).getTextField();
+				((NumberFormatter)field.getFormatter()).setAllowsInvalid(false);
+				if(JOptionPane.showConfirmDialog(MainFrame.this, components.toArray(new Object[components.size()]), "Envoyer un message", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION) {
+					ComputerFrame.createClientDialog(new Request(RequestType.MESSAGE, ProjetBBQProf.settings.uuid, textField.getText(), String.valueOf(spinner.getValue())), MainFrame.this, computers);
+				}
+			}
+			
+		});
+		sendMessage.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_sendmessage.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
+		final JMenuItem shutdown = new JMenuItem("Éteindre les PCs");
+		shutdown.addActionListener(new ActionListener() {
+			
+			@Override
+			public final void actionPerformed(final ActionEvent event) {
+				ComputerFrame.createClientDialog(new Request(RequestType.SHUTDOWN, ProjetBBQProf.settings.uuid), MainFrame.this, computers);
+			}
+			
+		});
+		shutdown.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_shutdown.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
+		final JMenuItem restart = new JMenuItem("Redémarrer les PCs");
+		restart.addActionListener(new ActionListener() {
+			
+			@Override
+			public final void actionPerformed(final ActionEvent event) {
+				ComputerFrame.createClientDialog(new Request(RequestType.RESTART, ProjetBBQProf.settings.uuid), MainFrame.this, computers);
+			}
+			
+		});
+		restart.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_restart.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
+		final JMenuItem logout = new JMenuItem("Déconnecter les PCs");
+		logout.addActionListener(new ActionListener() {
+			
+			@Override
+			public final void actionPerformed(final ActionEvent event) {
+				ComputerFrame.createClientDialog(new Request(RequestType.LOGOUT, ProjetBBQProf.settings.uuid), MainFrame.this, computers);
+			}
+			
+		});
+		logout.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_logout.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
+		final JMenuItem lock = new JMenuItem("Verrouiller les PCs");
+		lock.addActionListener(new ActionListener() {
+			
+			@Override
+			public final void actionPerformed(final ActionEvent event) {
+				ComputerFrame.createClientDialog(new Request(RequestType.LOCK, ProjetBBQProf.settings.uuid), MainFrame.this, computers);
+			}
+			
+		});
+		lock.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_lock.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
+		final JMenuItem unlock = new JMenuItem("Déverrouiller les PCs");
+		unlock.addActionListener(new ActionListener() {
+			
+			@Override
+			public final void actionPerformed(final ActionEvent event) {
+				ComputerFrame.createClientDialog(new Request(RequestType.UNLOCK, ProjetBBQProf.settings.uuid), MainFrame.this, computers);
+			}
+			
+		});
+		unlock.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_unlock.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
 		final JMenuItem onlineHelp = new JMenuItem("Aide en ligne...");
 		onlineHelp.addActionListener(new ActionListener() {
 			
@@ -200,6 +287,16 @@ public class MainFrame extends JFrame {
 			
 		});
 		about.setIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_about.png")));
+		final JMenu edit = new JMenu("Édition");
+		edit.add(refresh);
+		edit.add(sendMessage);
+		edit.addSeparator();
+		edit.add(shutdown);
+		edit.add(restart);
+		edit.add(logout);
+		edit.addSeparator();
+		edit.add(lock);
+		edit.add(unlock);
 		final JMenu help = new JMenu("Aide");
 		help.add(onlineHelp);
 		help.addSeparator();
