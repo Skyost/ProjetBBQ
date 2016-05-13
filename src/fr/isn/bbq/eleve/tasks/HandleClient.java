@@ -15,6 +15,7 @@ import java.util.Arrays;
 import javax.imageio.ImageIO;
 
 import fr.isn.bbq.eleve.ProjetBBQEleve;
+import fr.isn.bbq.eleve.frames.LockFrame;
 import fr.isn.bbq.eleve.frames.MessageFrame;
 import fr.isn.bbq.eleve.utils.ServerUtils;
 import fr.isn.bbq.eleve.utils.Utils;
@@ -37,6 +38,8 @@ public class HandleClient extends Thread {
 	 */
 	
 	private final Socket client;
+	
+	private LockFrame lockFrame;
 	
 	/**
 	 * Création d'un thread permettant de servir le client (il faut encore le démarrer avec <b>start()</b>).
@@ -92,9 +95,19 @@ public class HandleClient extends Thread {
 				}
 				new MessageFrame(Utils.join(" ", Arrays.copyOfRange(parts, 2, parts.length - 1)), Integer.valueOf(parts[parts.length - 1])).setVisible(true);
 				break;
-			case FREEZE:
+			case LOCK:
 				ServerUtils.sendMessage(client, ServerUtils.createResponse(true), output, false);
-				Runtime.getRuntime().exec("rundll32.exe user32.dll, LockWorkStation -t 0");
+				if(lockFrame == null) {
+					lockFrame = new LockFrame(screenshot());
+					lockFrame.setVisible(true);
+				}
+				break;
+			case UNLOCK:
+				ServerUtils.sendMessage(client, ServerUtils.createResponse(true), output, false);
+				if(lockFrame != null) {
+					lockFrame.unlockAndClose();
+					lockFrame = null;
+				}
 				break;
 			case SHUTDOWN:
 				ServerUtils.sendMessage(client, ServerUtils.createResponse(true), output, false);

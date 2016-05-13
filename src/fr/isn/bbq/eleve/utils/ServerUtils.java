@@ -111,25 +111,31 @@ public class ServerUtils {
 		 * On souhaite geler l'écran.
 		 */
 		
-		FREEZE(3),
+		LOCK(3),
+		
+		/**
+		 * On souhaite dégeler l'écran.
+		 */
+		
+		UNLOCK(4),
 		
 		/**
 		 * On souhaite éteindre l'ordinateur.
 		 */
 		
-		SHUTDOWN(4),
+		SHUTDOWN(5),
 		
 		/**
 		 * On souhaite redémarrer l'ordinateur.
 		 */
 		
-		RESTART(5),
+		RESTART(6),
 		
 		/**
 		 * On souhaite déconnecter l'ordinateur.
 		 */
 		
-		LOGOUT(6);
+		LOGOUT(7);
 		
 		/**
 		 * Index a envoyer dans la requête.
