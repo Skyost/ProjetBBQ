@@ -197,7 +197,7 @@ public class MainFrame extends JFrame {
 				final JFormattedTextField field = ((NumberEditor)spinner.getEditor()).getTextField();
 				((NumberFormatter)field.getFormatter()).setAllowsInvalid(false);
 				if(JOptionPane.showConfirmDialog(MainFrame.this, components.toArray(new Object[components.size()]), "Envoyer un message", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION) {
-					ComputerFrame.createClientDialog(new Request(RequestType.MESSAGE, ProjetBBQProf.settings.uuid, textField.getText(), String.valueOf(spinner.getValue())), MainFrame.this, getComputers());
+					ComputerFrame.createClientDialog(new Request(RequestType.MESSAGE, textField.getText(), String.valueOf(spinner.getValue())), MainFrame.this, getComputers());
 				}
 			}
 			
@@ -208,7 +208,7 @@ public class MainFrame extends JFrame {
 			
 			@Override
 			public final void actionPerformed(final ActionEvent event) {
-				ComputerFrame.createClientDialog(new Request(RequestType.SHUTDOWN, ProjetBBQProf.settings.uuid), MainFrame.this, getComputers());
+				ComputerFrame.createClientDialog(new Request(RequestType.SHUTDOWN), MainFrame.this, getComputers());
 			}
 			
 		});
@@ -218,7 +218,7 @@ public class MainFrame extends JFrame {
 			
 			@Override
 			public final void actionPerformed(final ActionEvent event) {
-				ComputerFrame.createClientDialog(new Request(RequestType.RESTART, ProjetBBQProf.settings.uuid), MainFrame.this, getComputers());
+				ComputerFrame.createClientDialog(new Request(RequestType.RESTART), MainFrame.this, getComputers());
 			}
 			
 		});
@@ -228,7 +228,7 @@ public class MainFrame extends JFrame {
 			
 			@Override
 			public final void actionPerformed(final ActionEvent event) {
-				ComputerFrame.createClientDialog(new Request(RequestType.LOGOUT, ProjetBBQProf.settings.uuid), MainFrame.this, getComputers());
+				ComputerFrame.createClientDialog(new Request(RequestType.LOGOUT), MainFrame.this, getComputers());
 			}
 			
 		});
@@ -238,7 +238,7 @@ public class MainFrame extends JFrame {
 			
 			@Override
 			public final void actionPerformed(final ActionEvent event) {
-				ComputerFrame.createClientDialog(new Request(RequestType.LOCK, ProjetBBQProf.settings.uuid), MainFrame.this, getComputers());
+				ComputerFrame.createClientDialog(new Request(RequestType.LOCK), MainFrame.this, getComputers());
 			}
 			
 		});
@@ -248,7 +248,7 @@ public class MainFrame extends JFrame {
 			
 			@Override
 			public final void actionPerformed(final ActionEvent event) {
-				ComputerFrame.createClientDialog(new Request(RequestType.UNLOCK, ProjetBBQProf.settings.uuid), MainFrame.this, getComputers());
+				ComputerFrame.createClientDialog(new Request(RequestType.UNLOCK), MainFrame.this, getComputers());
 			}
 			
 		});

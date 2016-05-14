@@ -1,5 +1,8 @@
 package fr.isn.bbq.prof.utils;
 
+import fr.isn.bbq.prof.ProjetBBQProf;
+import fr.isn.bbq.prof.tasks.Client;
+
 /**
  * Utilisé pour formuler des requêtes aux logiciels élèves.
  */
@@ -8,6 +11,16 @@ public class Request {
 	
 	private RequestType type;
 	private String[] args;
+	
+	/**
+	 * Créé une nouvelle requête.
+	 * 
+	 * @param type Le type de cette requête.
+	 */
+	
+	public Request(final RequestType type) {
+		this(type, new String[]{});
+	}
 	
 	/**
 	 * Créé une nouvelle requête.
@@ -40,7 +53,7 @@ public class Request {
 	}
 	
 	/**
-	 * Permet d'obtenir les arguments cette requête.
+	 * Permet d'obtenir les arguments cette requête (UUID et version du protocol exclu donc).
 	 * 
 	 * @return Les arguments de cette requête.
 	 */
@@ -50,7 +63,7 @@ public class Request {
 	}
 	
 	/**
-	 * Permet de changer les arguments cette requête.
+	 * Permet de changer les arguments cette requête (UUID et version du protocol exclu).
 	 */
 	
 	public final void setArguments(final String... args) {
@@ -58,7 +71,7 @@ public class Request {
 	}
 	
 	/**
-	 * Transforme la requête en chaîne de caractère.
+	 * Transforme la requête en chaîne de caractère. Prête à être envoyée.
 	 * 
 	 * @param type Le type de cette requête.
 	 * @param args Les arguments (voir l'aide en ligne).
@@ -73,17 +86,14 @@ public class Request {
 			if(args.length < 2) {
 				throw new IllegalArgumentException("Not enough arguments.");
 			}
-			if(!Utils.isNumeric(args[2])) {
-				throw new IllegalArgumentException("\"" + args[2] + "\" is not a number.");
+			if(!Utils.isNumeric(args[1])) {
+				throw new IllegalArgumentException("\"" + args[1] + "\" is not a number.");
 			}
 			break;
 		default:
-			if(args.length < 1) {
-				throw new IllegalArgumentException("Not enough arguments.");
-			}
 			break;
 		}
-		return type.getIndex() + " " + Utils.join(" ", args);
+		return type.getIndex() + " " + ProjetBBQProf.settings.uuid + " " + Client.PROTOCOL_VERSION + (args != null && args.length > 0 ? " " + Utils.join(" ", args) : "");
 	}
 	
 	/**

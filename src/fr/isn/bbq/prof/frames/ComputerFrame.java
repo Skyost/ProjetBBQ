@@ -128,16 +128,16 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 	@Override
 	public final void onSuccess(final Computer computer, final Object... returned) {
 		stopRefreshingScreenshot();
-		final long responseTime = (long)returned[returned.length - 1];
+		final long responseTime = (long)returned[1];
 		if(responseTime < refreshTime) {
 			return;
 		}
-		if(!(returned[0] instanceof Image)) {
+		if(!(returned[returned.length - 1] instanceof Image)) {
 			return;
 		}
-		lblScreenshot.setIcon(new ImageIcon((BufferedImage)returned[0]));
+		lblScreenshot.setIcon(new ImageIcon((BufferedImage)returned[returned.length - 1]));
 		lblScreenshot.setText(null);
-		this.setTitle(buildTitle(returned[1].toString()));
+		this.setTitle(buildTitle(returned[0].toString()));
 	}
 
 	@Override
@@ -171,7 +171,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 		if(client != null) {
 			stopRefreshingScreenshot();
 		}
-		client = new Client(this, new Request(RequestType.FULL_SCREENSHOT, ProjetBBQProf.settings.uuid), new Computer[]{computer}, true);
+		client = new Client(this, new Request(RequestType.FULL_SCREENSHOT), new Computer[]{computer}, true);
 		client.start();
 	}
 	
@@ -234,7 +234,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 				final JFormattedTextField field = ((NumberEditor)spinner.getEditor()).getTextField();
 				((NumberFormatter)field.getFormatter()).setAllowsInvalid(false);
 				if(JOptionPane.showConfirmDialog(ComputerFrame.this, components.toArray(new Object[components.size()]), "Envoyer un message", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION) {
-					createClientDialog(new Request(RequestType.MESSAGE, ProjetBBQProf.settings.uuid, textField.getText(), String.valueOf(spinner.getValue())));
+					createClientDialog(new Request(RequestType.MESSAGE, textField.getText(), String.valueOf(spinner.getValue())));
 				}
 			}
 			
@@ -245,7 +245,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			
 			@Override
 			public final void actionPerformed(final ActionEvent event) {
-				createClientDialog(new Request(RequestType.SHUTDOWN, ProjetBBQProf.settings.uuid));
+				createClientDialog(new Request(RequestType.SHUTDOWN));
 			}
 			
 		});
@@ -255,7 +255,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			
 			@Override
 			public final void actionPerformed(final ActionEvent event) {
-				createClientDialog(new Request(RequestType.RESTART, ProjetBBQProf.settings.uuid));
+				createClientDialog(new Request(RequestType.RESTART));
 			}
 			
 		});
@@ -265,7 +265,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			
 			@Override
 			public final void actionPerformed(final ActionEvent event) {
-				createClientDialog(new Request(RequestType.LOGOUT, ProjetBBQProf.settings.uuid));
+				createClientDialog(new Request(RequestType.LOGOUT));
 			}
 			
 		});
@@ -275,7 +275,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			
 			@Override
 			public final void actionPerformed(final ActionEvent event) {
-				createClientDialog(new Request(RequestType.LOCK, ProjetBBQProf.settings.uuid));
+				createClientDialog(new Request(RequestType.LOCK));
 			}
 			
 		});
@@ -285,7 +285,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			
 			@Override
 			public final void actionPerformed(final ActionEvent event) {
-				createClientDialog(new Request(RequestType.UNLOCK, ProjetBBQProf.settings.uuid));
+				createClientDialog(new Request(RequestType.UNLOCK));
 			}
 			
 		});
@@ -391,6 +391,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 
 			@Override
 			public final void onError(final Computer computer, final Exception ex, final long responseTime) {
+				ex.printStackTrace();
 				dialog.setMessage("<span style=\"font-weight: bold;\">[" + computer.name + "]</span><span> Erreur : " + ex.getMessage() + "</span>");
 				joinedComputers.add(computer);
 				if(computers.length == joinedComputers.size()) {

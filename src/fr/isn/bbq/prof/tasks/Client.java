@@ -23,10 +23,10 @@ import fr.isn.bbq.prof.utils.Utils;
 public class Client extends Thread {
 	
 	/**
-	 * La taille d'une miniature d'un ordinateur (carrée, en pixels).
+	 * La version du protocol utilisée pour communiquer avec le serveur.
 	 */
 	
-	public static final short THUMBNAIL_SIZE = 100;
+	public static final short PROTOCOL_VERSION = 1;
 	
 	/**
 	 * Si le serveur est en fonctionnement.
@@ -122,19 +122,40 @@ public class Client extends Thread {
 							System.out.println("Réponse du server \"" + response + "\"."); // in.readUTF() permet d'obtenir la réponse du serveur.
 							if(running) { // Si le client n'est plus en fonctionnement, on interrompt tout.
 								final String[] parts = response.split(" "); // On sépare la réponse UTF à l'espace.
+								if(Utils.isNumeric(parts[2])) {
+									final int version = Integer.parseInt(parts[2]);
+									if(PROTOCOL_VERSION < version) {
+										client.close();
+										throw new Exception("Le logiciel client est trop ancien pour communiquer avec ce serveur.");
+									}
+									else if(PROTOCOL_VERSION > version) {
+										client.close();
+										throw new Exception("Le logiciel serveur est serveur est trop ancien pour communiquer avec votre client.");
+									}
+								}
+								else {
+									client.close();
+									throw new Exception("Version du protocole invalide.");
+								}
+								String message = null;
+								final String[] splittedMessage = Arrays.copyOfRange(parts, 3, parts.length - 1);
+								if(splittedMessage.length > 0) {
+									message = Utils.join(" ", splittedMessage);
+								}
 								if(parts[0].equals("0")) { // Si la première partie est 0 (soit valide) alors, on renvoi un succès.
 									switch(request.getType()) { // En fonction de ce que l'on a demandé on execute ou non une action.
 									case THUMBNAIL:
 									case FULL_SCREENSHOT:
-										parent.onSuccess(computer, ImageIO.read(client.getInputStream()), parts[1], Long.valueOf(parts[parts.length - 1]));
+										parent.onSuccess(computer, parts[1], Long.valueOf(parts[3]), message, ImageIO.read(client.getInputStream()));
 										break;
 									default:
-										parent.onSuccess(computer, true, parts[1], Long.valueOf(parts[parts.length - 1]));
+										parent.onSuccess(computer, parts[1], Long.valueOf(parts[3]), message);
 										break;
 									}
 								}
 								else {
-									parent.onError(computer, new Exception(Utils.join(" ", Arrays.copyOfRange(parts, 1, parts.length - 1))), Long.valueOf(parts[parts.length - 1]));
+									client.close();
+									parent.onError(computer, new Exception(message), Long.valueOf(parts[3]));
 								}
 							}
 							else {

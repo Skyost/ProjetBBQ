@@ -114,7 +114,7 @@ public class RoomPane extends JPanel implements ClientInterface {
 	
 	public final void startRequests() {
 		final Set<Computer> computers = thumbnails.keySet();
-		client = new Client(this, new Request(RequestType.THUMBNAIL, ProjetBBQProf.settings.uuid), computers.toArray(new Computer[computers.size()]));
+		client = new Client(this, new Request(RequestType.THUMBNAIL), computers.toArray(new Computer[computers.size()]));
 		client.start();
 	}
 	
@@ -135,13 +135,13 @@ public class RoomPane extends JPanel implements ClientInterface {
 
 	@Override
 	public final void onSuccess(final Computer computer, final Object... returned) {
-		if(!(returned[0] instanceof Image)) {
+		if(!(returned[returned.length - 1] instanceof Image)) {
 			return;
 		}
 		bar.setText("La miniature de l'ordinateur " + computer.name + " (" + computer.ip + ":" + computer.port + ") a été récupérée avec succès.");
 		final ComputerThumbnail thumbnail = thumbnails.get(computer);
-		thumbnail.setThumbnail(new ImageIcon((BufferedImage)returned[0]), (long)returned[returned.length - 1]);
-		thumbnail.setTitle(computer.name + System.lineSeparator() + "(" + returned[1] + ")");
+		thumbnail.setThumbnail(new ImageIcon((BufferedImage)returned[returned.length - 1]), (long)returned[1]);
+		thumbnail.setTitle(computer.name + System.lineSeparator() + "(" + returned[0] + ")");
 	}
 
 	@Override
@@ -236,10 +236,10 @@ public class RoomPane extends JPanel implements ClientInterface {
 			if(downloadedTime <= thumbnailTime) {
 				return;
 			}
-			if(thumbnail.getIconHeight() != Client.THUMBNAIL_SIZE || thumbnail.getIconWidth() != Client.THUMBNAIL_SIZE) {
-				final BufferedImage resized = new BufferedImage(Client.THUMBNAIL_SIZE, Client.THUMBNAIL_SIZE, BufferedImage.TYPE_INT_RGB);
+			if(thumbnail.getIconHeight() != ProjetBBQProf.settings.thumbnailHeight || thumbnail.getIconWidth() != ProjetBBQProf.settings.thumbnailWidth) {
+				final BufferedImage resized = new BufferedImage(ProjetBBQProf.settings.thumbnailWidth, ProjetBBQProf.settings.thumbnailHeight, BufferedImage.TYPE_INT_RGB);
 				final Graphics graphics = resized.createGraphics();
-				graphics.drawImage(thumbnail.getImage(), 0, 0, Client.THUMBNAIL_SIZE, Client.THUMBNAIL_SIZE, null);
+				graphics.drawImage(thumbnail.getImage(), 0, 0, ProjetBBQProf.settings.thumbnailWidth, ProjetBBQProf.settings.thumbnailHeight, null);
 				graphics.dispose();
 				thumbnail = new ImageIcon(resized);
 			}
