@@ -28,6 +28,14 @@ VersionInfoVersion=0.1.0.0
 Name: en; MessagesFile: "compiler:Default.isl"
 Name: fr; MessagesFile: "compiler:Languages\French.isl"
 
+[CustomMessages]
+; Messages anglais :
+en.additionals=Additional tasks :
+en.taskstart=Start with Windows
+; Messages français :
+fr.additionals=Tâches additionnelles :
+fr.taskstart=Démarrer avec Windows
+
 [Files]
 ; Le fichier de l'application à inclure dans l'installateur :
 Source: "ProjetBBQEleve.exe"; DestDir: "{app}"
@@ -36,6 +44,10 @@ Source: "ProjetBBQEleve.exe"; DestDir: "{app}"
 ; Icône à ajouter sur le bureau, dans le menu démarrer, etc... :
 Name: "{group}\Projet BBQ Élève"; Filename: "{app}\ProjetBBQEleve.exe"
 
+[Tasks]
+; La tâche supplémentaire qui permet de démarrer l'application avec Windows :
+Name: TaskStart; Description: {cm:taskstart}; GroupDescription: {cm:additionals}
+
 [Registry]
-; On souhaite démarrer l'application au démarrage de Windows :
-Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "ProjetBBQEleve"; ValueData: """{app}\ProjetBBQEleve.exe"""; Flags: uninsdeletevalue
+; On souhaite démarrer l'application au démarrage de Windows si la tâche TaskStart est séléctionnée :
+Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "ProjetBBQEleve"; ValueData: """{app}\ProjetBBQEleve.exe"""; Flags: uninsdeletevalue; Tasks: TaskStart
