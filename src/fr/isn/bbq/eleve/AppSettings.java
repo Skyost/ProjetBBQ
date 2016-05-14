@@ -37,6 +37,8 @@ public class AppSettings implements XMLSettings {
 			"f03b4a82-1791-4b25-9e37-26e10d186c95"
 	)); // Liste des UUIDs autorisés.
 	public String imageType = "JPG";
+	public int thumbnailHeight = 100; // Hauteur de la miniature.
+	public int thumbnailWidth = 100; // Largeur de la miniature.
 	
 	@Override
 	public final boolean load(final String content) {
@@ -58,6 +60,9 @@ public class AppSettings implements XMLSettings {
 				this.uuids.add(child.getTextContent());
 			}
 			imageType = root.getElementsByTagName("image-type").item(0).getFirstChild().getNodeValue();
+			final Element thumbnail = (Element)root.getElementsByTagName("thumbnail").item(0);
+			thumbnailHeight = Integer.valueOf(thumbnail.getElementsByTagName("height").item(0).getFirstChild().getNodeValue());
+			thumbnailWidth = Integer.valueOf(thumbnail.getElementsByTagName("width").item(0).getFirstChild().getNodeValue());
 			return true;
 		}
 		catch(final Exception ex) {
@@ -89,12 +94,20 @@ public class AppSettings implements XMLSettings {
 			}
 			final Node imageType = document.createElement("image-type");
 			imageType.appendChild(document.createTextNode(String.valueOf(this.imageType)));
+			final Node thumbnail = document.createElement("thumbnail");
+			final Node thumbnailHeight = document.createElement("height");
+			thumbnailHeight.appendChild(document.createTextNode(String.valueOf(this.thumbnailHeight)));
+			thumbnail.appendChild(thumbnailHeight);
+			final Node thumbnailWidth = document.createElement("width");
+			thumbnailWidth.appendChild(document.createTextNode(String.valueOf(this.thumbnailWidth)));
+			thumbnail.appendChild(thumbnailWidth);
 			root.appendChild(ip);
 			root.appendChild(backlog);
 			root.appendChild(port);
 			root.appendChild(timeOut);
 			root.appendChild(uuids);
 			root.appendChild(imageType);
+			root.appendChild(thumbnail);
 			final Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); // On indent le fichier XML (plus joli).
 			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2"); // Deux espaces par noeud.

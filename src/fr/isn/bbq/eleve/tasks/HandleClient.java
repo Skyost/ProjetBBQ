@@ -28,12 +28,6 @@ import fr.isn.bbq.eleve.utils.ServerUtils.RequestType;
 public class HandleClient extends Thread {
 	
 	/**
-	 * La taille d'une miniature d'un ordinateur (carrée, en pixels).
-	 */
-	
-	public static final short THUMBNAIL_SIZE = 100;
-	
-	/**
 	 * Le client.
 	 */
 	
@@ -76,9 +70,9 @@ public class HandleClient extends Thread {
 			switch(type) {
 			case THUMBNAIL:
 				/* Méthode permettant de redimensionner une image. */
-				final BufferedImage resized = new BufferedImage(THUMBNAIL_SIZE, THUMBNAIL_SIZE, BufferedImage.TYPE_INT_RGB);
+				final BufferedImage resized = new BufferedImage(ProjetBBQEleve.settings.thumbnailWidth, ProjetBBQEleve.settings.thumbnailHeight, BufferedImage.TYPE_INT_RGB);
 				final Graphics graphics = resized.createGraphics();
-				graphics.drawImage(screenshot(), 0, 0, THUMBNAIL_SIZE, THUMBNAIL_SIZE, null);
+				graphics.drawImage(screenshot(), 0, 0, ProjetBBQEleve.settings.thumbnailWidth, ProjetBBQEleve.settings.thumbnailHeight, null);
 				graphics.dispose();
 				ServerUtils.sendMessage(client, ServerUtils.createResponse(true), output, false); // On envoie d'abord la réponse "true" sans fermer l'OutputStream.
 				ImageIO.write(resized, ProjetBBQEleve.settings.imageType, output); // Puis on envoie l'image redimensionnée.
