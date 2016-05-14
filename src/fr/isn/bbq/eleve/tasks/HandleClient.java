@@ -28,6 +28,12 @@ import fr.isn.bbq.eleve.utils.ServerUtils.RequestType;
 public class HandleClient extends Thread {
 	
 	/**
+	 * La version du protocol utilisée pour communiquer avec le client.
+	 */
+	
+	public static final short PROTOCOL_VERSION = 1;
+	
+	/**
 	 * Le client.
 	 */
 	
@@ -54,7 +60,22 @@ public class HandleClient extends Thread {
 			System.out.println("Message reçu : \"" + message + "\".");
 			final String[] parts = message.split(" "); // On sépare la requête à l'espace.
 			if(parts.length < 2) { // Il faut qu'il y ai au moins deux arguments (l'index et l'UUID).
-				ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "Message invalide (doit être de type \"<index> <uuid> <arguments>\"."));
+				ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "Message invalide (doit être de type \"<index> <uuid> <version> <arguments>\")."));
+				return;
+			}
+			if(Utils.isNumeric(parts[2])) {
+				final int version = Integer.parseInt(parts[2]);
+				if(PROTOCOL_VERSION < version) {
+					ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "Le logiciel serveur est serveur est trop ancien pour communiquer avec votre client."));
+					return;
+				}
+				else if(PROTOCOL_VERSION > version) {
+					ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "Le logiciel client est trop ancien pour communiquer avec ce serveur."));
+					return;
+				}
+			}
+			else {
+				ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "Version du protocole invalide."));
 				return;
 			}
 			RequestType type = null;
@@ -87,7 +108,7 @@ public class HandleClient extends Thread {
 					ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "Pas de dure valide entrée."));
 					return;
 				}
-				new MessageFrame(Utils.join(" ", Arrays.copyOfRange(parts, 2, parts.length - 1)), Integer.valueOf(parts[parts.length - 1])).setVisible(true);
+				new MessageFrame(Utils.join(" ", Arrays.copyOfRange(parts, 3, parts.length - 1)), Integer.valueOf(parts[parts.length - 1])).setVisible(true);
 				break;
 			case LOCK:
 				ServerUtils.sendMessage(client, ServerUtils.createResponse(true), output, false);

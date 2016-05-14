@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 
+import fr.isn.bbq.eleve.tasks.HandleClient;
+
 public class ServerUtils {
 	
 	/**
@@ -80,7 +82,7 @@ public class ServerUtils {
 	 */
 	
 	public static final String createResponse(final boolean success, final String message) {
-		return (success ? "0 " : "1 ") + (message == null ? "" : message + " ") + System.getProperty("user.name").replace(" ", "-") + " " + System.currentTimeMillis();
+		return (success ? "0 " : "1 ") + System.getProperty("user.name").replace(" ", "-") + " " + HandleClient.PROTOCOL_VERSION + " " + System.currentTimeMillis() + (message == null ? "" : message + " ");
 	}
 	
 	/**
