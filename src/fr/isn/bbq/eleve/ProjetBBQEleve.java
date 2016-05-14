@@ -39,8 +39,10 @@ public class ProjetBBQEleve {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); // Le style par défaut de l'application.
 			final File settings = new File(Utils.getParentFolder(), "settings.xml"); // Le fichier de paramètres XML.
 			ProjetBBQEleve.settings = new AppSettings();
-			if(!settings.exists()) { // Si il n'existe pas, on le créé et on applique des paramètres par défaut.
+			if(!settings.exists()) { // Si il n'existe pas, on le créé et on applique des paramètres par défaut puis on quitte le programme.
 				Files.write(settings.toPath(), ProjetBBQEleve.settings.toXML().getBytes());
+				JOptionPane.showMessageDialog(null, "<html>Les paramètres XML ont été enregistré ici :<br>" + settings.getPath() + "<br>Veuillez les modifier avant de démarrer l'application.</html>");
+				System.exit(0);
 			}
 			else { // Sinon on le charge.
 				ProjetBBQEleve.settings.load(new String(Files.readAllBytes(settings.toPath())));

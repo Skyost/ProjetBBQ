@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -34,7 +35,7 @@ public class AppSettings implements XMLSettings {
 	public int port = 4444; // Le port de connexion au logiciel élève.
 	public int timeOut = 10; // Le temps imparti pour que la socket se connecte.
 	public List<String> uuids = new ArrayList<String>(Arrays.asList(
-			"f03b4a82-1791-4b25-9e37-26e10d186c95"
+			UUID.randomUUID().toString()
 	)); // Liste des UUIDs autorisés.
 	public String imageType = "JPG";
 	public int thumbnailHeight = 100; // Hauteur de la miniature.
