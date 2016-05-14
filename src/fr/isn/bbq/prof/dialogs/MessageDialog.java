@@ -47,11 +47,21 @@ public class MessageDialog extends JDialog {
 	 */
 	
 	public final void setMessage(final String message) {
-		this.message.setText(message);
+		this.message.setText("<html>" + message + "</html>");
 		this.message.setHorizontalAlignment(SwingConstants.CENTER);
 		this.message.setFont(this.message.getFont().deriveFont(Font.ITALIC));
 		this.pack(); // On adapte la taille du dialogue au message.
 		this.setSize(this.getWidth() + 50, this.getHeight() + 30); // Et on ajoute (30 / 2)px sur les côtés (15 en haut, 15 à droite, 15 en bas et 15 à gauche).
+	}
+	
+	/**
+	 * Permet d'obtenir le message affiché.
+	 * 
+	 * @return Le message affiché.
+	 */
+	
+	public final String getMessage() {
+		return message.getText();
 	}
 
 }

@@ -119,7 +119,7 @@ public class Client extends Thread {
 							}
 							final DataInputStream input = new DataInputStream(client.getInputStream());
 							final String response = input.readUTF(); // On récupère le contenu de la réponse.
-							System.out.println("R�ponse du server \"" + response + "\"."); // in.readUTF() permet d'obtenir la réponse du serveur.
+							System.out.println("Réponse du server \"" + response + "\"."); // in.readUTF() permet d'obtenir la réponse du serveur.
 							if(running) { // Si le client n'est plus en fonctionnement, on interrompt tout.
 								final String[] parts = response.split(" "); // On sépare la réponse UTF à l'espace.
 								if(parts[0].equals("0")) { // Si la première partie est 0 (soit valide) alors, on renvoi un succès.

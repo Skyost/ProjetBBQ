@@ -42,7 +42,6 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -363,38 +362,49 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 	}
 	
 	private final void createClientDialog(final Request request) {
-		createClientDialog(request, ComputerFrame.this, new ArrayList<Computer>(Arrays.asList(computer)));
+		createClientDialog(request, ComputerFrame.this, computer);
 	}
 	
-	public static final void createClientDialog(final Request request, final JFrame parent, final List<Computer> computers) {
+	public static final void createClientDialog(final Request request, final JFrame parent, final Computer... computers) {
+		final List<Computer> joinedComputers = new ArrayList<Computer>();
 		new Client(new ClientInterface() {
 			
 			private static final int DIALOG_TIME = 5;
-			private static final String CLOSING_MESSAGE = "Ce message se fermera dans " + DIALOG_TIME +" seconde(s)...";
+			private static final String CLOSING_MESSAGE = "Ce message se fermera dans " + DIALOG_TIME + " seconde(s)...";
 			
-			private final MessageDialog dialog = new MessageDialog(parent, "Envoi de la requête", "Connexion à l'ordinateur...");
+			private final MessageDialog dialog = new MessageDialog(parent, "Envoi de la requête", "");
 
 			@Override
 			public final void connection(final Computer computer, final long time) {
+				dialog.setMessage("<span style=\"font-weight: bold;\">[" + computer.name + "]</span><span> Connexion à l'ordinateur...</span>");
 				dialog.setVisible(true);
 			}
 
 			@Override
 			public final void onSuccess(final Computer computer, final Object... returned) {
-				dialog.setMessage("<html>Action effectuée !<br/>" + CLOSING_MESSAGE + "</html>");
-				closeDialog();
+				dialog.setMessage("<span style=\"font-weight: bold;\">[" + computer.name + "]</span><span> Action effectuée !</span>");
+				joinedComputers.add(computer);
+				if(computers.length == joinedComputers.size()) {
+					closeDialog();
+				}
 			}
 
 			@Override
 			public final void onError(final Computer computer, final Exception ex, final long responseTime) {
-				dialog.setMessage("<html>" + ex.getMessage() + "<br/>" + CLOSING_MESSAGE + "</html>");
-				closeDialog();
+				dialog.setMessage("<span style=\"font-weight: bold;\">[" + computer.name + "]</span><span> Erreur : " + ex.getMessage() + "</span>");
+				joinedComputers.add(computer);
+				if(computers.length == joinedComputers.size()) {
+					closeDialog();
+				}
 			}
 
 			@Override
 			public final void onInterrupted(final Computer computer, final long time) {
-				dialog.setMessage("<html>Envoi interrompu.<br/>" + CLOSING_MESSAGE + "</html>");
-				closeDialog();
+				dialog.setMessage("<span style=\"font-weight: bold;\">[" + computer.name + "]</span><span> Envoi interrompu.</span>");
+				joinedComputers.add(computer);
+				if(computers.length == joinedComputers.size()) {
+					closeDialog();
+				}
 			}
 
 			@Override
@@ -405,6 +415,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			 */
 			
 			private final void closeDialog() {
+				dialog.setMessage(dialog.getMessage().replace("<html>", "").replace("</html>", "") + "<br>" + CLOSING_MESSAGE);
 				new Timer().schedule(new TimerTask() {
 					
 					@Override
@@ -415,7 +426,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 				}, DIALOG_TIME * 1000);
 			}
 			
-		}, request, computers.toArray(new Computer[computers.size()]), true).start();
+		}, request, computers, true).start();
 	}
 
 }

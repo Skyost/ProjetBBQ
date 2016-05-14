@@ -127,9 +127,8 @@ public class MainFrame extends JFrame {
 				JOptionPane.showMessageDialog(MainFrame.this, "Le fichier \"" + roomFile.getName() + "\" n'est pas un fichier XML valide. Veuillez consulter l'aide en ligne.", "Erreur !", JOptionPane.ERROR_MESSAGE);
 			}
 		}
-		message.dispose(); // On ferme le dialogue.
 		if(rooms.size() == 0) { // Si il n'y a pas de salles de classe chargées, on affiche un message d'erreur.
-			JOptionPane.showMessageDialog(MainFrame.this, "Pas de salle valide ajout�e. Veuillez consulter l'aide en ligne.", "Erreur !", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(MainFrame.this, "Pas de salle valide ajoutée. Veuillez consulter l'aide en ligne.", "Erreur !", JOptionPane.ERROR_MESSAGE);
 			System.exit(1);
 		}
 		for(final Room room : rooms) { // Pour chaque salle de classe, on créé l'onglet correspondant.
@@ -155,6 +154,7 @@ public class MainFrame extends JFrame {
 			}
 			
 		});
+		message.dispose(); // On ferme le dialogue.
 	}
 	
 	/**
@@ -164,12 +164,6 @@ public class MainFrame extends JFrame {
 	 */
 	
 	public final JMenuBar createMenuBar() {
-		final List<Computer> computers = new ArrayList<Computer>();
-		for(final Room room : rooms) {
-			for(final Computer computer : room.computers) {
-				computers.add(computer);
-			}
-		}
 		final JMenuBar menu = new JMenuBar();
 		final JMenuItem refresh = new JMenuItem("Rafraîchir les miniatures");
 		refresh.addActionListener(new ActionListener() {
@@ -203,7 +197,7 @@ public class MainFrame extends JFrame {
 				final JFormattedTextField field = ((NumberEditor)spinner.getEditor()).getTextField();
 				((NumberFormatter)field.getFormatter()).setAllowsInvalid(false);
 				if(JOptionPane.showConfirmDialog(MainFrame.this, components.toArray(new Object[components.size()]), "Envoyer un message", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION) {
-					ComputerFrame.createClientDialog(new Request(RequestType.MESSAGE, ProjetBBQProf.settings.uuid, textField.getText(), String.valueOf(spinner.getValue())), MainFrame.this, computers);
+					ComputerFrame.createClientDialog(new Request(RequestType.MESSAGE, ProjetBBQProf.settings.uuid, textField.getText(), String.valueOf(spinner.getValue())), MainFrame.this, getComputers());
 				}
 			}
 			
@@ -214,7 +208,7 @@ public class MainFrame extends JFrame {
 			
 			@Override
 			public final void actionPerformed(final ActionEvent event) {
-				ComputerFrame.createClientDialog(new Request(RequestType.SHUTDOWN, ProjetBBQProf.settings.uuid), MainFrame.this, computers);
+				ComputerFrame.createClientDialog(new Request(RequestType.SHUTDOWN, ProjetBBQProf.settings.uuid), MainFrame.this, getComputers());
 			}
 			
 		});
@@ -224,7 +218,7 @@ public class MainFrame extends JFrame {
 			
 			@Override
 			public final void actionPerformed(final ActionEvent event) {
-				ComputerFrame.createClientDialog(new Request(RequestType.RESTART, ProjetBBQProf.settings.uuid), MainFrame.this, computers);
+				ComputerFrame.createClientDialog(new Request(RequestType.RESTART, ProjetBBQProf.settings.uuid), MainFrame.this, getComputers());
 			}
 			
 		});
@@ -234,7 +228,7 @@ public class MainFrame extends JFrame {
 			
 			@Override
 			public final void actionPerformed(final ActionEvent event) {
-				ComputerFrame.createClientDialog(new Request(RequestType.LOGOUT, ProjetBBQProf.settings.uuid), MainFrame.this, computers);
+				ComputerFrame.createClientDialog(new Request(RequestType.LOGOUT, ProjetBBQProf.settings.uuid), MainFrame.this, getComputers());
 			}
 			
 		});
@@ -244,7 +238,7 @@ public class MainFrame extends JFrame {
 			
 			@Override
 			public final void actionPerformed(final ActionEvent event) {
-				ComputerFrame.createClientDialog(new Request(RequestType.LOCK, ProjetBBQProf.settings.uuid), MainFrame.this, computers);
+				ComputerFrame.createClientDialog(new Request(RequestType.LOCK, ProjetBBQProf.settings.uuid), MainFrame.this, getComputers());
 			}
 			
 		});
@@ -254,7 +248,7 @@ public class MainFrame extends JFrame {
 			
 			@Override
 			public final void actionPerformed(final ActionEvent event) {
-				ComputerFrame.createClientDialog(new Request(RequestType.UNLOCK, ProjetBBQProf.settings.uuid), MainFrame.this, computers);
+				ComputerFrame.createClientDialog(new Request(RequestType.UNLOCK, ProjetBBQProf.settings.uuid), MainFrame.this, getComputers());
 			}
 			
 		});
@@ -282,7 +276,7 @@ public class MainFrame extends JFrame {
 			
 			@Override
 			public final void actionPerformed(final ActionEvent event) {
-				// TODO: IHM "À propos"
+				new AboutFrame().setVisible(true);
 			}
 			
 		});
@@ -304,6 +298,16 @@ public class MainFrame extends JFrame {
 		menu.add(edit);
 		menu.add(help);
 		return menu;
+	}
+	
+	private final Computer[] getComputers() {
+		final List<Computer> computers = new ArrayList<Computer>();
+		for(final Room room : rooms) {
+			for(final Computer computer : room.computers) {
+				computers.add(computer);
+			}
+		}
+		return computers.toArray(new Computer[computers.size()]);
 	}
 	
 }
