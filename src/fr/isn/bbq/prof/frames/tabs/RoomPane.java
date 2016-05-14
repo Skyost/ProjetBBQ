@@ -3,7 +3,6 @@ package fr.isn.bbq.prof.frames.tabs;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -237,11 +236,7 @@ public class RoomPane extends JPanel implements ClientInterface {
 				return;
 			}
 			if(thumbnail.getIconHeight() != ProjetBBQProf.settings.thumbnailHeight || thumbnail.getIconWidth() != ProjetBBQProf.settings.thumbnailWidth) {
-				final BufferedImage resized = new BufferedImage(ProjetBBQProf.settings.thumbnailWidth, ProjetBBQProf.settings.thumbnailHeight, BufferedImage.TYPE_INT_RGB);
-				final Graphics graphics = resized.createGraphics();
-				graphics.drawImage(thumbnail.getImage(), 0, 0, ProjetBBQProf.settings.thumbnailWidth, ProjetBBQProf.settings.thumbnailHeight, null);
-				graphics.dispose();
-				thumbnail = new ImageIcon(resized);
+				thumbnail = new ImageIcon(thumbnail.getImage().getScaledInstance(ProjetBBQProf.settings.thumbnailWidth, ProjetBBQProf.settings.thumbnailHeight, Image.SCALE_SMOOTH));
 			}
 			this.thumbnailTime = downloadedTime;
 			this.thumbnail.setIcon(thumbnail);
