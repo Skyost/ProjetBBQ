@@ -28,8 +28,10 @@ public class AppSettings implements XMLSettings {
 	public String roomDir = "Salles"; // Le répertoire des salles.
 	public String uuid; // L'UUID dont le logiciel a besoin pour se connecter aux postes.
 	public boolean addSample = true; // Si on doit ajouter un fichier d'exemple ou non.
-	public int refreshInterval = 5; // Le temps de rafraîchissement (en sec).
+	public int refreshInterval = 10; // Le temps de rafraîchissement (en sec).
 	public int timeOut = 10; // Le temps imparti pour que la socket se connecte.
+	public int thumbnailHeight = 100; // Hauteur de la miniature.
+	public int thumbnailWidth = 100; // Largeur de la miniature.
 	
 	@Override
 	public final boolean load(final String content) {
@@ -42,6 +44,9 @@ public class AppSettings implements XMLSettings {
 			addSample = Boolean.valueOf(root.getElementsByTagName("add-sample").item(0).getFirstChild().getNodeValue());
 			refreshInterval = Integer.valueOf(root.getElementsByTagName("refresh-interval").item(0).getFirstChild().getNodeValue());
 			timeOut = Integer.valueOf(root.getElementsByTagName("time-out").item(0).getFirstChild().getNodeValue());
+			final Element thumbnail = (Element)root.getElementsByTagName("thumbnail").item(0);
+			thumbnailHeight = Integer.valueOf(thumbnail.getElementsByTagName("height").item(0).getFirstChild().getNodeValue());
+			thumbnailWidth = Integer.valueOf(thumbnail.getElementsByTagName("width").item(0).getFirstChild().getNodeValue());
 			return true;
 		}
 		catch(final Exception ex) {
@@ -67,11 +72,19 @@ public class AppSettings implements XMLSettings {
 			refreshInterval.appendChild(document.createTextNode(String.valueOf(this.refreshInterval)));
 			final Node timeOut = document.createElement("time-out");
 			timeOut.appendChild(document.createTextNode(String.valueOf(this.timeOut)));
+			final Node thumbnail = document.createElement("thumbnail");
+			final Node thumbnailHeight = document.createElement("height");
+			thumbnailHeight.appendChild(document.createTextNode(String.valueOf(this.thumbnailHeight)));
+			thumbnail.appendChild(thumbnailHeight);
+			final Node thumbnailWidth = document.createElement("width");
+			thumbnailWidth.appendChild(document.createTextNode(String.valueOf(this.thumbnailWidth)));
+			thumbnail.appendChild(thumbnailWidth);
 			root.appendChild(roomDir); // Et on ajoute les différents noeuds au noeud principal.
 			root.appendChild(uuid);
 			root.appendChild(addSample);
 			root.appendChild(refreshInterval);
 			root.appendChild(timeOut);
+			root.appendChild(thumbnail);
 			final Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); // On indent le fichier XML (plus joli).
 			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2"); // Deux espaces par noeud.
