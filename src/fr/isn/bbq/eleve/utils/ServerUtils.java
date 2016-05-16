@@ -82,7 +82,7 @@ public class ServerUtils {
 	 */
 	
 	public static final String createResponse(final boolean success, final String message) {
-		return (success ? "0 " : "1 ") + System.getProperty("user.name").replace(" ", "-") + " " + HandleClient.PROTOCOL_VERSION + " " + System.currentTimeMillis() + (message == null ? "" : message + " ");
+		return (success ? "0 " : "1 ") + OS.getUserName().replace(" ", "-") + " " + HandleClient.PROTOCOL_VERSION + " " + System.currentTimeMillis() + (message == null ? "" : message + " ");
 	}
 	
 	/**

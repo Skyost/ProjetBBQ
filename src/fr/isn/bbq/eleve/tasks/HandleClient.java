@@ -17,6 +17,7 @@ import javax.imageio.ImageIO;
 import fr.isn.bbq.eleve.ProjetBBQEleve;
 import fr.isn.bbq.eleve.frames.LockFrame;
 import fr.isn.bbq.eleve.frames.MessageFrame;
+import fr.isn.bbq.eleve.utils.OS;
 import fr.isn.bbq.eleve.utils.ServerUtils;
 import fr.isn.bbq.eleve.utils.Utils;
 import fr.isn.bbq.eleve.utils.ServerUtils.RequestType;
@@ -126,18 +127,15 @@ public class HandleClient extends Thread {
 				break;
 			case SHUTDOWN:
 				ServerUtils.sendMessage(client, ServerUtils.createResponse(true), output, false);
-				// -s pour l'arret; -f pour le forcer; -t pour le temps.
-				Runtime.getRuntime().exec("shutdown.exe -s -f -t 0");
+				OS.shutdown();
 				break;
 			case RESTART:
 				ServerUtils.sendMessage(client, ServerUtils.createResponse(true), output, false);
-				// -s pour l'arret; -f pour le forcer; -t pour le temps.
-				 Runtime.getRuntime().exec("shutdown.exe -r -f -t  0");
+				OS.restart();
 				break;
 			case LOGOUT:
 				ServerUtils.sendMessage(client, ServerUtils.createResponse(true), output, false);
-				// -s pour l'arret; -f pour le forcer; -t pour le temps.
-				 Runtime.getRuntime().exec("shutdown.exe -l");
+				OS.logout();
 				break;
 			default:
 				break;
