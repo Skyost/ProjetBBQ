@@ -85,7 +85,7 @@ public class OS {
 				Runtime.getRuntime().exec("osascript -e 'tell app \"System Events\" to  «event aevtrlgo»'");
 				break;
 			case LINUX:
-				Runtime.getRuntime().exec("pkill -KILL -u \"" + getUserName() + "\"");
+				new ProcessBuilder(new String[]{"pkill", "-KILL", "-u", getUserName()}).start();
 				break;
 			case UNKNOWN:
 				JOptionPane.showMessageDialog(null, "La déconnexion à distance n'étant pas supporté sur votre ordinateur, merci de le faire de vous-même.", "Déconnexion de l'ordinateur", JOptionPane.INFORMATION_MESSAGE);
