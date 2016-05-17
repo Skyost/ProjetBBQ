@@ -120,6 +120,7 @@ public class AboutFrame extends JFrame implements GithubUpdaterResultListener {
 	public final void updaterStarted() {
 		lblUpdaterStatus.setFont(lblUpdaterStatus.getFont().deriveFont(Font.ITALIC));
 		lblUpdaterStatus.setText("Vérification des mises à jour...");
+		lblUpdaterStatus.setIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/updater_loading.gif")));
 	}
 	
 	@Override
@@ -127,6 +128,7 @@ public class AboutFrame extends JFrame implements GithubUpdaterResultListener {
 		lblUpdaterStatus.setFont(lblUpdaterStatus.getFont().deriveFont(Font.PLAIN).deriveFont(Font.BOLD));
 		lblUpdaterStatus.setForeground(Color.decode("#E74C3C"));
 		lblUpdaterStatus.setText("Erreur : \"" + ex.getMessage() + "\"");
+		lblUpdaterStatus.setIcon(null);
 	}
 	
 	@Override
@@ -137,6 +139,7 @@ public class AboutFrame extends JFrame implements GithubUpdaterResultListener {
 		lblUpdaterStatus.setFont(lblUpdaterStatus.getFont().deriveFont(Font.PLAIN).deriveFont(Font.BOLD));
 		lblUpdaterStatus.setForeground(Color.decode("#2980B9"));
 		lblUpdaterStatus.setText("Une nouvelle version est disponible (v" + remoteVersion + ") !");
+		lblUpdaterStatus.setIcon(null);
 	}
 	
 	@Override
@@ -144,7 +147,7 @@ public class AboutFrame extends JFrame implements GithubUpdaterResultListener {
 		lblUpdaterStatus.setFont(lblUpdaterStatus.getFont().deriveFont(Font.PLAIN).deriveFont(Font.BOLD));
 		lblUpdaterStatus.setForeground(Color.decode("#27AE60"));
 		lblUpdaterStatus.setText("Le logiciel est à jour.");
-		updaterUpdateAvailable(localVersion, remoteVersion);
+		lblUpdaterStatus.setIcon(null);
 	}
 	
 	private final void openLinkOnClick(final JLabel label, final String link) {
