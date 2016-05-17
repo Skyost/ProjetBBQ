@@ -46,6 +46,7 @@ public class MessageFrame extends JDialog {
 		lblCountdown.setFont(lblCountdown.getFont().deriveFont(Font.ITALIC));
 		content.add(lblCountdown, BorderLayout.SOUTH);
 		this.pack();
+		this.setResizable(false);
 		new Timer().scheduleAtFixedRate(new TimerTask() {
 			
 			private int currentTime = time;

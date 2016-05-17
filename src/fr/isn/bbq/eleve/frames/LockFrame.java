@@ -44,6 +44,7 @@ public class LockFrame extends JFrame {
 		this.screenshot = screenshot;
 		mergeImageWithScreenshot("/fr/isn/bbq/eleve/res/icons/icon_locked.png");
 		this.getContentPane().add(label, BorderLayout.CENTER);
+		this.setResizable(false);
 	}
 	
 	public final void unlockAndClose() {
