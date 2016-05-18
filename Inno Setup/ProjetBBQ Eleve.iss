@@ -24,7 +24,7 @@ WizardSmallImageFile=res\WizardSmallImageFile.bmp
 ; Licence :
 LicenseFile=res\LICENSE.txt 
 ; Autres :
-OutputBaseFilename=ProjetBBQEleve
+OutputBaseFilename=Installer
 DisableWelcomePage=no
 UsePreviousAppDir=yes
 AllowNoIcons=yes
@@ -57,13 +57,15 @@ en.additionals=Additional tasks :
 en.taskstart=Start with Windows
 en.addtodesktop=Add an icon on the desktop
 en.uninstall=Uninstall
-en.runapp=Run Projet BBQ Élève
+en.runapp=Run Projet BBQ Élève (used only to generate the configuration at the first launch)
+en.openfolder=Open the installation directory (to edit the configuration)
 ; Messages français :
 fr.additionals=Tâches additionnelles :
 fr.taskstart=Démarrer avec Windows
 fr.addtodesktop=Ajouter une icône au bureau
 fr.uninstall=Désinstaller
-fr.runapp=Éxecuter Projet BBQ Élève
+fr.runapp=Éxecuter Projet BBQ Élève (ne permet que de générer la configuration au premier lancement)
+fr.openfolder=Ouvrir le dossier d'installation (pour éditer la configuration)
 
 [Files]
 ; Le fichier de l'application à inclure dans l'installateur :
@@ -88,4 +90,7 @@ Name: TaskDesktop; Description: {cm:addtodesktop}; GroupDescription: {cm:additio
 Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "ProjetBBQEleve"; ValueData: """{app}\ProjetBBQEleve.exe"""; Flags: uninsdeletevalue; Tasks: TaskStart
 
 [Run]
+; Permet d'éxecuter le logiciel après l'installation :
 Filename: "{app}\ProjetBBQEleve.exe"; Description: {cm:runapp}; Flags: postinstall nowait skipifsilent
+; Permet d'ouvrir le dossier d'installation :
+Filename: "{app}"; Description: {cm:openfolder}; Flags: postinstall nowait skipifsilent shellexec
