@@ -5,24 +5,21 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
-import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
-import javax.swing.JSpinner.NumberEditor;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
-import javax.swing.SpinnerNumberModel;
-
 import fr.isn.bbq.prof.Computer;
 import fr.isn.bbq.prof.ProjetBBQProf;
 import fr.isn.bbq.prof.dialogs.MessageDialog;
 import fr.isn.bbq.prof.tasks.Client;
 import fr.isn.bbq.prof.tasks.Client.ClientInterface;
 import fr.isn.bbq.prof.utils.Request;
+import fr.isn.bbq.prof.utils.Utils;
 import fr.isn.bbq.prof.utils.Request.RequestType;
 
 import java.awt.Component;
@@ -48,7 +45,6 @@ import java.util.TimerTask;
 
 import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.text.NumberFormatter;
 
 /**
  * IHM d'un poste élève.
@@ -221,20 +217,13 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 		final JButton sendMessage = new JButton(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_sendmessage.png")));
 		sendMessage.addActionListener(new ActionListener() {
 			
+			@SuppressWarnings("unchecked")
 			@Override
 			public final void actionPerformed(final ActionEvent event) {
-				final JTextField textField = new JTextField();
-				final JSpinner spinner = new JSpinner();
-				final List<Component> components = new ArrayList<Component>(); // Composants de la boîte de dialogue.
-				components.add(new JLabel("Message :"));
-				components.add(textField);
-				components.add(new JLabel("Durée d'affichage (en secondes) :"));
-				components.add(spinner);
-				spinner.setModel(new SpinnerNumberModel(5, 1, Integer.MAX_VALUE, 1));
-				final JFormattedTextField field = ((NumberEditor)spinner.getEditor()).getTextField();
-				((NumberFormatter)field.getFormatter()).setAllowsInvalid(false);
-				if(JOptionPane.showConfirmDialog(ComputerFrame.this, components.toArray(new Object[components.size()]), "Envoyer un message", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION) {
-					createClientDialog(new Request(RequestType.MESSAGE, textField.getText(), String.valueOf(spinner.getValue())));
+				final Object[] dialogData = Utils.createMessageDialog(ComputerFrame.this);
+				if((boolean)dialogData[0]) {
+					final List<Component> components = (List<Component>)dialogData[1];
+					createClientDialog(new Request(RequestType.MESSAGE, ((JTextField)components.get(0)).getText(), String.valueOf(((JSpinner)components.get(1)).getValue())), ComputerFrame.this, computer);
 				}
 			}
 			
