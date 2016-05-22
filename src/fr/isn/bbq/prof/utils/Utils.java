@@ -1,7 +1,20 @@
 package fr.isn.bbq.prof.utils;
 
+import java.awt.Component;
 import java.io.File;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JFormattedTextField;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.JSpinner.NumberEditor;
+import javax.swing.text.NumberFormatter;
 
 import fr.isn.bbq.prof.ProjetBBQProf;
 
@@ -54,6 +67,20 @@ public class Utils {
 		}
 		builder.setLength(builder.length() - joiner.length());
 		return builder.toString();
+	}
+	
+	public static final Object[] createMessageDialog(final JFrame parent) {
+		final JTextField textField = new JTextField();
+		final JSpinner spinner = new JSpinner();
+		final List<Component> components = new ArrayList<Component>(); // Composants de la boîte de dialogue.
+		components.add(new JLabel("Message :"));
+		components.add(textField);
+		components.add(new JLabel("Durée d'affichage (en secondes) :"));
+		components.add(spinner);
+		spinner.setModel(new SpinnerNumberModel(5, 1, Integer.MAX_VALUE, 1));
+		final JFormattedTextField field = ((NumberEditor)spinner.getEditor()).getTextField();
+		((NumberFormatter)field.getFormatter()).setAllowsInvalid(false);
+		return new Object[]{JOptionPane.showConfirmDialog(parent, components.toArray(new Object[components.size()]), "Envoyer un message", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION, components};
 	}
 
 }

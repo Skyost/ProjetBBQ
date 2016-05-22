@@ -4,17 +4,25 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
@@ -28,6 +36,7 @@ import fr.isn.bbq.prof.tasks.Client;
 import fr.isn.bbq.prof.tasks.Client.ClientInterface;
 import fr.isn.bbq.prof.utils.Request;
 import fr.isn.bbq.prof.utils.StatusBar;
+import fr.isn.bbq.prof.utils.Utils;
 import fr.isn.bbq.prof.utils.WrapLayout;
 import fr.isn.bbq.prof.utils.Request.RequestType;
 
@@ -86,7 +95,7 @@ public class RoomPane extends JPanel implements ClientInterface {
 			
 			@Override
 			public final void mouseClicked(final MouseEvent event) {
-				if(RoomPane.this.selected != null) {
+				if(RoomPane.this.selected != null && (SwingUtilities.isLeftMouseButton(event) || SwingUtilities.isRightMouseButton(event))) {
 					RoomPane.this.selected.unselect();
 				}
 			}
@@ -105,6 +114,10 @@ public class RoomPane extends JPanel implements ClientInterface {
 			
 		});
 		startRequests();
+	}
+	
+	public final String getName() {
+		return name;
 	}
 	
 	/**
@@ -187,11 +200,19 @@ public class RoomPane extends JPanel implements ClientInterface {
 
 				@Override
 				public final void mouseClicked(final MouseEvent event) {
+					if(SwingUtilities.isRightMouseButton(event)) {
+						createThumbnailPopupMenu().show(ComputerThumbnail.this, event.getX(), event.getY());
+					}
+					else if(SwingUtilities.isLeftMouseButton(event)) {
+						if(event.getClickCount() == 2 && !event.isConsumed()) {
+							new ComputerFrame(computer).setVisible(true); // Si il y a un double clic, on ouvre l'IHM de l'ordinateur correspondant.
+						}
+					}
+					else {
+						return;
+					}
 					if(RoomPane.this.selected != null) {
 						RoomPane.this.selected.unselect();
-					}
-					if(event.getClickCount() == 2 && !event.isConsumed()) {
-						new ComputerFrame(computer).setVisible(true); // Si il y a un double clic, on ouvre l'IHM de l'ordinateur correspondant.
 					}
 					ComputerThumbnail.this.select();
 				}
@@ -278,6 +299,84 @@ public class RoomPane extends JPanel implements ClientInterface {
 		public final void unselect() {
 			RoomPane.this.selected = null;
 			this.setBackground(SmartLookAndFeel.getBackgroundColor()); // On remet la couleur par défaut.
+		}
+		
+		private final JPopupMenu createThumbnailPopupMenu() {
+			final JPopupMenu popup = new JPopupMenu();
+			final JMenuItem sendMessage = new JMenuItem("Envoyer un message");
+			sendMessage.addActionListener(new ActionListener() {
+				
+				@SuppressWarnings("unchecked")
+				@Override
+				public final void actionPerformed(final ActionEvent event) {
+					final Object[] dialogData = Utils.createMessageDialog(null);
+					if((boolean)dialogData[0]) {
+						final List<Component> components = (List<Component>)dialogData[1];
+						ComputerFrame.createClientDialog(new Request(RequestType.MESSAGE, ((JTextField)components.get(0)).getText(), String.valueOf(((JSpinner)components.get(1)).getValue())), null, computer);
+					}
+				}
+				
+			});
+			sendMessage.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_sendmessage.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
+			final JMenuItem shutdown = new JMenuItem("Éteindre le PC");
+			shutdown.addActionListener(new ActionListener() {
+				
+				@Override
+				public final void actionPerformed(final ActionEvent event) {
+					ComputerFrame.createClientDialog(new Request(RequestType.SHUTDOWN), null, computer);
+				}
+				
+			});
+			shutdown.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_shutdown.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
+			final JMenuItem restart = new JMenuItem("Redémarrer le PC");
+			restart.addActionListener(new ActionListener() {
+				
+				@Override
+				public final void actionPerformed(final ActionEvent event) {
+					ComputerFrame.createClientDialog(new Request(RequestType.RESTART), null, computer);
+				}
+				
+			});
+			restart.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_restart.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
+			final JMenuItem logout = new JMenuItem("Déconnecter le PC");
+			logout.addActionListener(new ActionListener() {
+				
+				@Override
+				public final void actionPerformed(final ActionEvent event) {
+					ComputerFrame.createClientDialog(new Request(RequestType.LOGOUT), null, computer);
+				}
+				
+			});
+			logout.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_logout.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
+			final JMenuItem lock = new JMenuItem("Verrouiller le PC");
+			lock.addActionListener(new ActionListener() {
+				
+				@Override
+				public final void actionPerformed(final ActionEvent event) {
+					ComputerFrame.createClientDialog(new Request(RequestType.LOCK), null, computer);
+				}
+				
+			});
+			lock.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_lock.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
+			final JMenuItem unlock = new JMenuItem("Déverrouiller le PC");
+			unlock.addActionListener(new ActionListener() {
+				
+				@Override
+				public final void actionPerformed(final ActionEvent event) {
+					ComputerFrame.createClientDialog(new Request(RequestType.UNLOCK), null, computer);
+				}
+				
+			});
+			unlock.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_unlock.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
+			popup.add(sendMessage);
+			popup.addSeparator();
+			popup.add(shutdown);
+			popup.add(restart);
+			popup.add(logout);
+			popup.addSeparator();
+			popup.add(lock);
+			popup.add(unlock);
+			return popup;
 		}
 		
 	}
