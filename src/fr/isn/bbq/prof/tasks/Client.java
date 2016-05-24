@@ -99,8 +99,8 @@ public class Client extends Thread {
 						try {
 							parent.connection(computer, System.currentTimeMillis()); // On notifie le parent de la connexion.
 							System.out.println("Connexion à l'ordinateur " + computer.name + " (" + computer.ip + ") sur le port " + computer.port + "...");
-							final SSLSocket client = (SSLSocket)SSLSocketFactory.getDefault().createSocket();
-							client.setEnabledCipherSuites(getEnabledCipherSuites(client));
+							final SSLSocket client = (SSLSocket)SSLSocketFactory.getDefault().createSocket(); // On créé le client.
+							client.setEnabledCipherSuites(getEnabledCipherSuites(client)); // On ajoute les types d'encryptions supportés par le client (doivent être anonymes).
 							client.connect(new InetSocketAddress(computer.ip, computer.port), ProjetBBQProf.settings.timeOut * 1000); // On se connecte au poste élève.
 							if(!running) { // Si le client n'est plus en fonctionnement, on interrompt tout.
 								parent.onInterrupted(computer, System.currentTimeMillis());
