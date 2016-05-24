@@ -21,57 +21,82 @@ public class LockFrame extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
 	
+	/**
+	 * Le temps pendant lequel on affiche l'icône de déverrouillage.
+	 */
+	
 	private static final short UNLOCK_SECONDS = 2;
 	
+	/**
+	 * Le screenshot de fond (sans icône de verrouillage).
+	 */
+	
 	private final BufferedImage screenshot;
+	
+	/**
+	 * Permet d'afficher l'écran de verrouillage.
+	 */
+	
 	private final JLabel label = new JLabel();
 	
 	/**
 	 * Première méthode exécutée par la fenêtre.
+	 * 
+	 * @param screenshot L'image de fond (une capture d'écran de préférence).
 	 */
 	
 	public LockFrame(final BufferedImage screenshot) {
-		this.setTitle("Locked");
-		this.setIconImage(Toolkit.getDefaultToolkit().getImage(ProjetBBQEleve.class.getResource("/fr/isn/bbq/eleve/res/app_icon.png")));
-		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		this.setLocationRelativeTo(null);
-		this.setAlwaysOnTop(true);
-		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-		this.setUndecorated(true);
+		this.setTitle("Locked"); // Titre par défaut de la fenêtre (invisible)
+		this.setIconImage(Toolkit.getDefaultToolkit().getImage(ProjetBBQEleve.class.getResource("/fr/isn/bbq/eleve/res/app_icon.png"))); // Icône invisible également.
+		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // On refuse de la fermer.
+		this.setLocationRelativeTo(null); // On la centre.
+		this.setAlwaysOnTop(true); // On lui indique de rester au dessus des autres fenêtres.
+		this.setExtendedState(JFrame.MAXIMIZED_BOTH); // On maximise la fenêtre.
+		this.setUndecorated(true); // Et on enlève la barre avec le bouton fermer, réduire, etc...
 		final Graphics graphics = screenshot.getGraphics();
-		graphics.setColor(new Color(0, 0, 0, (int)(256 - 256 * 0.5f)));
-		graphics.fillRect(0, 0, screenshot.getWidth(), screenshot.getHeight());
-		this.screenshot = screenshot;
-		mergeImageWithScreenshot("/fr/isn/bbq/eleve/res/icons/icon_locked.png");
+		graphics.setColor(new Color(0, 0, 0, (int)(256 - 256 * 0.5f))); // On créé une couleur permettant d'assombrir le screenshot.
+		graphics.fillRect(0, 0, screenshot.getWidth(), screenshot.getHeight()); // Et on applique cette couleur.
+		this.screenshot = screenshot; // On garde une référence vers le screenshot.
+		mergeImageWithScreenshot("/fr/isn/bbq/eleve/res/icons/icon_locked.png"); // On applique l'image de verrouillage au screenshot.
 		this.getContentPane().add(label, BorderLayout.CENTER);
-		this.setResizable(false);
+		this.setResizable(false); // Et on enlève le redimensionnement.
 	}
+	
+	/**
+	 * Débloque et ferme cette fenêtre.
+	 */
 	
 	public final void unlockAndClose() {
 		this.setTitle("Unlocked");
-		mergeImageWithScreenshot("/fr/isn/bbq/eleve/res/icons/icon_unlocked.png");
+		mergeImageWithScreenshot("/fr/isn/bbq/eleve/res/icons/icon_unlocked.png"); // On applique l'image de déverrouillage au screenshot.
 		new Timer().schedule(new TimerTask() {
 
 			@Override
 			public final void run() {
 				LockFrame.this.setVisible(false);
-				LockFrame.this.dispose();
+				LockFrame.this.dispose(); // On ferme la fenêtre.
 			}
 			
-		}, UNLOCK_SECONDS * 1000L);
+		}, UNLOCK_SECONDS * 1000L); // Le délai de fermeture.
 	}
+	
+	/**
+	 * Permet d'ajouter une image au centre du screenshot.
+	 * 
+	 * @param imageUrl Le lien vers cette image.
+	 */
 	
 	private final void mergeImageWithScreenshot(final String imageUrl) {
 		try {
 			final int height = screenshot.getHeight();
 			final int width = screenshot.getWidth();
-			final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+			final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB); // On créé une nouvelle image.
 			final Graphics graphics = image.getGraphics();
-			final BufferedImage icon = ImageIO.read(ProjetBBQEleve.class.getResource(imageUrl));
-			graphics.drawImage(screenshot, 0, 0, this);
-			graphics.drawImage(icon, width / 2 - icon.getWidth() / 2, height / 2 - icon.getHeight() / 2, this);
+			final BufferedImage icon = ImageIO.read(ProjetBBQEleve.class.getResource(imageUrl)); // On va chercher l'image en fonction de l'url donné.
+			graphics.drawImage(screenshot, 0, 0, this); // On ajoute le screenshot sur cette image.
+			graphics.drawImage(icon, width / 2 - icon.getWidth() / 2, height / 2 - icon.getHeight() / 2, this); // Puis on y ajoute l'image donnée au centre.
 			graphics.dispose();
-			label.setIcon(new ImageIcon(image));
+			label.setIcon(new ImageIcon(image)); // Enfin, on applique cette image nouvellement créée.
 		}
 		catch(final Exception ex) {
 			ex.printStackTrace();

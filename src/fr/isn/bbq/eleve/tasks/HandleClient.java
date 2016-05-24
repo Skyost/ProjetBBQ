@@ -64,18 +64,18 @@ public class HandleClient extends Thread {
 				ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "Message invalide (doit être de type \"<index> <uuid> <version> <arguments>\")."));
 				return;
 			}
-			if(Utils.isNumeric(parts[2])) {
+			if(Utils.isNumeric(parts[2])) { // Si le protocole est bien un nombre, on le vérifie.
 				final int version = Integer.parseInt(parts[2]);
-				if(PROTOCOL_VERSION < version) {
+				if(PROTOCOL_VERSION < version) { // Si la version du protocole de l'élève est inférieure à celle du prof, on renvoie une erreur.
 					ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "Le logiciel serveur est serveur est trop ancien pour communiquer avec votre client."));
 					return;
 				}
-				else if(PROTOCOL_VERSION > version) {
+				else if(PROTOCOL_VERSION > version) { // Et si la version du protocole de l'élève est supérieure à celle du prof, on en renvoie une autre.
 					ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "Le logiciel client est trop ancien pour communiquer avec ce serveur."));
 					return;
 				}
 			}
-			else {
+			else { // Sinon on renvoie une erreur.
 				ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "Version du protocole invalide."));
 				return;
 			}
@@ -104,38 +104,39 @@ public class HandleClient extends Thread {
 				ImageIO.write(screenshot(), ProjetBBQEleve.settings.imageType, output);
 				break;
 			case MESSAGE:
-				ServerUtils.sendMessage(client, ServerUtils.createResponse(true));
-				if(!Utils.isNumeric(parts[parts.length - 1])) {
-					ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "Pas de dure valide entrée."));
-					return;
+				if(Utils.isNumeric(parts[parts.length - 1])) { // Si c'est un chiffre, on renvoie un accusé et on affiche le message.
+					ServerUtils.sendMessage(client, ServerUtils.createResponse(true), output, false); // Accusé de réception.
+					new MessageFrame(Utils.join(" ", Arrays.copyOfRange(parts, 3, parts.length - 1)), Integer.valueOf(parts[parts.length - 1])).setVisible(true);
 				}
-				new MessageFrame(Utils.join(" ", Arrays.copyOfRange(parts, 3, parts.length - 1)), Integer.valueOf(parts[parts.length - 1])).setVisible(true);
+				else { // Si ce n'est pas un chiffre, on renvoie une erreur.
+					ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "Pas de durée valide entrée."), output, false);
+				}
 				break;
 			case LOCK:
-				ServerUtils.sendMessage(client, ServerUtils.createResponse(true), output, false);
-				if(lockFrame == null) {
-					lockFrame = new LockFrame(screenshot());
+				ServerUtils.sendMessage(client, ServerUtils.createResponse(true), output, false); // Accusé de reception.
+				if(lockFrame == null) { // Si l'écran n'est pas déjà bloqué, on le bloque.
+					lockFrame = new LockFrame(screenshot()); // cf. documentation sur le constructeur de LockFrame.
 					lockFrame.setVisible(true);
 				}
 				break;
 			case UNLOCK:
-				ServerUtils.sendMessage(client, ServerUtils.createResponse(true), output, false);
-				if(lockFrame != null) {
+				ServerUtils.sendMessage(client, ServerUtils.createResponse(true), output, false); // Accusé de reception.
+				if(lockFrame != null) { // Si l'écran est bloqué, on le débloque.
 					lockFrame.unlockAndClose();
 					lockFrame = null;
 				}
 				break;
 			case SHUTDOWN:
-				ServerUtils.sendMessage(client, ServerUtils.createResponse(true), output, false);
-				OS.shutdown();
+				ServerUtils.sendMessage(client, ServerUtils.createResponse(true), output, false); // Accusé de reception.
+				OS.shutdown(); // On eteint l'ordinateur.
 				break;
 			case RESTART:
-				ServerUtils.sendMessage(client, ServerUtils.createResponse(true), output, false);
-				OS.restart();
+				ServerUtils.sendMessage(client, ServerUtils.createResponse(true), output, false); // Accusé de reception.
+				OS.restart(); // On redémarre l'ordinateur.
 				break;
 			case LOGOUT:
-				ServerUtils.sendMessage(client, ServerUtils.createResponse(true), output, false);
-				OS.logout();
+				ServerUtils.sendMessage(client, ServerUtils.createResponse(true), output, false); // Accusé de reception.
+				OS.logout(); // On déconnecte l'élève.
 				break;
 			default:
 				break;

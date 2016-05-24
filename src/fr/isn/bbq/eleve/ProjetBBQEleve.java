@@ -49,7 +49,7 @@ public class ProjetBBQEleve {
 			}
 			server = (SSLServerSocket)SSLServerSocketFactory.getDefault().createServerSocket(ProjetBBQEleve.settings.port, ProjetBBQEleve.settings.backlog, InetAddress.getByName(ProjetBBQEleve.settings.ip)); // On créé le serveur en fonction des paramètres XML.
 			server.setSoTimeout(ProjetBBQEleve.settings.timeOut * 1000); // Et on change le timeout.
-			server.setEnabledCipherSuites(getEnabledCipherSuites(server));
+			server.setEnabledCipherSuites(getEnabledCipherSuites(server)); // On ajoute les types d'encryptions supportés par le serveur (doivent être anonymes).
 		}
 		catch(final Exception ex) {
 			ex.printStackTrace();
