@@ -13,6 +13,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
+
 import fr.isn.bbq.prof.Computer;
 import fr.isn.bbq.prof.ProjetBBQProf;
 import fr.isn.bbq.prof.dialogs.MessageDialog;
@@ -202,7 +203,8 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 	
 	public final JToolBar createToolbar() {
 		final JToolBar toolbar = new JToolBar();
-		toolbar.setFloatable(false);
+		toolbar.setFloatable(false); // On ne veut pas qu'elle se détache de l'IHM.
+		/* Le bouton rafraîchir : */
 		final JButton refresh = new JButton(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_refresh.png")));
 		refresh.addActionListener(new ActionListener() {
 			
@@ -214,21 +216,22 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			
 		});
 		refresh.setToolTipText("Rafraîchir la capture d'écran");
+		/* Le bouton pour envoyer un message : */
 		final JButton sendMessage = new JButton(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_sendmessage.png")));
 		sendMessage.addActionListener(new ActionListener() {
 			
-			@SuppressWarnings("unchecked")
 			@Override
 			public final void actionPerformed(final ActionEvent event) {
 				final Object[] dialogData = Utils.createMessageDialog(ComputerFrame.this);
-				if((boolean)dialogData[0]) {
-					final List<Component> components = (List<Component>)dialogData[1];
-					createClientDialog(new Request(RequestType.MESSAGE, ((JTextField)components.get(0)).getText(), String.valueOf(((JSpinner)components.get(1)).getValue())), ComputerFrame.this, computer);
+				if((boolean)dialogData[0]) { // Cf. Documentation de la fonction Utils.createMessageDialog(...).
+					final Component[] components = (Component[])dialogData[1];
+					createClientDialog(new Request(RequestType.MESSAGE, ((JTextField)components[0]).getText(), String.valueOf(((JSpinner)components[1]).getValue())), ComputerFrame.this, computer);
 				}
 			}
 			
 		});
 		sendMessage.setToolTipText("Envoyer un message");
+		/* Le bouton pour envoyer éteindre le PC : */
 		final JButton shutdown = new JButton(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_shutdown.png")));
 		shutdown.addActionListener(new ActionListener() {
 			
@@ -239,6 +242,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			
 		});
 		shutdown.setToolTipText("Éteindre le PC");
+		/* Le bouton pour redémarrer le PC : */
 		final JButton restart = new JButton(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_restart.png")));
 		restart.addActionListener(new ActionListener() {
 			
@@ -249,6 +253,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			
 		});
 		restart.setToolTipText("Redémarrer le PC");
+		/* Le bouton pour déconnecter le PC : */
 		final JButton logout = new JButton(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_logout.png")));
 		logout.addActionListener(new ActionListener() {
 			
@@ -259,6 +264,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			
 		});
 		logout.setToolTipText("Déconnecter le PC");
+		/* Le bouton pour verrouiller le PC : */
 		final JButton lock = new JButton(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_lock.png")));
 		lock.addActionListener(new ActionListener() {
 			
@@ -269,6 +275,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			
 		});
 		lock.setToolTipText("Verrouiller le PC");
+		/* Le bouton pour déverrouiller le PC : */
 		final JButton unlock = new JButton(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_unlock.png")));
 		unlock.addActionListener(new ActionListener() {
 			
@@ -279,6 +286,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			
 		});
 		unlock.setToolTipText("Déverrouiller le PC");
+		/* Puis on ajoute les différents boutons : */
 		toolbar.add(refresh);
 		toolbar.add(sendMessage);
 		toolbar.addSeparator();
@@ -304,7 +312,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			
 			@Override
 			public final void actionPerformed(final ActionEvent event) {
-				final String[] availableWriters = ImageIO.getWriterFormatNames();
+				final String[] availableWriters = ImageIO.getWriterFormatNames(); // On liste les différentes extensions disponibles.
 				final List<String> addedWriters = new ArrayList<String>();
 				final JFileChooser chooser = new JFileChooser();
 				for(int i = 0; i != availableWriters.length; i++) {
@@ -350,16 +358,43 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 		return popup;
 	}
 	
+	/**
+	 * Permet de créer le dialogue d'attente et d'envoyer une requête.
+	 * 
+	 * @param request La requête.
+	 */
+	
 	private final void createClientDialog(final Request request) {
 		createClientDialog(request, ComputerFrame.this, computer);
 	}
 	
+	/**
+	 * Permet de créer le dialogue d'attente et d'envoyer une requête.
+	 * 
+	 * @param request La requête.
+	 * @param parent L'IHM parent.
+	 * @param computers Les ordinateurs qui doivent recevoir cette requête.
+	 */
+	
 	public static final void createClientDialog(final Request request, final JFrame parent, final Computer... computers) {
-		final List<Computer> joinedComputers = new ArrayList<Computer>();
-		new Client(new ClientInterface() {
+		final List<Computer> joinedComputers = new ArrayList<Computer>(); // La liste des ordinateurs joints.
+		new Client(new ClientInterface() { // On créé le client.
+			
+			/** 
+			 * Temps pendant lequel le dialogue est affiché.
+			 */
 			
 			private static final int DIALOG_TIME = 5;
+			
+			/**
+			 * Le message d'attente du dialogue.
+			 */
+			
 			private static final String CLOSING_MESSAGE = "Ce message se fermera dans " + DIALOG_TIME + " seconde(s)...";
+			
+			/**
+			 * Le dialogue d'attente.
+			 */
 			
 			private final MessageDialog dialog = new MessageDialog(parent, "Envoi de la requête", "");
 

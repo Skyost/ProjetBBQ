@@ -95,7 +95,7 @@ public class MainFrame extends JFrame {
 					((RoomPane)((JScrollPane)tabbedPane.getComponent(tabbedPane.getSelectedIndex())).getViewport().getView()).stopRequests();
 				}
 				currentIndex = tabbedPane.getSelectedIndex(); // Et on redéfini l'index au nouvel index.
-				MainFrame.this.setTitle(buildTitle(((RoomPane)((JScrollPane)tabbedPane.getComponent(currentIndex)).getViewport().getView()).getName()));
+				MainFrame.this.setTitle(buildTitle(((RoomPane)((JScrollPane)tabbedPane.getComponent(currentIndex)).getViewport().getView()).getName())); // Puis on change le titre.
 			}
 			
 		});
@@ -133,11 +133,13 @@ public class MainFrame extends JFrame {
 				rooms.add(room); // Et on ajoute la classe chargée dans la liste des salles de classe.
 			}
 			catch(final Exception ex) {
+				message.dispose();
 				ex.printStackTrace();
 				JOptionPane.showMessageDialog(MainFrame.this, "Le fichier \"" + roomFile.getName() + "\" n'est pas un fichier XML valide. Veuillez consulter l'aide en ligne.", "Erreur !", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		if(rooms.size() == 0) { // Si il n'y a pas de salles de classe chargées, on affiche un message d'erreur.
+			message.dispose();
 			JOptionPane.showMessageDialog(MainFrame.this, "Pas de salle valide ajoutée. Veuillez consulter l'aide en ligne.", "Erreur !", JOptionPane.ERROR_MESSAGE);
 			System.exit(1);
 		}
@@ -180,13 +182,12 @@ public class MainFrame extends JFrame {
 		final JMenuItem sendMessage = new JMenuItem("Envoyer un message");
 		sendMessage.addActionListener(new ActionListener() {
 			
-			@SuppressWarnings("unchecked")
 			@Override
 			public final void actionPerformed(final ActionEvent event) {
 				final Object[] dialogData = Utils.createMessageDialog(MainFrame.this);
 				if((boolean)dialogData[0]) {
-					final List<Component> components = (List<Component>)dialogData[1];
-					ComputerFrame.createClientDialog(new Request(RequestType.MESSAGE, ((JTextField)components.get(0)).getText(), String.valueOf(((JSpinner)components.get(1)).getValue())), MainFrame.this, getComputers());
+					final Component[] components = (Component[])dialogData[1];
+					ComputerFrame.createClientDialog(new Request(RequestType.MESSAGE, ((JTextField)components[0]).getText(), String.valueOf(((JSpinner)components[1]).getValue())), MainFrame.this, getComputers());
 				}
 			}
 			

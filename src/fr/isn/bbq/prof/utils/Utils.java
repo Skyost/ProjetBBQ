@@ -69,6 +69,14 @@ public class Utils {
 		return builder.toString();
 	}
 	
+	/**
+	 * Permet de créer un dialogue pour envoyer un message.
+	 * 
+	 * @param parent L'IHM parent.
+	 * 
+	 * @return Un object content en colonne 1 la réponse du dialogue et en colonne deux la liste des composants ajoutés (donc 
+	 */
+	
 	public static final Object[] createMessageDialog(final JFrame parent) {
 		final JTextField textField = new JTextField();
 		final JSpinner spinner = new JSpinner();
@@ -80,7 +88,7 @@ public class Utils {
 		spinner.setModel(new SpinnerNumberModel(5, 1, Integer.MAX_VALUE, 1));
 		final JFormattedTextField field = ((NumberEditor)spinner.getEditor()).getTextField();
 		((NumberFormatter)field.getFormatter()).setAllowsInvalid(false);
-		return new Object[]{JOptionPane.showConfirmDialog(parent, components.toArray(new Object[components.size()]), "Envoyer un message", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION, components};
+		return new Object[]{JOptionPane.showConfirmDialog(parent, new Component[]{textField, spinner}, "Envoyer un message", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION, components};
 	}
 
 }

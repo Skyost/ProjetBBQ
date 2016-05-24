@@ -10,7 +10,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
@@ -306,13 +305,12 @@ public class RoomPane extends JPanel implements ClientInterface {
 			final JMenuItem sendMessage = new JMenuItem("Envoyer un message");
 			sendMessage.addActionListener(new ActionListener() {
 				
-				@SuppressWarnings("unchecked")
 				@Override
 				public final void actionPerformed(final ActionEvent event) {
 					final Object[] dialogData = Utils.createMessageDialog(null);
 					if((boolean)dialogData[0]) {
-						final List<Component> components = (List<Component>)dialogData[1];
-						ComputerFrame.createClientDialog(new Request(RequestType.MESSAGE, ((JTextField)components.get(0)).getText(), String.valueOf(((JSpinner)components.get(1)).getValue())), null, computer);
+						final Component[] components = (Component[])dialogData[1];
+						ComputerFrame.createClientDialog(new Request(RequestType.MESSAGE, ((JTextField)components[0]).getText(), String.valueOf(((JSpinner)components[1]).getValue())), null, computer);
 					}
 				}
 				
