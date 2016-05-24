@@ -83,18 +83,18 @@ public class RoomPane extends JPanel implements ClientInterface {
 	
 	public RoomPane(final Room room, final StatusBar bar) {
 		name = room.name;
-		this.bar = bar;
+		this.bar = bar; // On ajoute une référence vers la barre de statuts pour la mettre à jour.
 		for(final Computer computer : room.computers) { // Pour chaque ordinateur de la salle, on créé une miniature.
 			final ComputerThumbnail thumbnail = new ComputerThumbnail(computer);
-			thumbnails.put(computer, thumbnail);
+			thumbnails.put(computer, thumbnail); // On ajoute les miniatures en fonction des ordinateurs.
 			this.add(thumbnail);
 		}
-		this.setLayout(new WrapLayout(WrapLayout.LEFT));
+		this.setLayout(new WrapLayout(WrapLayout.LEFT)); // Les images doivent être disposées en partant de la gauche.
 		this.addMouseListener(new MouseListener() {
 			
 			@Override
 			public final void mouseClicked(final MouseEvent event) {
-				if(RoomPane.this.selected != null && (SwingUtilities.isLeftMouseButton(event) || SwingUtilities.isRightMouseButton(event))) {
+				if(RoomPane.this.selected != null && (SwingUtilities.isLeftMouseButton(event) || SwingUtilities.isRightMouseButton(event))) { // Si il y a un clic gauche ou un droit, on déselectionne la miniature.
 					RoomPane.this.selected.unselect();
 				}
 			}

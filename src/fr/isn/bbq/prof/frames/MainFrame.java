@@ -163,6 +163,7 @@ public class MainFrame extends JFrame {
 	
 	public final JMenuBar createMenuBar() {
 		final JMenuBar menu = new JMenuBar();
+		/* Le menu rafraîchir : */
 		final JMenuItem refresh = new JMenuItem("Rafraîchir les miniatures");
 		refresh.addActionListener(new ActionListener() {
 			
@@ -172,13 +173,14 @@ public class MainFrame extends JFrame {
 
 			@Override
 			public final void actionPerformed(final ActionEvent event) {
-				final RoomPane pane = (RoomPane)((JScrollPane)tabbedPane.getComponent(tabbedPane.getSelectedIndex())).getViewport().getView();
+				final RoomPane pane = (RoomPane)((JScrollPane)tabbedPane.getComponent(tabbedPane.getSelectedIndex())).getViewport().getView(); // On va rechercher la RoomPane actuelle.
 				pane.stopRequests();
 				pane.startRequests();
 			}
 			
 		});
-		refresh.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_refresh.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
+		refresh.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_refresh.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH))); // On doit redimensionner les icônes en 16x16.
+		/* Le menu pour envoyer un message : */
 		final JMenuItem sendMessage = new JMenuItem("Envoyer un message");
 		sendMessage.addActionListener(new ActionListener() {
 			
@@ -193,6 +195,7 @@ public class MainFrame extends JFrame {
 			
 		});
 		sendMessage.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_sendmessage.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
+		/* Le menu pour envoyer éteindre les PCs : */
 		final JMenuItem shutdown = new JMenuItem("Éteindre les PCs");
 		shutdown.addActionListener(new ActionListener() {
 			
@@ -203,6 +206,7 @@ public class MainFrame extends JFrame {
 			
 		});
 		shutdown.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_shutdown.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
+		/* Le menu pour redémarrer les PCs : */
 		final JMenuItem restart = new JMenuItem("Redémarrer les PCs");
 		restart.addActionListener(new ActionListener() {
 			
@@ -213,6 +217,7 @@ public class MainFrame extends JFrame {
 			
 		});
 		restart.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_restart.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
+		/* Le menu pour déconnecter les PCs : */
 		final JMenuItem logout = new JMenuItem("Déconnecter les PCs");
 		logout.addActionListener(new ActionListener() {
 			
@@ -223,6 +228,7 @@ public class MainFrame extends JFrame {
 			
 		});
 		logout.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_logout.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
+		/* Le menu pour verrouiller les PCs : */
 		final JMenuItem lock = new JMenuItem("Verrouiller les PCs");
 		lock.addActionListener(new ActionListener() {
 			
@@ -233,6 +239,7 @@ public class MainFrame extends JFrame {
 			
 		});
 		lock.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_lock.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
+		/* Le menu pour déverrouiller les PCs : */
 		final JMenuItem unlock = new JMenuItem("Déverrouiller les PCs");
 		unlock.addActionListener(new ActionListener() {
 			
@@ -243,6 +250,7 @@ public class MainFrame extends JFrame {
 			
 		});
 		unlock.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_unlock.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
+		/* Le menu pour ouvrir l'aide en ligne : */
 		final JMenuItem onlineHelp = new JMenuItem("Aide en ligne...");
 		onlineHelp.addActionListener(new ActionListener() {
 			
@@ -261,12 +269,13 @@ public class MainFrame extends JFrame {
 			
 		});
 		onlineHelp.setIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_onlinehelp.png")));
+		/* Le menu pour afficher la boîte À propos : */
 		final JMenuItem about = new JMenuItem("À propos...");
 		about.addActionListener(new ActionListener() {
 			
 			@Override
 			public final void actionPerformed(final ActionEvent event) {
-				new AboutFrame().setVisible(true);
+				new AboutFrame().setVisible(true); // Affiche la boîte À propos.
 			}
 			
 		});
@@ -290,6 +299,12 @@ public class MainFrame extends JFrame {
 		return menu;
 	}
 	
+	/**
+	 * Permet d'obtenir tous les ordinateurs gérées par le logiciel, indépendemment de la salle.
+	 * 
+	 * @return Les ordinateurs gérées par le logiciel.
+	 */
+	
 	private final Computer[] getComputers() {
 		final List<Computer> computers = new ArrayList<Computer>();
 		for(final Room room : rooms) {
@@ -299,6 +314,14 @@ public class MainFrame extends JFrame {
 		}
 		return computers.toArray(new Computer[computers.size()]);
 	}
+	
+	/**
+	 * Permet de créer le titre en fonction de la salle actuelle.
+	 * 
+	 * @param roomName La salle actuelle.
+	 * 
+	 * @return Le titre.
+	 */
 	
 	private final String buildTitle(final String roomName) {
 		return ProjetBBQProf.APP_NAME + " v" + ProjetBBQProf.APP_VERSION + (roomName == null ? "" : " (" + roomName + ")");
