@@ -95,7 +95,9 @@ public class MainFrame extends JFrame {
 					((RoomPane)((JScrollPane)tabbedPane.getComponent(tabbedPane.getSelectedIndex())).getViewport().getView()).stopRequests();
 				}
 				currentIndex = tabbedPane.getSelectedIndex(); // Et on redéfini l'index au nouvel index.
-				MainFrame.this.setTitle(buildTitle(((RoomPane)((JScrollPane)tabbedPane.getComponent(currentIndex)).getViewport().getView()).getName())); // Puis on change le titre.
+				final RoomPane pane = (RoomPane)((JScrollPane)tabbedPane.getComponent(currentIndex)).getViewport().getView();
+				pane.startRequests(); // On démarre les requêtes.
+				MainFrame.this.setTitle(buildTitle(pane.getName())); // Puis on change le titre.
 			}
 			
 		});
@@ -150,8 +152,6 @@ public class MainFrame extends JFrame {
 			tabbedPane.add(room.name, pane);
 		}
 		tabbedPane.setSelectedIndex(0); // On va sur le premier onglet.
-		currentIndex = tabbedPane.getSelectedIndex();
-		MainFrame.this.setTitle(buildTitle(((RoomPane)((JScrollPane)tabbedPane.getComponent(currentIndex)).getViewport().getView()).getName()));
 		message.dispose(); // On ferme le dialogue.
 	}
 	

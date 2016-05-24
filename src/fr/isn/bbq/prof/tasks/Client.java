@@ -122,25 +122,25 @@ public class Client extends Thread {
 							System.out.println("Réponse du server \"" + response + "\"."); // in.readUTF() permet d'obtenir la réponse du serveur.
 							if(running) { // Si le client n'est plus en fonctionnement, on interrompt tout.
 								final String[] parts = response.split(" "); // On sépare la réponse UTF à l'espace.
-								if(Utils.isNumeric(parts[2])) {
+								if(Utils.isNumeric(parts[2])) { // Si le protocole est bien un nombre, on le vérifie.
 									final int version = Integer.parseInt(parts[2]);
-									if(PROTOCOL_VERSION < version) {
+									if(PROTOCOL_VERSION < version) { // Si la version du protocole du prof est inférieure à celle de l'élève, on renvoie une erreur.
 										client.close();
 										throw new Exception("Le logiciel client est trop ancien pour communiquer avec ce serveur.");
 									}
-									else if(PROTOCOL_VERSION > version) {
+									else if(PROTOCOL_VERSION > version) { // Et si la version du protocole du prof est supérieure à celle de l'élève, on en renvoie une autre.
 										client.close();
 										throw new Exception("Le logiciel serveur est serveur est trop ancien pour communiquer avec votre client.");
 									}
 								}
-								else {
+								else { // Si ce n'est pas un nombre, on montre une erreur.
 									client.close();
 									throw new Exception("Version du protocole invalide.");
 								}
 								String message = null;
 								final String[] splittedMessage = Arrays.copyOfRange(parts, 3, parts.length - 1);
 								if(splittedMessage.length > 0) {
-									message = Utils.join(" ", splittedMessage);
+									message = Utils.join(" ", splittedMessage); // On recréé le message.
 								}
 								if(parts[0].equals("0")) { // Si la première partie est 0 (soit valide) alors, on renvoi un succès.
 									switch(request.getType()) { // En fonction de ce que l'on a demandé on execute ou non une action.
@@ -153,12 +153,12 @@ public class Client extends Thread {
 										break;
 									}
 								}
-								else {
+								else { // Sinon c'est une erreur.
 									client.close();
 									parent.onError(computer, new Exception(message), Long.valueOf(parts[3]));
 								}
 							}
-							else {
+							else { // On iterrompte le client.
 								parent.onInterrupted(computer, System.currentTimeMillis());
 							}
 							System.out.println("Fermeture du client...");
@@ -173,7 +173,7 @@ public class Client extends Thread {
 				}.start();
 			}
 			try {
-				if(oneRequest) {
+				if(oneRequest) { // Si il n'y a qu'une requête, on s'en va. Sinon on attends.
 					System.out.println();
 					return;
 				}

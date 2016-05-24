@@ -112,18 +112,24 @@ public class RoomPane extends JPanel implements ClientInterface {
 			public final void mouseReleased(final MouseEvent event) {}
 			
 		});
-		startRequests();
 	}
+	
+	/**
+	 * Permet d'obtenir le nom de la salle gérée par ce panel.
+	 */
 	
 	public final String getName() {
 		return name;
 	}
 	
 	/**
-	 * Démarre les requêtes.
+	 * Démarre les requêtes (si il y en a déjà, elles sont annulées).
 	 */
 	
 	public final void startRequests() {
+		if(client != null) {
+			stopRequests();
+		}
 		final Set<Computer> computers = thumbnails.keySet();
 		client = new Client(this, new Request(RequestType.THUMBNAIL), computers.toArray(new Computer[computers.size()]));
 		client.start();
@@ -134,21 +140,25 @@ public class RoomPane extends JPanel implements ClientInterface {
 	 */
 	
 	public final void stopRequests() {
+		if(client == null) {
+			return;
+		}
 		client.stopRequests();
 		client = null;
 	}
 
 	@Override
 	public final void connection(final Computer computer, final long time) {
-		bar.setText("Connexion aux ordinateurs de la salle " + name + "...");
+		bar.setText("Connexion aux ordinateurs de la salle " + name + "..."); // On change la barre de status et on met à jour l'image.
 		thumbnails.get(computer).setThumbnail(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/thumbnails/thumbnail_loading.gif")), time);
 	}
 
 	@Override
 	public final void onSuccess(final Computer computer, final Object... returned) {
-		if(!(returned[returned.length - 1] instanceof Image)) {
+		if(!(returned[returned.length - 1] instanceof Image)) { // Si on a pas d'image, on s'en va.
 			return;
 		}
+		/* Sinon on met à jour la barre de status, le titre et l'image : */
 		bar.setText("La miniature de l'ordinateur " + computer.name + " (" + computer.ip + ":" + computer.port + ") a été récupérée avec succès.");
 		final ComputerThumbnail thumbnail = thumbnails.get(computer);
 		thumbnail.setThumbnail(new ImageIcon((BufferedImage)returned[returned.length - 1]), (long)returned[1]);
@@ -182,38 +192,52 @@ public class RoomPane extends JPanel implements ClientInterface {
 
 		private static final long serialVersionUID = 1L;
 		
+		/**
+		 * L'ordinateur géré par cette miniature.
+		 */
+		
 		private final Computer computer;
+		
+		/**
+		 * Permet d'afficher la miniature.
+		 */
+		
 		private final JLabel thumbnail = new JLabel();
+		
+		/**
+		 * La dernière fois que cette miniature a été rafraichie.
+		 */
+		
 		private long thumbnailTime;
 		
 		public ComputerThumbnail(final Computer computer) {
-			this.computer = computer;
-			thumbnail.setBackground(Color.WHITE);
-			thumbnail.setOpaque(true);
-			thumbnail.setHorizontalTextPosition(JLabel.CENTER);
-			thumbnail.setVerticalTextPosition(JLabel.BOTTOM);
-			thumbnail.setBorder(new CompoundBorder(BorderFactory.createLineBorder(Color.BLACK), new EmptyBorder(10, 10, 10, 10)));
-			setTitle(computer.name);
-			this.add(thumbnail, BorderLayout.CENTER);
+			this.computer = computer; // On pointe la référence vers l'ordinateur.
+			thumbnail.setBackground(Color.WHITE); // Fond blanc.
+			thumbnail.setOpaque(true); // Opaque.
+			thumbnail.setHorizontalTextPosition(JLabel.CENTER); // Texte centrée horizonatalement.
+			thumbnail.setVerticalTextPosition(JLabel.BOTTOM); // Et en dessous de l'image.
+			thumbnail.setBorder(new CompoundBorder(BorderFactory.createLineBorder(Color.BLACK), new EmptyBorder(10, 10, 10, 10))); // Avec une bordure noire de 10px.
+			setTitle(computer.name); // On affecte un titre par défaut.
+			this.add(thumbnail, BorderLayout.CENTER); // La miniature est ajoutée au centre du panel.
 			this.addMouseListener(new MouseListener() {
 
 				@Override
 				public final void mouseClicked(final MouseEvent event) {
-					if(SwingUtilities.isRightMouseButton(event)) {
+					if(SwingUtilities.isRightMouseButton(event)) { // Si c'est un clic droit, on créé un popup menu.
 						createThumbnailPopupMenu().show(ComputerThumbnail.this, event.getX(), event.getY());
 					}
-					else if(SwingUtilities.isLeftMouseButton(event)) {
+					else if(SwingUtilities.isLeftMouseButton(event)) { // Si c'est un clic gauche et un double clic, on ouvre le menu de la capture d'écran.
 						if(event.getClickCount() == 2 && !event.isConsumed()) {
-							new ComputerFrame(computer).setVisible(true); // Si il y a un double clic, on ouvre l'IHM de l'ordinateur correspondant.
+							new ComputerFrame(computer).setVisible(true);
 						}
 					}
-					else {
+					else { // Sinon on s'en va.
 						return;
 					}
-					if(RoomPane.this.selected != null) {
+					if(RoomPane.this.selected != null) { // Si il y a déjà une miniature de séléctionnée, on la déselectionne.
 						RoomPane.this.selected.unselect();
 					}
-					ComputerThumbnail.this.select();
+					ComputerThumbnail.this.select(); // Et on séléctionne celle-ci.
 				}
 
 				@Override
@@ -300,8 +324,15 @@ public class RoomPane extends JPanel implements ClientInterface {
 			this.setBackground(SmartLookAndFeel.getBackgroundColor()); // On remet la couleur par défaut.
 		}
 		
+		/**
+		 * Permet de créer le popup menu (lors du clic droit sur cette miniature).
+		 * 
+		 * @return Le popup menu.
+		 */
+		
 		private final JPopupMenu createThumbnailPopupMenu() {
 			final JPopupMenu popup = new JPopupMenu();
+			/* Le menu pour envoyer un message : */
 			final JMenuItem sendMessage = new JMenuItem("Envoyer un message");
 			sendMessage.addActionListener(new ActionListener() {
 				
@@ -316,6 +347,7 @@ public class RoomPane extends JPanel implements ClientInterface {
 				
 			});
 			sendMessage.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_sendmessage.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
+			/* Le menu pour envoyer éteindre le PC : */
 			final JMenuItem shutdown = new JMenuItem("Éteindre le PC");
 			shutdown.addActionListener(new ActionListener() {
 				
@@ -326,6 +358,7 @@ public class RoomPane extends JPanel implements ClientInterface {
 				
 			});
 			shutdown.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_shutdown.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
+			/* Le menu pour redémarrer le PC : */
 			final JMenuItem restart = new JMenuItem("Redémarrer le PC");
 			restart.addActionListener(new ActionListener() {
 				
@@ -336,6 +369,7 @@ public class RoomPane extends JPanel implements ClientInterface {
 				
 			});
 			restart.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_restart.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
+			/* Le menu pour déconnecter le PC : */
 			final JMenuItem logout = new JMenuItem("Déconnecter le PC");
 			logout.addActionListener(new ActionListener() {
 				
@@ -346,6 +380,7 @@ public class RoomPane extends JPanel implements ClientInterface {
 				
 			});
 			logout.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_logout.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
+			/* Le menu pour verrouiller le PC : */
 			final JMenuItem lock = new JMenuItem("Verrouiller le PC");
 			lock.addActionListener(new ActionListener() {
 				
@@ -356,6 +391,7 @@ public class RoomPane extends JPanel implements ClientInterface {
 				
 			});
 			lock.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_lock.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
+			/* Le menu pour déverrouiller le PC : */
 			final JMenuItem unlock = new JMenuItem("Déverrouiller le PC");
 			unlock.addActionListener(new ActionListener() {
 				

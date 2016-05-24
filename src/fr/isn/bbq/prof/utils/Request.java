@@ -83,16 +83,17 @@ public class Request {
 	public final String toString() {
 		switch(type) {
 		case MESSAGE:
-			if(args.length < 2) {
+			if(args.length < 2) { // Il faut au moins deux arguments pour envoyer un message (message + durée d'affichage).
 				throw new IllegalArgumentException("Not enough arguments.");
 			}
-			if(!Utils.isNumeric(args[1])) {
+			if(!Utils.isNumeric(args[1])) { // La durée doit être numérique.
 				throw new IllegalArgumentException("\"" + args[1] + "\" is not a number.");
 			}
 			break;
 		default:
 			break;
 		}
+		/* Cf. documentation en ligne. */
 		return type.getIndex() + " " + ProjetBBQProf.settings.uuid + " " + Client.PROTOCOL_VERSION + (args != null && args.length > 0 ? " " + Utils.join(" ", args) : "");
 	}
 	

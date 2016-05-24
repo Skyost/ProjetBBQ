@@ -88,7 +88,7 @@ public class Utils {
 		spinner.setModel(new SpinnerNumberModel(5, 1, Integer.MAX_VALUE, 1));
 		final JFormattedTextField field = ((NumberEditor)spinner.getEditor()).getTextField();
 		((NumberFormatter)field.getFormatter()).setAllowsInvalid(false);
-		return new Object[]{JOptionPane.showConfirmDialog(parent, new Component[]{textField, spinner}, "Envoyer un message", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION, components};
+		return new Object[]{JOptionPane.showConfirmDialog(parent, components.toArray(new Component[components.size()]), "Envoyer un message", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION, new Component[]{textField, spinner}};
 	}
 
 }
