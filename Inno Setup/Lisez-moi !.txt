@@ -1,0 +1,18 @@
+PROJET BBQ ÉLÈVE
+================
+
+Vous pouvez démarrer le logiciel en double cliquant sur l'exécutable "ProjetBBQEleve.exe".
+La première fois, celui-ci se fermera tout seul et créera un fichier de configuration. Il faut éditer ce fichier.
+
+Pour éditer la configuration alors que le logiciel est lancé, exécutez "KillEleve.exe" qui tuera la tâche.
+
+Si le fichier ne se créé pas, veuillez être sur qu'il est possible pour le logiciel d'écrire dans le dossier d'installation;
+Sinon : clic droit -> exécuter en mode administrateur.
+
+Pour voir la liste des problèmes courants, veuillez consulter la FAQ (https://github.com/Skyost/ProjetBBQ/wiki/FAQ).
+
+
+
+
+
+Licence : GNU GPL v3.

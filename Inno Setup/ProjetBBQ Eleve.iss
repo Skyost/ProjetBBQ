@@ -68,8 +68,10 @@ fr.runapp=Éxecuter Projet BBQ Élève (ne permet que de générer la configuration a
 fr.openfolder=Ouvrir le dossier d'installation (pour éditer la configuration)
 
 [Files]
-; Le fichier de l'application à inclure dans l'installateur :
+; Les fichiers de l'application à inclure dans l'installateur :
 Source: "ProjetBBQEleve.exe"; DestDir: "{app}"
+Source: "KillEleve.exe"; DestDir: "{app}"
+Source: "Lisez-moi !.txt"; DestDir: "{app}"
 
 [Icons]
 ; Icône de l'application (menu démarrer) :
