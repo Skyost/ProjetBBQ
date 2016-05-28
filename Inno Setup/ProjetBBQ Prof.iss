@@ -6,7 +6,7 @@ AppId=ProjetBBQProf
 ; Nom de l'application :
 AppName=Projet BBQ Professeur
 ; Version de l'application :
-AppVersion=0.1
+AppVersion=0.1.1
 ; Dossier d'installation par défaut :
 DefaultDirName={pf}\Projet BBQ Professeur
 ; Dossier dans le menu démarrer par défaut :
@@ -14,7 +14,7 @@ DefaultGroupName=Projet BBQ Professeur
 ; Icône du désinstallateur (dans Ajouter/Supprimer des programmes) :
 UninstallDisplayIcon={app}\ProjetBBQProf.exe
 ; Nom du désinstallateur (dans Ajouter/Supprimer des programmes) :
-UninstallDisplayName=Projet BBQ Professeur v0.1
+UninstallDisplayName=Projet BBQ Professeur v0.1.1
 ; Icône de l'installateur :
 SetupIconFile=res\Icon.ico
 ; Grande icône sur la gauche :
@@ -41,10 +41,10 @@ VersionInfoCompany=Groupe ISN
 VersionInfoCopyright=Voir liste des dépendances ici : https://github.com/Skyost/ProjetBBQ/wiki. 
 VersionInfoDescription=ProjetBBQ Professeur
 VersionInfoProductName=ProjetBBQ Professeur
-VersionInfoProductTextVersion=v0.1
-VersionInfoProductVersion=0.1.0.0
-VersionInfoTextVersion=v0.1
-VersionInfoVersion=0.1.0.0
+VersionInfoProductTextVersion=v0.1.1
+VersionInfoProductVersion=0.1.1.0
+VersionInfoTextVersion=v0.1.1
+VersionInfoVersion=0.1.1.0
 
 [Languages]
 ; La liste des langages disponibles :

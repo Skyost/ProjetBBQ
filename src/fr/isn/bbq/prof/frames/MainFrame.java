@@ -89,7 +89,7 @@ public class MainFrame extends JFrame {
 			@Override
 			public final void stateChanged(final ChangeEvent event) {
 				if(currentIndex != -1) { // Si l'index est défini, on annule toutes les requêtes.
-					((RoomPane)((JScrollPane)tabbedPane.getComponent(tabbedPane.getSelectedIndex())).getViewport().getView()).stopRequests();
+					((RoomPane)((JScrollPane)tabbedPane.getComponent(currentIndex)).getViewport().getView()).stopRequests();
 				}
 				currentIndex = tabbedPane.getSelectedIndex(); // Et on redéfini l'index au nouvel index.
 				final RoomPane pane = (RoomPane)((JScrollPane)tabbedPane.getComponent(currentIndex)).getViewport().getView();
