@@ -35,7 +35,7 @@ public class AppSettings implements XMLSettings {
 	public int port = 4444; // Le port de connexion au logiciel élève.
 	public int timeOut = 10; // Le temps imparti pour que la socket se connecte.
 	public List<String> uuids = new ArrayList<String>(Arrays.asList(
-			UUID.randomUUID().toString()
+		UUID.randomUUID().toString()
 	)); // Liste des UUIDs autorisés.
 	public String imageType = "JPG";
 	public int thumbnailHeight = 100; // Hauteur de la miniature.
