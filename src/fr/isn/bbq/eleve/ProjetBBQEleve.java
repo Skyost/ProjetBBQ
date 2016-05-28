@@ -23,7 +23,7 @@ public class ProjetBBQEleve {
 	*/
 	
 	public static final String APP_NAME = "Projet BBQ";
-	public static final String APP_VERSION = "0.1";
+	public static final String APP_VERSION = "0.1.1";
 	
 	public static AppSettings settings;
 	

@@ -67,11 +67,11 @@ public class HandleClient extends Thread {
 			if(Utils.isNumeric(parts[2])) { // Si le protocole est bien un nombre, on le vérifie.
 				final int version = Integer.parseInt(parts[2]);
 				if(PROTOCOL_VERSION < version) { // Si la version du protocole de l'élève est inférieure à celle du prof, on renvoie une erreur.
-					ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "Le logiciel serveur est serveur est trop ancien pour communiquer avec votre client."));
+					ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "Ce logiciel serveur est trop ancien pour communiquer avec votre client."));
 					return;
 				}
 				else if(PROTOCOL_VERSION > version) { // Et si la version du protocole de l'élève est supérieure à celle du prof, on en renvoie une autre.
-					ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "Le logiciel client est trop ancien pour communiquer avec ce serveur."));
+					ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "Votre logiciel client est trop ancien pour communiquer avec ce serveur."));
 					return;
 				}
 			}
