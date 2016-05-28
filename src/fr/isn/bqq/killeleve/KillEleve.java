@@ -15,19 +15,26 @@ public class KillEleve {
 			final MonitoredHost host = MonitoredHost.getMonitoredHost("localhost"); // L'host est situé sur la machine locale.
 			for(final int pid : host.activeVms()) { // On va chercher les JVM démarrées sur l'host.
 				final MonitoredVm vm = host.getMonitoredVm(new VmIdentifier("//" + pid + "?mode=r"), 0);
-				if(mainClass(vm, true).contains("ProjetBBQEleve")) { // Si la classe principale de la JVM correspond.
+				final String mainClass = mainClass(vm, true);
+				System.out.println("Classe : \"" + mainClass + "\", PID : " + pid);
+				if(mainClass.contains("ProjetBBQEleve")) { // Si la classe principale de la JVM correspond.
 					targetPid = pid; // On enregistre le PID.
 					break;
 				}
 			}
+			System.out.println();
 			if(targetPid == null) { // Si le PID n'est pas trouvé, on s'en va.
 				System.out.println("ProjetBBQ Élève non trouvé. Est-il en train de s'exécuter ?");
-				return;
 			}
-			System.out.println("ProjetBBQ Élève trouvé, envoi du signal de terminaison...");
-			final Process process = new ProcessBuilder("taskkill", "/PID", String.valueOf(targetPid), "/F").start(); // On va tuer le processus de la JVM trouvée.
-			process.waitFor(); // On attends avant de s'en aller.
-			System.out.println(process.exitValue() == 0 ? "Tâche tuée avec succès !" : "Impossible de tuer la tâche.");
+			else {
+				System.out.println("ProjetBBQ Élève trouvé, envoi du signal de terminaison...");
+				final Process process = new ProcessBuilder("taskkill", "/PID", String.valueOf(targetPid), "/F").start(); // On va tuer le processus de la JVM trouvée.
+				process.waitFor(); // On attends avant de s'en aller.
+				System.out.println(process.exitValue() == 0 ? "Tâche tuée avec succès !" : "Impossible de tuer la tâche.");
+			}
+			System.out.println();
+			System.out.println("Veuillez appuyer sur \"Entrer\" pour terminer le programme :");
+			System.in.read();
 		}
 		catch(final Exception ex) {
 			System.err.println("Erreur ! Veuillez essayer de relancer l'utilitaire ou de tuer le processus manuellement.");
