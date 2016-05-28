@@ -1,8 +1,9 @@
 package fr.isn.bqq.killeleve;
 
+import sun.jvmstat.monitor.MonitorException;
 import sun.jvmstat.monitor.MonitoredHost;
 import sun.jvmstat.monitor.MonitoredVm;
-import sun.jvmstat.monitor.MonitoredVmUtil;
+import sun.jvmstat.monitor.StringMonitor;
 import sun.jvmstat.monitor.VmIdentifier;
 
 public class KillEleve {
@@ -14,7 +15,7 @@ public class KillEleve {
 			final MonitoredHost host = MonitoredHost.getMonitoredHost("localhost"); // L'host est situé sur la machine locale.
 			for(final int pid : host.activeVms()) { // On va chercher les JVM démarrées sur l'host.
 				final MonitoredVm vm = host.getMonitoredVm(new VmIdentifier("//" + pid + "?mode=r"), 0);
-				if(MonitoredVmUtil.mainClass(vm, true).equals("fr.isn.bbq.eleve.ProjetBBQEleve")) { // Si la classe principale de la JVM correspond.
+				if(mainClass(vm, true).contains("ProjetBBQEleve")) { // Si la classe principale de la JVM correspond.
 					targetPid = pid; // On enregistre le PID.
 					break;
 				}
@@ -33,5 +34,44 @@ public class KillEleve {
 			ex.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Méthode permettant de retrouver la classe principale d'une JVM corrigée et prise d'OpenJDK.
+	 * 
+	 * @param vm La VM.
+	 * @param fullPath Si vous souhaitez le chemin complet.
+	 * 
+	 * @return La classe principale de la JVM.
+	 * 
+	 * @throws MonitorException Si une exception se produit.
+	 */
+	
+    public static String mainClass(MonitoredVm vm, boolean fullPath) throws MonitorException {
+    	StringMonitor cmd = (StringMonitor)vm.findByName("sun.rt.javaCommand");
+		String arg0 = cmd == null ? "Unknown" : cmd.stringValue();
+		
+		if (!fullPath) {
+			/*
+			* can't use File.separator() here because the separator
+			* for the target jvm may be different than the separator
+			* for the monitoring jvm.
+			*/
+			int lastFileSeparator = arg0.lastIndexOf('/');
+			if (lastFileSeparator > 0) {
+			    return arg0.substring(lastFileSeparator + 1);
+			}
+			
+			lastFileSeparator = arg0.lastIndexOf('\\');
+			if (lastFileSeparator > 0) {
+			    return arg0.substring(lastFileSeparator + 1);
+			}
+			
+			int lastPackageSeparator = arg0.lastIndexOf('.');
+			if (lastPackageSeparator > 0) {
+			    return arg0.substring(lastPackageSeparator + 1);
+			}
+		}
+		return arg0;
+    }
 
 }
