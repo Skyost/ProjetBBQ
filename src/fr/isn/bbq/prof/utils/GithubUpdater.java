@@ -20,7 +20,7 @@ import com.eclipsesource.json.JsonArray;
 public class GithubUpdater extends Thread {
 	
 	public static final String UPDATER_NAME = "GithubUpdater";
-	public static final String UPDATER_VERSION = "0.1";
+	public static final String UPDATER_VERSION = "0.1.1";
 	
 	public static final String UPDATER_GITHUB_USERNAME = "Skyost";
 	public static final String UPDATER_GITHUB_REPO = "ProjetBBQ";
@@ -76,10 +76,10 @@ public class GithubUpdater extends Thread {
 	}
 	
 	/**
-	 * Compare de version.
+	 * Compare deux version.
 	 * 
-	 * @param version1 La version une.
-	 * @param version2 La version deux.
+	 * @param versionTo La version une.
+	 * @param versionWith La version deux.
 	 * 
 	 * @return <b>true</b> Si <b>versionTo</b> est inférieure à <b>versionWith</b>.
 	 * <br><b>false</b> Si <b>versionTo</b> est supérieure ou égale à <b>versionWith</b>.

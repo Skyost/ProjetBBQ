@@ -126,11 +126,11 @@ public class Client extends Thread {
 									final int version = Integer.parseInt(parts[2]);
 									if(PROTOCOL_VERSION < version) { // Si la version du protocole du prof est inférieure à celle de l'élève, on renvoie une erreur.
 										client.close();
-										throw new Exception("Le logiciel client est trop ancien pour communiquer avec ce serveur.");
+										throw new Exception("Ce logiciel client est trop ancien pour communiquer avec le serveur.");
 									}
 									else if(PROTOCOL_VERSION > version) { // Et si la version du protocole du prof est supérieure à celle de l'élève, on en renvoie une autre.
 										client.close();
-										throw new Exception("Le logiciel serveur est serveur est trop ancien pour communiquer avec votre client.");
+										throw new Exception("Le logiciel serveur est trop ancien pour communiquer avec ce client.");
 									}
 								}
 								else { // Si ce n'est pas un nombre, on montre une erreur.

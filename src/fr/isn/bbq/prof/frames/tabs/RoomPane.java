@@ -165,7 +165,7 @@ public class RoomPane extends JPanel implements ClientInterface {
 
 	@Override
 	public final void onError(final Computer computer, final Exception ex, final long responseTime) {
-		bar.setText("L'ordinateur " + computer.name + "(" + computer.ip + ":" + computer.port + ") n'a pas pu être joint.");
+		bar.setText("L'ordinateur " + computer.name + "(" + computer.ip + ":" + computer.port + ") n'a pas pu être joint (" + ex.getMessage() + ").");
 		ex.printStackTrace();
 		onInterrupted(computer, responseTime);
 	}
