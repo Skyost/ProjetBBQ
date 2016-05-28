@@ -19,8 +19,6 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -338,10 +336,9 @@ public class RoomPane extends JPanel implements ClientInterface {
 				
 				@Override
 				public final void actionPerformed(final ActionEvent event) {
-					final Object[] dialogData = Utils.createMessageDialog(null);
-					if((boolean)dialogData[0]) {
-						final Component[] components = (Component[])dialogData[1];
-						ComputerFrame.createClientDialog(new Request(RequestType.MESSAGE, ((JTextField)components[0]).getText(), String.valueOf(((JSpinner)components[1]).getValue())), null, computer);
+					final Object[] data = Utils.createMessageDialog(null);
+					if((boolean)data[0]) {
+						ComputerFrame.createClientDialog(new Request(RequestType.MESSAGE, data[1].toString(), data[2].toString()), null, computer);
 					}
 				}
 				

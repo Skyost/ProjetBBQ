@@ -47,6 +47,7 @@ public class ProjetBBQProf {
 			else { // Sinon on le charge.
 				ProjetBBQProf.settings.load(new String(Files.readAllBytes(settings.toPath())));
 			}
+			Utils.loadMessagesInSettings();
 			if(ProjetBBQProf.settings.addSample) { // Paramètres relatifs au fichier d'exemple.
 				final File testFile = new File(getRoomDirectory(), "exemple.xml.test");
 				if(!testFile.exists()) {

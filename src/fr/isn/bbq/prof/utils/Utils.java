@@ -6,6 +6,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -19,6 +20,20 @@ import javax.swing.text.NumberFormatter;
 import fr.isn.bbq.prof.ProjetBBQProf;
 
 public class Utils {
+	
+	private static final List<Component> MESSAGE_COMPONENTS = new ArrayList<Component>(); // Composants de la boîte de dialogue "message".
+	static {
+		final JSpinner spinner = new JSpinner();
+		MESSAGE_COMPONENTS.add(new JLabel("Entrez votre message :"));
+		MESSAGE_COMPONENTS.add(new JTextField());
+		MESSAGE_COMPONENTS.add(new JLabel("Ou sélectionnez le depuis la liste ci-dessous :"));
+		MESSAGE_COMPONENTS.add(new JComboBox<String>());
+		MESSAGE_COMPONENTS.add(new JLabel("Durée d'affichage (en secondes) :"));
+		MESSAGE_COMPONENTS.add(spinner);
+		spinner.setModel(new SpinnerNumberModel(5, 1, Integer.MAX_VALUE, 1));
+		final JFormattedTextField field = ((NumberEditor)spinner.getEditor()).getTextField();
+		((NumberFormatter)field.getFormatter()).setAllowsInvalid(false);
+	}
 	
 	/**
 	 * Permet d'obtenir le chemin du fichier JAR.
@@ -70,25 +85,33 @@ public class Utils {
 	}
 	
 	/**
+	 * Chargement des messages contenus dans les paramètres "settings.xml".
+	 */
+	
+	public static final void loadMessagesInSettings() {
+		final List<String> messages = new ArrayList<String>();
+		messages.add("-");
+		messages.addAll(ProjetBBQProf.settings.defaultMessages);
+		MESSAGE_COMPONENTS.set(3, new JComboBox<String>(messages.toArray(new String[messages.size()])));
+	}
+	
+	/**
 	 * Permet de créer un dialogue pour envoyer un message.
 	 * 
 	 * @param parent L'IHM parent.
 	 * 
-	 * @return Un object content en colonne 1 la réponse du dialogue et en colonne deux la liste des composants ajoutés (donc 
+	 * @return Un object content en colonne 1 la réponse du dialogue (boolean), en colonne 2 le message (String) et en colonne 3 la durée (String).
 	 */
 	
+	@SuppressWarnings("unchecked")
 	public static final Object[] createMessageDialog(final JFrame parent) {
-		final JTextField textField = new JTextField();
-		final JSpinner spinner = new JSpinner();
-		final List<Component> components = new ArrayList<Component>(); // Composants de la boîte de dialogue.
-		components.add(new JLabel("Message :"));
-		components.add(textField);
-		components.add(new JLabel("Durée d'affichage (en secondes) :"));
-		components.add(spinner);
-		spinner.setModel(new SpinnerNumberModel(5, 1, Integer.MAX_VALUE, 1));
-		final JFormattedTextField field = ((NumberEditor)spinner.getEditor()).getTextField();
-		((NumberFormatter)field.getFormatter()).setAllowsInvalid(false);
-		return new Object[]{JOptionPane.showConfirmDialog(parent, components.toArray(new Component[components.size()]), "Envoyer un message", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION, new Component[]{textField, spinner}};
+		final boolean result = JOptionPane.showConfirmDialog(parent, MESSAGE_COMPONENTS.toArray(new Component[MESSAGE_COMPONENTS.size()]), "Envoyer un message", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION;
+		final List<Object> returned = new ArrayList<Object>();
+		returned.add(result);
+		final JComboBox<String> comboBox = (JComboBox<String>)MESSAGE_COMPONENTS.get(3);
+		returned.add(comboBox.getSelectedIndex() == 0 ? ((JTextField)MESSAGE_COMPONENTS.get(1)).getText() : comboBox.getSelectedItem().toString());
+		returned.add(((JSpinner)MESSAGE_COMPONENTS.get(5)).getValue().toString());
+		return returned.toArray(new Object[returned.size()]);
 	}
 
 }

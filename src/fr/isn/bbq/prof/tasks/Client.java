@@ -138,7 +138,7 @@ public class Client extends Thread {
 									throw new Exception("Version du protocole invalide.");
 								}
 								String message = null;
-								final String[] splittedMessage = Arrays.copyOfRange(parts, 3, parts.length - 1);
+								final String[] splittedMessage = Arrays.copyOfRange(parts, 4, parts.length);
 								if(splittedMessage.length > 0) {
 									message = Utils.join(" ", splittedMessage); // On recréé le message.
 								}

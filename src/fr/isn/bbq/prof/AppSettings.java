@@ -3,6 +3,9 @@ package fr.isn.bbq.prof;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -15,6 +18,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import fr.isn.bbq.prof.utils.XMLSettings;
@@ -28,14 +32,19 @@ public class AppSettings implements XMLSettings {
 	public String roomDir = "Salles"; // Le répertoire des salles.
 	public String uuid; // L'UUID dont le logiciel a besoin pour se connecter aux postes.
 	public boolean addSample = true; // Si on doit ajouter un fichier d'exemple ou non.
-	public int refreshInterval = 10; // Le temps de rafraîchissement (en sec).
+	public int refreshInterval = 3; // Le temps de rafraîchissement (en sec).
 	public int timeOut = 10; // Le temps imparti pour que la socket se connecte.
 	public int thumbnailHeight = 100; // Hauteur de la miniature.
 	public int thumbnailWidth = 100; // Largeur de la miniature.
+	public List<String> defaultMessages = new ArrayList<String>(Arrays.asList(
+		"Votre PC va s'éteindre dans quelques instants.<br>Veuillez enregistrer votre activité dès à présent.",
+		"Veuillez stopper votre activité immédiatement."
+	)); // Liste des messages par défaut dans la boîte de dialogue "Envoyer un message".
 	
 	@Override
 	public final boolean load(final String content) {
 		try {
+			defaultMessages.clear(); // On enlève tous les éléments qui sont déjà dans la liste des messages par défaut.
 			final DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			final Document document = builder.parse(new InputSource(new StringReader(content))); // On parse le contenu XML.
 			final Element root = document.getDocumentElement();
@@ -47,6 +56,14 @@ public class AppSettings implements XMLSettings {
 			final Element thumbnail = (Element)root.getElementsByTagName("thumbnail").item(0);
 			thumbnailHeight = Integer.valueOf(thumbnail.getElementsByTagName("height").item(0).getFirstChild().getNodeValue());
 			thumbnailWidth = Integer.valueOf(thumbnail.getElementsByTagName("width").item(0).getFirstChild().getNodeValue());
+			final NodeList defaultMessages = ((Element)root.getElementsByTagName("default-messages").item(0)).getElementsByTagName("message");
+			for(int i = 0; i != defaultMessages.getLength(); i++) { // On parse chaque élément du noeud <default-messages> qui est <message>.
+				final Node child = defaultMessages.item(i);
+				if(child.getNodeType() != Node.ELEMENT_NODE) {
+					continue;
+				}
+				this.defaultMessages.add(child.getTextContent());
+			}
 			return true;
 		}
 		catch(final Exception ex) {
@@ -79,12 +96,19 @@ public class AppSettings implements XMLSettings {
 			final Node thumbnailWidth = document.createElement("width");
 			thumbnailWidth.appendChild(document.createTextNode(String.valueOf(this.thumbnailWidth)));
 			thumbnail.appendChild(thumbnailWidth);
+			final Node defaultMessages = document.createElement("default-messages");
+			for(final String message : this.defaultMessages) { // On parse chaque message.
+				final Node node = document.createElement("message"); // On créé l'élément <message>.
+				node.appendChild(document.createTextNode(message));
+				defaultMessages.appendChild(node);
+			}
 			root.appendChild(roomDir); // Et on ajoute les différents noeuds au noeud principal.
 			root.appendChild(uuid);
 			root.appendChild(addSample);
 			root.appendChild(refreshInterval);
 			root.appendChild(timeOut);
 			root.appendChild(thumbnail);
+			root.appendChild(defaultMessages);
 			final Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); // On indent le fichier XML (plus joli).
 			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2"); // Deux espaces par noeud.

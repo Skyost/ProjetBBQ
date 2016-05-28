@@ -10,8 +10,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
 import javax.swing.JToolBar;
 
 import fr.isn.bbq.prof.Computer;
@@ -23,7 +21,6 @@ import fr.isn.bbq.prof.utils.Request;
 import fr.isn.bbq.prof.utils.Utils;
 import fr.isn.bbq.prof.utils.Request.RequestType;
 
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -222,10 +219,9 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			
 			@Override
 			public final void actionPerformed(final ActionEvent event) {
-				final Object[] dialogData = Utils.createMessageDialog(ComputerFrame.this);
-				if((boolean)dialogData[0]) { // Cf. Documentation de la fonction Utils.createMessageDialog(...).
-					final Component[] components = (Component[])dialogData[1];
-					createClientDialog(new Request(RequestType.MESSAGE, ((JTextField)components[0]).getText(), String.valueOf(((JSpinner)components[1]).getValue())), ComputerFrame.this, computer);
+				final Object[] data = Utils.createMessageDialog(null);
+				if((boolean)data[0]) {
+					ComputerFrame.createClientDialog(new Request(RequestType.MESSAGE, data[1].toString(), data[2].toString()), ComputerFrame.this, computer);
 				}
 			}
 			

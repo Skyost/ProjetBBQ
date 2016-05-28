@@ -70,8 +70,9 @@ public class AboutFrame extends JFrame implements GithubUpdaterResultListener {
 		builder.append("<html><b>Liste des contributeurs :</b> ");
 		builder.append("Thibault Dolley, ");
 		builder.append("Bastien Lesachey, ");
-		builder.append("Hugo Delaunay et ");
-		builder.append("Hugo Meslin.</html>");
+		builder.append("Hugo Delaunay, ");
+		builder.append("Hugo Meslin et ");
+		builder.append("M. Dacié.</html>");
 		
 		final JLabel lblContributors = new JLabel(builder.toString()); // Permet d'afficher les contributeurs.
 		
