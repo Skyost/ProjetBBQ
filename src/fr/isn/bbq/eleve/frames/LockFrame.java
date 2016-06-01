@@ -1,6 +1,5 @@
 package fr.isn.bbq.eleve.frames;
 
-import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -47,7 +46,7 @@ public class LockFrame extends JFrame {
 	
 	public LockFrame(final BufferedImage screenshot) {
 		this.setTitle("Locked"); // Titre par défaut de la fenêtre (invisible)
-		this.setIconImage(Toolkit.getDefaultToolkit().getImage(ProjetBBQEleve.class.getResource("/fr/isn/bbq/eleve/res/app_icon.png"))); // Icône invisible également.
+		this.setIconImages(ProjetBBQEleve.icons); // Icône invisible également.
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // On refuse de la fermer.
 		this.setLocationRelativeTo(null); // On la centre.
 		this.setAlwaysOnTop(true); // On lui indique de rester au dessus des autres fenêtres.

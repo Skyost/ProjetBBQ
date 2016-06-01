@@ -10,6 +10,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.net.ssl.SSLServerSocket;
@@ -23,13 +24,18 @@ import fr.isn.bbq.eleve.utils.Utils;
 public class ProjetBBQEleve {
 	
 	/*
-	* Variables globales du projet.
+	* Constantes globales du projet :
 	*/
 	
 	public static final String APP_NAME = "Projet BBQ";
 	public static final String APP_VERSION = "0.1.2";
 	
+	/*
+	 * Certaines variables comme les paramètres, la liste d'icônes (16, 32, 64, 128, 256, 512) :
+	 */
+	
 	public static AppSettings settings;
+	public static final List<Image> icons = new ArrayList<Image>();
 	
 	/**
 	* Première méthode exécutée par le programme.
@@ -43,14 +49,15 @@ public class ProjetBBQEleve {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); // Le style par défaut de l'application.
 			final File settings = new File(Utils.getParentFolder(), "settings.xml"); // Le fichier de paramètres XML.
 			ProjetBBQEleve.settings = new AppSettings();
-			if(!settings.exists()) { // Si il n'existe pas, on le créé et on applique des paramètres par défaut puis on quitte le programme.
+			if(settings.exists()) { // Si les paramètres existent, on les charge.
+				ProjetBBQEleve.settings.load(settings);
+			}
+			else { // Sinon on le créé et on applique des paramètres par défaut puis on quitte le programme.
 				ProjetBBQEleve.settings.write(settings);
 				JOptionPane.showMessageDialog(null, "<html>Les paramètres XML ont été enregistré ici :<br>" + settings.getPath() + "<br>Veuillez les modifier avant de démarrer l'application.</html>");
 				System.exit(0);
 			}
-			else { // Sinon on le charge.
-				ProjetBBQEleve.settings.load(settings);
-			}
+			loadIcons();
 			if(ProjetBBQEleve.settings.showTrayIcon) {
 				createTrayIcon();
 			}
@@ -120,9 +127,25 @@ public class ProjetBBQEleve {
 		if(!SystemTray.isSupported()) {
 			return;
 		}
-		final TrayIcon icon = new TrayIcon(Toolkit.getDefaultToolkit().getImage(ProjetBBQEleve.class.getResource("/fr/isn/bbq/eleve/res/app_icon.png")).getScaledInstance(16, 16, Image.SCALE_SMOOTH), APP_NAME + " v" + APP_VERSION + " - Activé");
+		final TrayIcon icon = new TrayIcon(icons.get(0), APP_NAME + " v" + APP_VERSION + " - Activé");
 		icon.setImageAutoSize(true);
 		SystemTray.getSystemTray().add(icon);
+	}
+	
+	/**
+	 * Chargement des icônes.
+	 */
+	
+	private static final void loadIcons() {
+		final Image icon = Toolkit.getDefaultToolkit().getImage(ProjetBBQEleve.class.getResource("/fr/isn/bbq/eleve/res/app_icon.png"));
+		icons.addAll(Arrays.asList(
+			icon.getScaledInstance(16, 16, Image.SCALE_SMOOTH),
+			icon.getScaledInstance(32, 32, Image.SCALE_SMOOTH),
+			icon.getScaledInstance(64, 64, Image.SCALE_SMOOTH),
+			icon.getScaledInstance(128, 128, Image.SCALE_SMOOTH),
+			icon.getScaledInstance(256, 256, Image.SCALE_SMOOTH),
+			icon/*.getScaledInstance(512, 512, Image.SCALE_SMOOTH) // L'icône est déjà en 512x512 */
+		));
 	}
 	
 }

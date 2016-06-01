@@ -32,7 +32,7 @@ import fr.isn.bbq.eleve.utils.XMLSettings;
 
 public class AppSettings extends XMLSettings {
 	
-	private static final String[] TAGS = new String[]{ // En cas de mise à jour de la configuration, il faut penser à ajouter la balise ici :
+	private static final String[] TAGS = new String[]{ // En cas de mise à jour de la configuration, il faut penser à ajouter la balise ici (en plus du reste) :
 		"configuration",	// TAGS[0]
 		"ip",				// TAGS[1]
 		"backlog",			// TAGS[2]
@@ -63,6 +63,7 @@ public class AppSettings extends XMLSettings {
 	public final boolean load(final File file) {
 		try {
 			boolean result = true;
+			
 			uuids.clear(); // On enlève tous les éléments qui sont déjà dans la liste des uuids.
 			final DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			final Document document = builder.parse(new InputSource(new StringReader(new String(Files.readAllBytes(file.toPath()))))); // On parse le contenu XML.
@@ -127,7 +128,7 @@ public class AppSettings extends XMLSettings {
 			if(elementContains(root, TAGS[9])) {
 				final Element thumbnail = (Element)root.getElementsByTagName(TAGS[9]).item(0);
 				
-				if(!elementContains(thumbnail, TAGS[10]) || !elementContains(thumbnail, TAGS[11])) {
+				if(elementContains(thumbnail, TAGS[10]) && elementContains(thumbnail, TAGS[11])) {
 					thumbnailHeight = Integer.valueOf(thumbnail.getElementsByTagName(TAGS[10]).item(0).getFirstChild().getNodeValue());
 					thumbnailWidth = Integer.valueOf(thumbnail.getElementsByTagName(TAGS[11]).item(0).getFirstChild().getNodeValue());
 				}

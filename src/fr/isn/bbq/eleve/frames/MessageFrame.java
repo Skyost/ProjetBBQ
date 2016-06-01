@@ -2,7 +2,6 @@ package fr.isn.bbq.eleve.frames;
 
 import java.awt.Container;
 import java.awt.Font;
-import java.awt.Toolkit;
 
 import javax.swing.JDialog;
 
@@ -37,7 +36,7 @@ public class MessageFrame extends JDialog {
 	
 	public MessageFrame(final String message, final int time) {
 		this.setTitle("Message reçu !"); // Le titre de la fenêtre.
-		this.setIconImage(Toolkit.getDefaultToolkit().getImage(ProjetBBQEleve.class.getResource("/fr/isn/bbq/eleve/res/app_icon.png"))); // Icône de la fenêtre.
+		this.setIconImages(ProjetBBQEleve.icons); // Icône de la fenêtre.
 		this.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE); // Impossibilité de la fermer avant la fin du compte à rebours.
 		this.setLocationRelativeTo(null); // Méthode pour centrer la fenêtre.
 		this.setAlwaysOnTop(true); // Permet de la mettre au dessus de toutes les autres fenêtres.
