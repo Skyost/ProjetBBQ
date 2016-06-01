@@ -1,5 +1,7 @@
 package fr.isn.bbq.prof.tasks;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.InetSocketAddress;
@@ -109,7 +111,7 @@ public class Client extends Thread {
 							}
 							System.out.println("Connexion réussie à " + client.getRemoteSocketAddress() + ".");
 							System.out.println("Envoi de la requête \"" + request + "\"...");
-							final DataOutputStream output = new DataOutputStream(client.getOutputStream());
+							final DataOutputStream output = new DataOutputStream(new BufferedOutputStream(client.getOutputStream()));
 							output.writeUTF(request.toString()); // On prépare l'envoi.
 							output.flush(); // On envoie la requête.
 							if(!running) { // Si le client n'est plus en fonctionnement, on interrompt tout.
@@ -117,7 +119,7 @@ public class Client extends Thread {
 								client.close();
 								return;
 							}
-							final DataInputStream input = new DataInputStream(client.getInputStream());
+							final DataInputStream input = new DataInputStream(new BufferedInputStream(client.getInputStream()));
 							final String response = input.readUTF(); // On récupère le contenu de la réponse.
 							System.out.println("Réponse du server \"" + response + "\"."); // in.readUTF() permet d'obtenir la réponse du serveur.
 							if(running) { // Si le client n'est plus en fonctionnement, on interrompt tout.
@@ -146,7 +148,7 @@ public class Client extends Thread {
 									switch(request.getType()) { // En fonction de ce que l'on a demandé on execute ou non une action.
 									case THUMBNAIL:
 									case FULL_SCREENSHOT:
-										parent.onSuccess(computer, parts[1], Long.valueOf(parts[3]), message, ImageIO.read(client.getInputStream()));
+										parent.onSuccess(computer, parts[1], Long.valueOf(parts[3]), message, ImageIO.read(input));
 										break;
 									default:
 										parent.onSuccess(computer, parts[1], Long.valueOf(parts[3]), message);
