@@ -6,8 +6,6 @@ import java.nio.file.Files;
 
 import org.w3c.dom.Element;
 
-import fr.isn.bbq.eleve.ProjetBBQEleve;
-
 /**
  * Création de fichiers en XML.
  * <br/>Utilisé pour les salles, les paramètres de l'application, ...
@@ -43,7 +41,7 @@ public abstract class XMLSettings {
 	 */
 	
 	public final void write(final File file) throws IOException {
-		Files.write(file.toPath(), ProjetBBQEleve.settings.toXML().getBytes());
+		Files.write(file.toPath(), toXML().getBytes());
 	}
 	
 	/**
