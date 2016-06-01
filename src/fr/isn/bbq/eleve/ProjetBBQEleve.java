@@ -9,7 +9,6 @@ import java.io.File;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,17 +40,19 @@ public class ProjetBBQEleve {
 	public static final void main(final String[] args) {
 		SSLServerSocket server = null;
 		try {
-			createTrayIcon();
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); // Le style par défaut de l'application.
 			final File settings = new File(Utils.getParentFolder(), "settings.xml"); // Le fichier de paramètres XML.
 			ProjetBBQEleve.settings = new AppSettings();
 			if(!settings.exists()) { // Si il n'existe pas, on le créé et on applique des paramètres par défaut puis on quitte le programme.
-				Files.write(settings.toPath(), ProjetBBQEleve.settings.toXML().getBytes());
+				ProjetBBQEleve.settings.write(settings);
 				JOptionPane.showMessageDialog(null, "<html>Les paramètres XML ont été enregistré ici :<br>" + settings.getPath() + "<br>Veuillez les modifier avant de démarrer l'application.</html>");
 				System.exit(0);
 			}
 			else { // Sinon on le charge.
-				ProjetBBQEleve.settings.load(new String(Files.readAllBytes(settings.toPath())));
+				ProjetBBQEleve.settings.load(settings);
+			}
+			if(ProjetBBQEleve.settings.showTrayIcon) {
+				createTrayIcon();
 			}
 			server = (SSLServerSocket)SSLServerSocketFactory.getDefault().createServerSocket(ProjetBBQEleve.settings.port, ProjetBBQEleve.settings.backlog, InetAddress.getByName(ProjetBBQEleve.settings.ip)); // On créé le serveur en fonction des paramètres XML.
 			server.setSoTimeout(ProjetBBQEleve.settings.timeOut * 1000); // Et on change le timeout.
