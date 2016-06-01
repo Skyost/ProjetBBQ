@@ -1,5 +1,10 @@
 package fr.isn.bbq.eleve;
 
+import java.awt.AWTException;
+import java.awt.Image;
+import java.awt.SystemTray;
+import java.awt.Toolkit;
+import java.awt.TrayIcon;
 import java.io.File;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -36,6 +41,7 @@ public class ProjetBBQEleve {
 	public static final void main(final String[] args) {
 		SSLServerSocket server = null;
 		try {
+			createTrayIcon();
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); // Le style par défaut de l'application.
 			final File settings = new File(Utils.getParentFolder(), "settings.xml"); // Le fichier de paramètres XML.
 			ProjetBBQEleve.settings = new AppSettings();
@@ -101,6 +107,21 @@ public class ProjetBBQEleve {
 			suites.add(suite);
 		}
 		return suites.toArray(new String[suites.size()]);
+	}
+	
+	/**
+	 * Permet de créer une icône dans la barre d'outils.
+	 * 
+	 * @throws AWTException Si une exception se produit.
+	 */
+	
+	private static final void createTrayIcon() throws AWTException {
+		if(!SystemTray.isSupported()) {
+			return;
+		}
+		final TrayIcon icon = new TrayIcon(Toolkit.getDefaultToolkit().getImage(ProjetBBQEleve.class.getResource("/fr/isn/bbq/eleve/res/app_icon.png")).getScaledInstance(16, 16, Image.SCALE_SMOOTH), APP_NAME + " v" + APP_VERSION + " - Activé");
+		icon.setImageAutoSize(true);
+		SystemTray.getSystemTray().add(icon);
 	}
 	
 }
