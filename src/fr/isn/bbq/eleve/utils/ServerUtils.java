@@ -2,7 +2,6 @@ package fr.isn.bbq.eleve.utils;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.Socket;
 
 import fr.isn.bbq.eleve.tasks.HandleClient;
@@ -14,25 +13,12 @@ public class ServerUtils {
 	 * 
 	 * @param client Le client.
 	 * @param message Le message.
-	 * 
-	 * @throws IOException Si un exception se produit.
-	 */
-	
-	public static final void sendMessage(final Socket client, final String message) throws IOException {
-		sendMessage(client, message, client.getOutputStream());
-	}
-	
-	/**
-	 * Envoi d'un message à un client.
-	 * 
-	 * @param client Le client.
-	 * @param message Le message.
 	 * @param output L'OutputStream utilisé pour envoyer le message.
 	 * 
 	 * @throws IOException Si un exception se produit.
 	 */
 	
-	public static final void sendMessage(final Socket client, final String message, final OutputStream output) throws IOException {
+	public static final void sendMessage(final Socket client, final String message, final DataOutputStream output) throws IOException {
 		sendMessage(client, message, output, true);
 	}
 	
@@ -47,16 +33,13 @@ public class ServerUtils {
 	 * @throws IOException Si un exception se produit.
 	 */
 	
-	public static final void sendMessage(final Socket client, final String message, final OutputStream output, final boolean close) throws IOException {
+	public static final void sendMessage(final Socket client, final String message, final DataOutputStream output, final boolean close) throws IOException {
 		System.out.println("Envoi de la réponse...");
 		System.out.println(message);
-		final DataOutputStream dataOutput = new DataOutputStream(output);
-		dataOutput.writeUTF(message); // On prépare l'envoi.
+		output.writeUTF(message); // On prépare l'envoi.
+		output.flush(); // On envoie le message.
 		if(close) {
-			client.close(); // On ferme la connexion avec le client si demandé.
-		}
-		else {
-			dataOutput.flush(); // Sinon, on envoie manuellement le message.
+			client.close();
 		}
 	}
 	

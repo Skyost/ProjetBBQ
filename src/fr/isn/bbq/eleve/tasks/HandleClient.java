@@ -7,8 +7,10 @@ import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
-import java.io.OutputStream;
+import java.io.DataOutputStream;
 import java.net.Socket;
 import java.util.Arrays;
 
@@ -40,6 +42,10 @@ public class HandleClient extends Thread {
 	
 	private final Socket client;
 	
+	/**
+	 * L'écran de verrouillage.
+	 */
+	
 	private static LockFrame lockFrame = null;
 	
 	/**
@@ -56,39 +62,39 @@ public class HandleClient extends Thread {
 	public final void run() {
 		try {
 			System.out.println("Connecté à " + client.getRemoteSocketAddress() + ".");
-			final DataInputStream input = new DataInputStream(client.getInputStream());
+			final DataInputStream input = new DataInputStream(new BufferedInputStream(client.getInputStream()));
 			final String message = input.readUTF(); // On récupère le contenu de la requête.
 			System.out.println("Message reçu : \"" + message + "\".");
+			final DataOutputStream output = new DataOutputStream(new BufferedOutputStream(client.getOutputStream())); // Pour renvoyer des messages au client.
 			final String[] parts = message.split(" "); // On sépare la requête à l'espace.
 			if(parts.length < 2) { // Il faut qu'il y ai au moins deux arguments (l'index et l'UUID).
-				ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "Message invalide (doit être de type \"<index> <uuid> <version> <arguments>\")."));
+				ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "Message invalide (doit être de type \"<index> <uuid> <version> <arguments>\")."), output);
 				return;
 			}
 			if(Utils.isNumeric(parts[2])) { // Si le protocole est bien un nombre, on le vérifie.
 				final int version = Integer.parseInt(parts[2]);
 				if(PROTOCOL_VERSION < version) { // Si la version du protocole de l'élève est inférieure à celle du prof, on renvoie une erreur.
-					ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "Ce logiciel serveur est trop ancien pour communiquer avec votre client."));
+					ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "Ce logiciel serveur est trop ancien pour communiquer avec votre client."), output);
 					return;
 				}
 				else if(PROTOCOL_VERSION > version) { // Et si la version du protocole de l'élève est supérieure à celle du prof, on en renvoie une autre.
-					ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "Votre logiciel client est trop ancien pour communiquer avec ce serveur."));
+					ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "Votre logiciel client est trop ancien pour communiquer avec ce serveur."), output);
 					return;
 				}
 			}
 			else { // Sinon on renvoie une erreur.
-				ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "Version du protocole invalide."));
+				ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "Version du protocole invalide."), output);
 				return;
 			}
 			RequestType type = null;
 			if(!Utils.isNumeric(parts[0]) || (type = RequestType.getFromIndex(Integer.valueOf(parts[0]))) == null) { // Si l'index n'est pas numérique ou est invalide, on renvoie une erreur.
-				ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "L'index est invalide."));
+				ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "L'index est invalide."), output);
 				return;
 			}
 			if(!ProjetBBQEleve.settings.uuids.contains(parts[1])) { // Si l'UUID n'est pas dans la liste, on renvoie une erreur.
-				ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "Non autorisé."));
+				ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "Non autorisé."), output);
 				return;
 			}
-			final OutputStream output = client.getOutputStream(); // Pour renvoyer des messages au client.
 			switch(type) {
 			case THUMBNAIL:
 				/* Méthode permettant de redimensionner une image. */
@@ -142,7 +148,7 @@ public class HandleClient extends Thread {
 				break;
 			}
 			System.out.println("Fermeture de la connexion avec le client...");
-			client.close(); // On ferme la connexion au client.
+			client.close(); // On ferme la connexion avec le client.
 			System.out.println();
 		}
 		catch(final Exception ex) {
