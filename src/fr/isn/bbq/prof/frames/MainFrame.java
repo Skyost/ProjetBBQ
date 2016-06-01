@@ -2,7 +2,6 @@ package fr.isn.bbq.prof.frames;
 
 import java.io.File;
 import java.net.URL;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +31,6 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Desktop;
 import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -74,7 +72,7 @@ public class MainFrame extends JFrame {
 	
 	public MainFrame() {
 		this.setTitle(buildTitle(null));
-		this.setIconImage(Toolkit.getDefaultToolkit().getImage(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/app_icon.png")));
+		this.setIconImages(ProjetBBQProf.icons);
 		this.setSize(600, 400); // Par défaut, une taille de 600x400.
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLocationRelativeTo(null);
@@ -126,8 +124,8 @@ public class MainFrame extends JFrame {
 					continue;
 				}
 				final Room room = new Room(); // On créé une salle de classe "blanche".
-				if(!room.load(new String(Files.readAllBytes(roomFile.toPath())))) { // On tente de la charger.
-					throw new IllegalArgumentException("Le fichier \"" + roomFile.getName() + "\" est invalide !"); // Si cela échoue, on déclenche une erreur.
+				if(!room.load(roomFile)) { // On tente de la charger.
+					throw new IllegalArgumentException("<html>Le fichier \"" + roomFile.getName() + "\" est invalide ! Le logiciel a tenté de corriger les erreurs. Veuillez tenter de recharger le fichier.<br>Si cela échoue, veuillez consulter l'aide en ligne avant de ré-éditer le ficher.</html>"); // Si cela échoue, on déclenche une erreur.
 				}
 				rooms.add(room); // Et on ajoute la classe chargée dans la liste des salles de classe.
 			}

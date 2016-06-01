@@ -1,8 +1,10 @@
 package fr.isn.bbq.prof;
 
+import java.io.File;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,7 +29,21 @@ import fr.isn.bbq.prof.utils.XMLSettings;
  * Représente les paramètres de configuration de l'application.
  */
 
-public class AppSettings implements XMLSettings {
+public class AppSettings extends XMLSettings {
+	
+	private static final String[] TAGS = new String[]{ // En cas de mise à jour de la configuration, il faut penser à ajouter la balise ici (en plus du reste) :
+		"configuration",	// TAGS[0]
+		"room-directory",	// TAGS[1]
+		"uuid",				// TAGS[2]
+		"add-sample",		// TAGS[3]
+		"refresh-interval",	// TAGS[4]
+		"time-out",			// TAGS[5]
+		"thumbnail",		// TAGS[6]
+		"height",			// TAGS[7]
+		"width",			// TAGS[8]
+		"default-messages",	// TAGS[9]
+		"message",			// TAGS[10]
+	};
 	
 	public String roomDir = "Salles"; // Le répertoire des salles.
 	public String uuid; // L'UUID dont le logiciel a besoin pour se connecter aux postes.
@@ -42,29 +58,83 @@ public class AppSettings implements XMLSettings {
 	)); // Liste des messages par défaut dans la boîte de dialogue "Envoyer un message".
 	
 	@Override
-	public final boolean load(final String content) {
+	public final boolean load(final File file) {
 		try {
+			boolean result = true;
+			
 			defaultMessages.clear(); // On enlève tous les éléments qui sont déjà dans la liste des messages par défaut.
 			final DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			final Document document = builder.parse(new InputSource(new StringReader(content))); // On parse le contenu XML.
+			final Document document = builder.parse(new InputSource(new StringReader(new String(Files.readAllBytes(file.toPath()))))); // On parse le contenu XML.
 			final Element root = document.getDocumentElement();
-			roomDir = root.getElementsByTagName("room-directory").item(0).getFirstChild().getNodeValue(); // Le premier enfant du premier élément <room-directory>.
-			uuid = root.getElementsByTagName("uuid").item(0).getFirstChild().getNodeValue();
-			addSample = Boolean.valueOf(root.getElementsByTagName("add-sample").item(0).getFirstChild().getNodeValue());
-			refreshInterval = Integer.valueOf(root.getElementsByTagName("refresh-interval").item(0).getFirstChild().getNodeValue());
-			timeOut = Integer.valueOf(root.getElementsByTagName("time-out").item(0).getFirstChild().getNodeValue());
-			final Element thumbnail = (Element)root.getElementsByTagName("thumbnail").item(0);
-			thumbnailHeight = Integer.valueOf(thumbnail.getElementsByTagName("height").item(0).getFirstChild().getNodeValue());
-			thumbnailWidth = Integer.valueOf(thumbnail.getElementsByTagName("width").item(0).getFirstChild().getNodeValue());
-			final NodeList defaultMessages = ((Element)root.getElementsByTagName("default-messages").item(0)).getElementsByTagName("message");
-			for(int i = 0; i != defaultMessages.getLength(); i++) { // On parse chaque élément du noeud <default-messages> qui est <message>.
-				final Node child = defaultMessages.item(i);
-				if(child.getNodeType() != Node.ELEMENT_NODE) {
-					continue;
-				}
-				this.defaultMessages.add(child.getTextContent());
+			
+			if(elementContains(root, TAGS[1])) {
+				roomDir = root.getElementsByTagName(TAGS[1]).item(0).getFirstChild().getNodeValue(); // Le premier enfant du premier élément <room-directory>.
 			}
-			return true;
+			else {
+				result = false;
+			}
+			
+			if(elementContains(root, TAGS[2])) {
+				uuid = root.getElementsByTagName(TAGS[2]).item(0).getFirstChild().getNodeValue();
+			}
+			else {
+				result = false;
+			}
+			
+			if(elementContains(root, TAGS[3])) {
+				addSample = Boolean.valueOf(root.getElementsByTagName(TAGS[3]).item(0).getFirstChild().getNodeValue());
+			}
+			else {
+				result = false;
+			}
+			
+			if(elementContains(root, TAGS[4])) {
+				refreshInterval = Integer.valueOf(root.getElementsByTagName(TAGS[4]).item(0).getFirstChild().getNodeValue());
+			}
+			else {
+				result = false;
+			}
+			
+			if(elementContains(root, TAGS[5])) {
+				timeOut = Integer.valueOf(root.getElementsByTagName(TAGS[5]).item(0).getFirstChild().getNodeValue());
+			}
+			else {
+				result = false;
+			}
+			
+			if(elementContains(root, TAGS[6])) {
+				final Element thumbnail = (Element)root.getElementsByTagName(TAGS[6]).item(0);
+				
+				if(elementContains(thumbnail, TAGS[7]) && elementContains(thumbnail, TAGS[8])) {
+					thumbnailHeight = Integer.valueOf(thumbnail.getElementsByTagName(TAGS[7]).item(0).getFirstChild().getNodeValue());
+					thumbnailWidth = Integer.valueOf(thumbnail.getElementsByTagName(TAGS[8]).item(0).getFirstChild().getNodeValue());
+				}
+				else {
+					result = false;
+				}
+			}
+			else {
+				result = false;
+			}
+			
+			if(elementContains(root, TAGS[9])) {
+				final NodeList defaultMessages = ((Element)root.getElementsByTagName(TAGS[9]).item(0)).getElementsByTagName(TAGS[10]);
+				for(int i = 0; i != defaultMessages.getLength(); i++) { // On parse chaque élément du noeud <default-messages> qui est <message>.
+					final Node child = defaultMessages.item(i);
+					if(child.getNodeType() != Node.ELEMENT_NODE) {
+						continue;
+					}
+					this.defaultMessages.add(child.getTextContent());
+				}
+			}
+			else {
+				result = false;
+			}
+			
+			if(!result) {
+				super.write(file);
+			}
+			return result;
 		}
 		catch(final Exception ex) {
 			ex.printStackTrace();
@@ -77,28 +147,28 @@ public class AppSettings implements XMLSettings {
 		try {
 			final DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			final Document document = builder.newDocument();
-			final Element root = document.createElement("configuration"); // On créé le noeud principal du fichier XML.
+			final Element root = document.createElement(TAGS[0]); // On créé le noeud principal du fichier XML.
 			document.appendChild(root); // On l'ajoute.
-			final Node roomDir = document.createElement("room-directory");
+			final Node roomDir = document.createElement(TAGS[1]);
 			roomDir.appendChild(document.createTextNode(this.roomDir));
-			final Node uuid = document.createElement("uuid");
+			final Node uuid = document.createElement(TAGS[2]);
 			uuid.appendChild(document.createTextNode(this.uuid));
-			final Node addSample = document.createElement("add-sample");
+			final Node addSample = document.createElement(TAGS[3]);
 			addSample.appendChild(document.createTextNode(String.valueOf(this.addSample)));
-			final Node refreshInterval = document.createElement("refresh-interval");
+			final Node refreshInterval = document.createElement(TAGS[4]);
 			refreshInterval.appendChild(document.createTextNode(String.valueOf(this.refreshInterval)));
-			final Node timeOut = document.createElement("time-out");
+			final Node timeOut = document.createElement(TAGS[5]);
 			timeOut.appendChild(document.createTextNode(String.valueOf(this.timeOut)));
-			final Node thumbnail = document.createElement("thumbnail");
-			final Node thumbnailHeight = document.createElement("height");
+			final Node thumbnail = document.createElement(TAGS[6]);
+			final Node thumbnailHeight = document.createElement(TAGS[7]);
 			thumbnailHeight.appendChild(document.createTextNode(String.valueOf(this.thumbnailHeight)));
 			thumbnail.appendChild(thumbnailHeight);
-			final Node thumbnailWidth = document.createElement("width");
+			final Node thumbnailWidth = document.createElement(TAGS[8]);
 			thumbnailWidth.appendChild(document.createTextNode(String.valueOf(this.thumbnailWidth)));
 			thumbnail.appendChild(thumbnailWidth);
-			final Node defaultMessages = document.createElement("default-messages");
+			final Node defaultMessages = document.createElement(TAGS[9]);
 			for(final String message : this.defaultMessages) { // On parse chaque message.
-				final Node node = document.createElement("message"); // On créé l'élément <message>.
+				final Node node = document.createElement(TAGS[10]); // On créé l'élément <message>.
 				node.appendChild(document.createTextNode(message));
 				defaultMessages.appendChild(node);
 			}

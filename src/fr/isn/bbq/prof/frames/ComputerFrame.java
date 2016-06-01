@@ -25,7 +25,6 @@ import java.awt.Container;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.Toolkit;
 
 import javax.swing.JLabel;
 
@@ -86,7 +85,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 	public ComputerFrame(final Computer computer) {
 		this.computer = computer;
 		this.setTitle(buildTitle(null));
-		this.setIconImage(Toolkit.getDefaultToolkit().getImage(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/app_icon.png")));
+		this.setIconImages(ProjetBBQProf.icons);
 		this.setSize(600, 400); // Par défaut, une taille de 600x400.
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setLocationRelativeTo(null);

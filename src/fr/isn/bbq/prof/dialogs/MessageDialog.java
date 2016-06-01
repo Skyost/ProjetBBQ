@@ -8,6 +8,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
+import fr.isn.bbq.prof.ProjetBBQProf;
+
 /**
  * Permet d'afficher un message.
  */
@@ -32,6 +34,7 @@ public class MessageDialog extends JDialog {
 	
 	public MessageDialog(final JFrame parent, final String title, final String message) {
 		this.setTitle(title);
+		this.setIconImages(ProjetBBQProf.icons);
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.setLocationRelativeTo(parent);
 		this.setAlwaysOnTop(true);

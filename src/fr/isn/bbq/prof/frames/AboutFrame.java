@@ -12,7 +12,6 @@ import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.URL;
@@ -44,7 +43,7 @@ public class AboutFrame extends JFrame implements GithubUpdaterResultListener {
 	
 	public AboutFrame() {
 		this.setTitle("À propos...");
-		this.setIconImage(Toolkit.getDefaultToolkit().getImage(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/app_icon.png")));
+		this.setIconImages(ProjetBBQProf.icons);
 		this.setSize(600, 500); // Par défaut, une taille de 600x500.
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setLocationRelativeTo(null);
