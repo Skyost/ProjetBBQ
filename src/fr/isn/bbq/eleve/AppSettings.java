@@ -63,7 +63,6 @@ public class AppSettings extends XMLSettings {
 	public final XMLError load(final File file) {
 		final XMLError result = new XMLError();
 		try {
-			uuids.clear(); // On enlève tous les éléments qui sont déjà dans la liste des uuids.
 			final DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			final Document document = builder.parse(new InputSource(new StringReader(new String(Files.readAllBytes(file.toPath()))))); // On parse le contenu XML.
 			final Element root = document.getDocumentElement();
@@ -109,6 +108,7 @@ public class AppSettings extends XMLSettings {
 			}
 			
 			if(elementContains(root, TAGS[6])) {
+				uuids.clear(); // On enlève tous les éléments qui sont déjà dans la liste des uuids.
 				final NodeList uuids = ((Element)root.getElementsByTagName(TAGS[6]).item(0)).getElementsByTagName(TAGS[7]);
 				for(int i = 0; i != uuids.getLength(); i++) { // On parse chaque élément du noeud <uuids> qui est <uuid>.
 					final Node child = uuids.item(i);
