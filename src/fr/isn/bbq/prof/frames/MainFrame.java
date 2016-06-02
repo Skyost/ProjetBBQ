@@ -13,6 +13,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+
 import fr.isn.bbq.prof.Computer;
 import fr.isn.bbq.prof.ProjetBBQProf;
 import fr.isn.bbq.prof.Room;
@@ -22,11 +23,13 @@ import fr.isn.bbq.prof.utils.Request;
 import fr.isn.bbq.prof.utils.StatusBar;
 import fr.isn.bbq.prof.utils.Utils;
 import fr.isn.bbq.prof.utils.Request.RequestType;
+import fr.isn.bbq.prof.utils.XMLSettings.XMLError;
 
 import javax.swing.JTabbedPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Desktop;
@@ -124,15 +127,16 @@ public class MainFrame extends JFrame {
 					continue;
 				}
 				final Room room = new Room(); // On créé une salle de classe "blanche".
-				if(!room.load(roomFile)) { // On tente de la charger.
-					throw new IllegalArgumentException("<html>Le fichier \"" + roomFile.getName() + "\" est invalide ! Le logiciel a tenté de corriger les erreurs. Veuillez tenter de recharger le fichier.<br>Si cela échoue, veuillez consulter l'aide en ligne avant de ré-éditer le ficher.</html>"); // Si cela échoue, on déclenche une erreur.
+				final XMLError result = room.load(roomFile); // On tente de la charger.
+				if(result.getInvalidParameters().length != 0) {
+					throw new IllegalArgumentException("<html>Le fichier \"" + roomFile.getName() + "\" est invalide ! Le logiciel a tenté de corriger les erreurs. Veuillez tenter de recharger le fichier.<br>Si cela échoue, veuillez consulter l'aide en ligne avant de ré-éditer le ficher.<br>Paramètres invalides : " + Utils.join(", ", result.getInvalidParameters()) + "</html>"); // Si cela échoue, on déclenche une erreur.
 				}
 				rooms.add(room); // Et on ajoute la classe chargée dans la liste des salles de classe.
 			}
 			catch(final Exception ex) {
 				message.dispose();
 				ex.printStackTrace();
-				JOptionPane.showMessageDialog(MainFrame.this, "Le fichier \"" + roomFile.getName() + "\" n'est pas un fichier XML valide. Veuillez consulter l'aide en ligne.", "Erreur !", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(MainFrame.this, ex.getMessage(), "Erreur !", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		if(rooms.size() == 0) { // Si il n'y a pas de salles de classe chargées, on affiche un message d'erreur.

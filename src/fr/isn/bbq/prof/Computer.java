@@ -22,13 +22,13 @@ public class Computer {
 	 * Le port de cet ordinateur (pour s'y connecter).
 	 */
 	
-	public int port;
+	public Integer port;
 	
 	public Computer() {
-		this(null, null, -1);
+		this(null, null, null);
 	}
 	
-	public Computer(final String name, final String ip, final int port) {
+	public Computer(final String name, final String ip, final Integer port) {
 		this.name = name;
 		this.ip = ip;
 		this.port = port;

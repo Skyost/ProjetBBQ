@@ -16,6 +16,7 @@ import com.jtattoo.plaf.smart.SmartLookAndFeel;
 
 import fr.isn.bbq.prof.frames.MainFrame;
 import fr.isn.bbq.prof.utils.Utils;
+import fr.isn.bbq.prof.utils.XMLSettings.XMLError;
 
 public class ProjetBBQProf {
 	
@@ -48,7 +49,10 @@ public class ProjetBBQProf {
 			final File settings = new File(Utils.getParentFolder(), "settings.xml"); // Le fichier de paramètres XML.
 			ProjetBBQProf.settings = new AppSettings();
 			if(settings.exists()) { // Si les paramètres existent, on les charge.
-				ProjetBBQProf.settings.load(settings);
+				final XMLError result = ProjetBBQProf.settings.load(settings);
+				if(result.getInvalidParameters().length > 0) {
+					throw new IllegalArgumentException("Paramètres invalides : " + Utils.join(", ", result.getInvalidParameters()) + ". Le logiciel a tenté de les corriger, veuillez relancer l'application.<br>Si cela ne fonctionne pas, consultez l'aide en ligne avant de ré-éditer la configuration.");
+				}
 			}
 			else { // Sinon on le créé et on applique des paramètres par défaut.
 				ProjetBBQProf.settings.roomDir = new File(Utils.getParentFolder(), "Salles").getPath();
@@ -81,7 +85,7 @@ public class ProjetBBQProf {
 		}
 		catch(final Exception ex) {
 			ex.printStackTrace();
-			JOptionPane.showMessageDialog(null, ex.getClass().getName(), "Erreur durant le démarrage ! Peut-être que la configuration est invalide, veuillez consulter l'aide en ligne.", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "<html>Erreur durant le démarrage ! Peut-être que la configuration est invalide, veuillez consulter l'aide en ligne.<br>" + ex.getMessage() + "</html>", ex.getClass().getName(), JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	

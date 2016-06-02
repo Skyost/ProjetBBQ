@@ -58,63 +58,69 @@ public class AppSettings extends XMLSettings {
 	)); // Liste des messages par défaut dans la boîte de dialogue "Envoyer un message".
 	
 	@Override
-	public final boolean load(final File file) {
+	public final XMLError load(final File file) {
+		final XMLError result = new XMLError();
 		try {
-			boolean result = true;
-			
 			defaultMessages.clear(); // On enlève tous les éléments qui sont déjà dans la liste des messages par défaut.
 			final DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			final Document document = builder.parse(new InputSource(new StringReader(new String(Files.readAllBytes(file.toPath()))))); // On parse le contenu XML.
 			final Element root = document.getDocumentElement();
 			
-			if(elementContains(root, TAGS[1])) {
-				roomDir = root.getElementsByTagName(TAGS[1]).item(0).getFirstChild().getNodeValue(); // Le premier enfant du premier élément <room-directory>.
+			final String roomDir = getObject(root, TAGS[1], String.class); // On récupère le paramètre.
+			if(roomDir == null) {
+				result.addInvalidParameters(TAGS[1]);
 			}
 			else {
-				result = false;
+				this.roomDir = roomDir;
 			}
 			
-			if(elementContains(root, TAGS[2])) {
-				uuid = root.getElementsByTagName(TAGS[2]).item(0).getFirstChild().getNodeValue();
+			final String uuid = getObject(root, TAGS[2], String.class);
+			if(uuid == null) {
+				result.addInvalidParameters(TAGS[2]);
 			}
 			else {
-				result = false;
+				this.uuid = uuid;
 			}
 			
-			if(elementContains(root, TAGS[3])) {
-				addSample = Boolean.valueOf(root.getElementsByTagName(TAGS[3]).item(0).getFirstChild().getNodeValue());
+			final Boolean addSample = getObject(root, TAGS[3], Boolean.class);
+			if(addSample == null) {
+				result.addInvalidParameters(TAGS[3]);
 			}
 			else {
-				result = false;
+				this.addSample = addSample;
 			}
 			
-			if(elementContains(root, TAGS[4])) {
-				refreshInterval = Integer.valueOf(root.getElementsByTagName(TAGS[4]).item(0).getFirstChild().getNodeValue());
+			final Integer refreshInterval = getObject(root, TAGS[4], Integer.class);
+			if(refreshInterval == null) {
+				result.addInvalidParameters(TAGS[4]);
 			}
 			else {
-				result = false;
+				this.refreshInterval = refreshInterval;
 			}
 			
-			if(elementContains(root, TAGS[5])) {
-				timeOut = Integer.valueOf(root.getElementsByTagName(TAGS[5]).item(0).getFirstChild().getNodeValue());
+			final Integer timeOut = getObject(root, TAGS[5], Integer.class);
+			if(timeOut == null) {
+				result.addInvalidParameters(TAGS[5]);
 			}
 			else {
-				result = false;
+				this.timeOut = timeOut;
 			}
 			
 			if(elementContains(root, TAGS[6])) {
 				final Element thumbnail = (Element)root.getElementsByTagName(TAGS[6]).item(0);
 				
-				if(elementContains(thumbnail, TAGS[7]) && elementContains(thumbnail, TAGS[8])) {
-					thumbnailHeight = Integer.valueOf(thumbnail.getElementsByTagName(TAGS[7]).item(0).getFirstChild().getNodeValue());
-					thumbnailWidth = Integer.valueOf(thumbnail.getElementsByTagName(TAGS[8]).item(0).getFirstChild().getNodeValue());
+				final Integer thumbnailHeight = getObject(thumbnail, TAGS[7], Integer.class);
+				final Integer thumbnailWidth = getObject(thumbnail, TAGS[8], Integer.class);
+				if(thumbnailHeight != null && thumbnailWidth != null) {
+					this.thumbnailHeight = thumbnailHeight;
+					this.thumbnailWidth = thumbnailWidth;
 				}
 				else {
-					result = false;
+					result.addInvalidParameters(TAGS[7], TAGS[8]);
 				}
 			}
 			else {
-				result = false;
+				result.addInvalidParameters(TAGS[6]);
 			}
 			
 			if(elementContains(root, TAGS[9])) {
@@ -128,18 +134,19 @@ public class AppSettings extends XMLSettings {
 				}
 			}
 			else {
-				result = false;
+				result.addInvalidParameters(TAGS[9]);
 			}
 			
-			if(!result) {
+			if(result.getInvalidParameters().length != 0) {
 				super.write(file);
 			}
 			return result;
 		}
 		catch(final Exception ex) {
 			ex.printStackTrace();
+			result.addInvalidParameters(ex.getClass().getName());
 		}
-		return false;
+		return result;
 	}
 	
 	@Override

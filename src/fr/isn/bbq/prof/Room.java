@@ -44,20 +44,20 @@ public class Room extends XMLSettings {
 	public final List<Computer> computers = new ArrayList<Computer>(); // Les ordinateurs qui composent la salle.
 	
 	@Override
-	public final boolean load(final File file) {
+	public final XMLError load(final File file) {
+		final XMLError result = new XMLError();
 		try {
-			boolean result = true;
-			
 			computers.clear(); // On enlève tous les éléments qui sont déjà dans la liste des ordinateurs.
 			final DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			final Document document = builder.parse(new InputSource(new StringReader(new String(Files.readAllBytes(file.toPath()))))); // On parse le contenu XML.
 			final Element root = document.getDocumentElement();
 			
-			if(elementContains(root, TAGS[1])) {
-				name = root.getElementsByTagName(TAGS[1]).item(0).getFirstChild().getNodeValue(); // Le premier enfant du premier élément <name>.
+			final String name = getObject(root, TAGS[1], String.class); // On récupère le paramètre.
+			if(name == null) {
+				result.addInvalidParameters(TAGS[1]);
 			}
 			else {
-				result = false;
+				this.name = name;
 			}
 			
 			if(elementContains(root, TAGS[2])) {
@@ -70,43 +70,38 @@ public class Room extends XMLSettings {
 					final Computer computer = new Computer(); // On créé une instance d'ordinateur "blanc".
 					final Element element = (Element)child;
 					
-					if(elementContains(element, TAGS[4])) {
-						computer.name = element.getElementsByTagName("name").item(0).getFirstChild().getNodeValue(); // On y ajoute les différents paramètres parsés.
-					}
-					else {
-						result = false;
+					computer.name = getObject(element, TAGS[4], String.class); // On y ajoute les différents paramètres parsés.
+					if(computer.name == null) {
+						result.addInvalidParameters("Ordinateur(" + i + ") : " + TAGS[4]);
 					}
 					
-					if(elementContains(element, TAGS[5])) {
-						computer.ip = element.getElementsByTagName("ip").item(0).getFirstChild().getNodeValue();
-					}
-					else {
-						result = false;
+					computer.ip = getObject(element, TAGS[5], String.class);
+					if(computer.ip == null) {
+						result.addInvalidParameters("Ordinateur(" + i + ") : " + TAGS[5]);
 					}
 					
-					if(elementContains(element, TAGS[6])) {
-						computer.port = Integer.valueOf(element.getElementsByTagName("port").item(0).getFirstChild().getNodeValue());
-					}
-					else {
-						result = false;
+					computer.port = getObject(element, TAGS[6], Integer.class);
+					if(computer.port == null) {
+						result.addInvalidParameters("Ordinateur(" + i + ") : " + TAGS[6]);
 					}
 					
 					this.computers.add(computer); // Et on ajoute l'ordinateur à la liste de la salle.
 				}
 			}
 			else {
-				result = false;
+				result.addInvalidParameters(TAGS[2]);
 			}
 			
-			if(!result) {
+			if(result.getInvalidParameters().length != 0) {
 				super.write(file);
 			}
 			return result;
 		}
 		catch(final Exception ex) {
 			ex.printStackTrace();
+			result.addInvalidParameters(ex.getClass().getName());
 		}
-		return false;
+		return result;
 	}
 	
 	@Override
