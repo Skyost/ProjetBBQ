@@ -48,15 +48,15 @@ public class ProjetBBQProf {
 			UIManager.setLookAndFeel(new SmartLookAndFeel()); // Le style par défaut de l'application.
 			final File settings = new File(Utils.getParentFolder(), "settings.xml"); // Le fichier de paramètres XML.
 			ProjetBBQProf.settings = new AppSettings();
+			ProjetBBQProf.settings.roomDir = new File(Utils.getParentFolder(), "Salles").getPath(); // Application des paramètres par défaut.
+			ProjetBBQProf.settings.uuid = UUID.randomUUID().toString();
 			if(settings.exists()) { // Si les paramètres existent, on les charge.
 				final XMLError result = ProjetBBQProf.settings.load(settings);
 				if(result.getInvalidParameters().length > 0) {
 					throw new IllegalArgumentException("Paramètres invalides : " + Utils.join(", ", result.getInvalidParameters()) + ". Le logiciel a tenté de les corriger, veuillez relancer l'application.<br>Si cela ne fonctionne pas, consultez l'aide en ligne avant de ré-éditer la configuration.");
 				}
 			}
-			else { // Sinon on le créé et on applique des paramètres par défaut.
-				ProjetBBQProf.settings.roomDir = new File(Utils.getParentFolder(), "Salles").getPath();
-				ProjetBBQProf.settings.uuid = UUID.randomUUID().toString();
+			else {
 				ProjetBBQProf.settings.write(settings);
 			}
 			Utils.loadMessagesInSettings();
