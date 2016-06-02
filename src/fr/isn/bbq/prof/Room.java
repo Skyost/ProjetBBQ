@@ -47,7 +47,6 @@ public class Room extends XMLSettings {
 	public final XMLError load(final File file) {
 		final XMLError result = new XMLError();
 		try {
-			computers.clear(); // On enlève tous les éléments qui sont déjà dans la liste des ordinateurs.
 			final DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			final Document document = builder.parse(new InputSource(new StringReader(new String(Files.readAllBytes(file.toPath()))))); // On parse le contenu XML.
 			final Element root = document.getDocumentElement();
@@ -61,6 +60,7 @@ public class Room extends XMLSettings {
 			}
 			
 			if(elementContains(root, TAGS[2])) {
+				computers.clear(); // On enlève tous les éléments qui sont déjà dans la liste des ordinateurs.
 				final NodeList computers = root.getElementsByTagName(TAGS[2]).item(0).getChildNodes();
 				for(int i = 0; i != computers.getLength(); i++) { // On parse chaque élément du noeud <computers>.
 					final Node child = computers.item(i);
