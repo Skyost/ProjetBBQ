@@ -70,6 +70,7 @@ fr.openfolder=Ouvrir le dossier d'installation (pour éditer la configuration)
 [Files]
 ; Les fichiers de l'application à inclure dans l'installateur :
 Source: "ProjetBBQEleve.exe"; DestDir: "{app}"
+Source: "settings.xml"; DestDir: "{app}"; Flags: confirmoverwrite uninsneveruninstall
 Source: "KillEleve.exe"; DestDir: "{app}"
 Source: "Lisez-moi !.txt"; DestDir: "{app}"
 
