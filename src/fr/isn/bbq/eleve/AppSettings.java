@@ -60,48 +60,52 @@ public class AppSettings extends XMLSettings {
 	public int thumbnailWidth = 100; // Largeur de la miniature.
 	
 	@Override
-	public final boolean load(final File file) {
+	public final XMLError load(final File file) {
+		final XMLError result = new XMLError();
 		try {
-			boolean result = true;
-			
 			uuids.clear(); // On enlève tous les éléments qui sont déjà dans la liste des uuids.
 			final DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			final Document document = builder.parse(new InputSource(new StringReader(new String(Files.readAllBytes(file.toPath()))))); // On parse le contenu XML.
 			final Element root = document.getDocumentElement();
 			
-			if(elementContains(root, TAGS[1])) {
-				ip = root.getElementsByTagName(TAGS[1]).item(0).getFirstChild().getNodeValue(); // Le premier enfant du premier élément <ip>.
+			final String ip = getObject(root, TAGS[1], String.class); // On récupère le paramètre.
+			if(ip == null) {
+				result.addInvalidParameters(TAGS[1]);
 			}
 			else {
-				result = false;
+				this.ip = ip;
 			}
 			
-			if(elementContains(root, TAGS[2])) {
-				backlog = Integer.valueOf(root.getElementsByTagName(TAGS[2]).item(0).getFirstChild().getNodeValue());
+			final Integer backlog = getObject(root, TAGS[2], Integer.class);
+			if(backlog == null) {
+				result.addInvalidParameters(TAGS[2]);
 			}
 			else {
-				result = false;
+				this.backlog = backlog;
 			}
 			
-			if(elementContains(root, TAGS[3])) {
-				port = Integer.valueOf(root.getElementsByTagName(TAGS[3]).item(0).getFirstChild().getNodeValue());
+			final Integer port = getObject(root, TAGS[3], Integer.class);
+			if(port == null) {
+				result.addInvalidParameters(TAGS[3]);
 			}
 			else {
-				result = false;
+				this.port = port;
 			}
 			
-			if(elementContains(root, TAGS[4])) {
-				timeOut = Integer.valueOf(root.getElementsByTagName(TAGS[4]).item(0).getFirstChild().getNodeValue());
+			final Integer timeOut = getObject(root, TAGS[4], Integer.class);
+			if(timeOut == null) {
+				result.addInvalidParameters(TAGS[4]);
 			}
 			else {
-				result = false;
+				this.timeOut = timeOut;
 			}
 			
-			if(elementContains(root, TAGS[5])) {
-				showTrayIcon = Boolean.valueOf(root.getElementsByTagName(TAGS[5]).item(0).getFirstChild().getNodeValue());
+			final Boolean showTrayIcon = getObject(root, TAGS[5], Boolean.class);
+			if(showTrayIcon == null) {
+				result.addInvalidParameters(TAGS[5]);
 			}
 			else {
-				result = false;
+				this.showTrayIcon = showTrayIcon;
 			}
 			
 			if(elementContains(root, TAGS[6])) {
@@ -115,32 +119,35 @@ public class AppSettings extends XMLSettings {
 				}
 			}
 			else {
-				result = false;
+				result.addInvalidParameters(TAGS[6]);
 			}
 			
-			if(elementContains(root, TAGS[8])) {
-				imageType = root.getElementsByTagName(TAGS[8]).item(0).getFirstChild().getNodeValue();
+			final String imageType = getObject(root, TAGS[8], String.class);
+			if(imageType == null) {
+				result.addInvalidParameters(TAGS[8]);
 			}
 			else {
-				result = false;
+				this.imageType = imageType;
 			}
 			
 			if(elementContains(root, TAGS[9])) {
 				final Element thumbnail = (Element)root.getElementsByTagName(TAGS[9]).item(0);
 				
-				if(elementContains(thumbnail, TAGS[10]) && elementContains(thumbnail, TAGS[11])) {
-					thumbnailHeight = Integer.valueOf(thumbnail.getElementsByTagName(TAGS[10]).item(0).getFirstChild().getNodeValue());
-					thumbnailWidth = Integer.valueOf(thumbnail.getElementsByTagName(TAGS[11]).item(0).getFirstChild().getNodeValue());
+				final Integer thumbnailHeight = getObject(thumbnail, TAGS[10], Integer.class);
+				final Integer thumbnailWidth = getObject(thumbnail, TAGS[11], Integer.class);
+				if(thumbnailHeight != null && thumbnailWidth != null) {
+					this.thumbnailHeight = thumbnailHeight;
+					this.thumbnailWidth = thumbnailWidth;
 				}
 				else {
-					result = false;
+					result.addInvalidParameters(TAGS[10], TAGS[11]);
 				}
 			}
 			else {
-				result = false;
+				result.addInvalidParameters(TAGS[9]);
 			}
 			
-			if(!result) {
+			if(result.getInvalidParameters().length != 0) {
 				super.write(file);
 			}
 			return result;
@@ -148,7 +155,7 @@ public class AppSettings extends XMLSettings {
 		catch(final Exception ex) {
 			ex.printStackTrace();
 		}
-		return false;
+		return result;
 	}
 	
 	@Override
