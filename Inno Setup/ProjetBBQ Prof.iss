@@ -68,6 +68,8 @@ fr.openfolder=Ouvrir le dossier d'installation (pour éditer la configuration et 
 [Files]
 ; Le fichier de l'application à inclure dans l'installateur :
 Source: "ProjetBBQProf.exe"; DestDir: "{app}"
+Source: "settings.xml"; DestDir: "{app}"; Flags: confirmoverwrite uninsneveruninstall
+Source: "Salles\exemple.xml.test"; DestDir: "{app}\Salles";
 Source: "Lisez-moi !.txt"; DestDir: "{app}"
 
 [Icons]
@@ -84,6 +86,6 @@ Name: TaskDesktop; Description: {cm:addtodesktop}; GroupDescription: {cm:additio
 
 [Run]
 ; Permet d'éxecuter le logiciel après l'installation :
-Filename: "{app}\ProjetBBQEleve.exe"; Description: {cm:runapp}; Flags: postinstall nowait skipifsilent
+Filename: "{app}\ProjetBBQProf.exe"; Description: {cm:runapp}; Flags: postinstall nowait skipifsilent
 ; Permet d'ouvrir le dossier d'installation :
 Filename: "{app}"; Description: {cm:openfolder}; Flags: postinstall nowait skipifsilent shellexec
