@@ -72,8 +72,8 @@ public class ProjetBBQProf {
 					room.write(testFile); // Et on enregistre cette salle.
 				}
 			}
-			final Image icon = Toolkit.getDefaultToolkit().getImage(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/app_icon.png"));
-			icons.addAll(Arrays.asList(
+			final Image icon = Toolkit.getDefaultToolkit().getImage(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/app_icon.png")); // On récupère l'icône par défaut de l'application.
+			icons.addAll(Arrays.asList( // On ajoute l'icône de différentes tailles pour que le système choisisse la plus appropriée.
 				icon.getScaledInstance(16, 16, Image.SCALE_SMOOTH),
 				icon.getScaledInstance(32, 32, Image.SCALE_SMOOTH),
 				icon.getScaledInstance(64, 64, Image.SCALE_SMOOTH),
