@@ -50,6 +50,7 @@ public class LockFrame extends JFrame {
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // On refuse de la fermer.
 		this.setLocationRelativeTo(null); // On la centre.
 		this.setAlwaysOnTop(true); // On lui indique de rester au dessus des autres fenêtres.
+		this.setState(JFrame.NORMAL); // La fenêtre ne doit pas être miniaturisée.
 		this.setExtendedState(JFrame.MAXIMIZED_BOTH); // On maximise la fenêtre.
 		this.setUndecorated(true); // Et on enlève la barre avec le bouton fermer, réduire, etc...
 		final Graphics graphics = screenshot.getGraphics();

@@ -1,6 +1,7 @@
 package fr.isn.bbq.eleve;
 
 import java.awt.AWTException;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.SystemTray;
 import java.awt.Toolkit;
@@ -57,20 +58,20 @@ public class ProjetBBQEleve {
 				JOptionPane.showMessageDialog(null, "<html>Les paramètres XML ont été enregistré ici :<br>" + settings.getPath() + "<br>Veuillez les modifier avant de démarrer l'application.</html>");
 				System.exit(0);
 			}
+			server = (SSLServerSocket)SSLServerSocketFactory.getDefault().createServerSocket(ProjetBBQEleve.settings.port, ProjetBBQEleve.settings.backlog, InetAddress.getByName(ProjetBBQEleve.settings.ip)); // On créé le serveur en fonction des paramètres XML.
+			server.setSoTimeout(ProjetBBQEleve.settings.timeOut * 1000); // Et on change le timeout.
+			server.setEnabledCipherSuites(getEnabledCipherSuites(server)); // On ajoute les types d'encryptions supportés par le serveur (doivent être anonymes).
 			loadIcons();
 			if(ProjetBBQEleve.settings.showTrayIcon) {
 				createTrayIcon();
 			}
-			server = (SSLServerSocket)SSLServerSocketFactory.getDefault().createServerSocket(ProjetBBQEleve.settings.port, ProjetBBQEleve.settings.backlog, InetAddress.getByName(ProjetBBQEleve.settings.ip)); // On créé le serveur en fonction des paramètres XML.
-			server.setSoTimeout(ProjetBBQEleve.settings.timeOut * 1000); // Et on change le timeout.
-			server.setEnabledCipherSuites(getEnabledCipherSuites(server)); // On ajoute les types d'encryptions supportés par le serveur (doivent être anonymes).
 		}
 		catch(final Exception ex) {
 			ex.printStackTrace();
 			JOptionPane.showMessageDialog(null, "<html>Impossible de démarrer " + APP_NAME + " en tâche de fond !<br/>Raison : " + ex.getMessage() + "</html>", "Erreur !", JOptionPane.ERROR_MESSAGE);
 		}
 		if(server == null) { // Si il y a une erreur durant l'initialisation de l'application, on s'en va.
-			return;
+			System.exit(0);
 		}
 		boolean waitingMessageDisplayed = false; // On n'affiche le message qu'une fois.
 		while(true) { // Le serveur boucle infiniment.
@@ -96,6 +97,7 @@ public class ProjetBBQEleve {
 		catch(final Exception ex) {
 			ex.printStackTrace();
 		}
+		System.exit(0);
 	}
 	
 	/**
@@ -124,12 +126,12 @@ public class ProjetBBQEleve {
 	 */
 	
 	private static final void createTrayIcon() throws AWTException {
-		if(!SystemTray.isSupported()) {
+		if(!SystemTray.isSupported()) { // Si l'icône dans la barre d'outils est supportée.
 			return;
 		}
-		final TrayIcon icon = new TrayIcon(icons.get(0), APP_NAME + " v" + APP_VERSION + " - Activé");
-		icon.setImageAutoSize(true);
-		SystemTray.getSystemTray().add(icon);
+		final Dimension size = SystemTray.getSystemTray().getTrayIconSize();
+		/* L'icône numéro 5 (la 6ème) correspond à l'icône non redimensionnée. Elle sera redimensionnée en fonction de la taille supportée par le système. */
+		SystemTray.getSystemTray().add(new TrayIcon(icons.get(5).getScaledInstance(size.width, size.height, Image.SCALE_SMOOTH), APP_NAME + " v" + APP_VERSION + " - Activé")); // On ajoute l'icône.
 	}
 	
 	/**
@@ -137,8 +139,8 @@ public class ProjetBBQEleve {
 	 */
 	
 	private static final void loadIcons() {
-		final Image icon = Toolkit.getDefaultToolkit().getImage(ProjetBBQEleve.class.getResource("/fr/isn/bbq/eleve/res/app_icon.png"));
-		icons.addAll(Arrays.asList(
+		final Image icon = Toolkit.getDefaultToolkit().getImage(ProjetBBQEleve.class.getResource("/fr/isn/bbq/eleve/res/app_icon.png")); // On récupère l'icône par défaut de l'application.
+		icons.addAll(Arrays.asList( // On ajoute l'icône de différentes tailles pour que le système choisisse la plus appropriée.
 			icon.getScaledInstance(16, 16, Image.SCALE_SMOOTH),
 			icon.getScaledInstance(32, 32, Image.SCALE_SMOOTH),
 			icon.getScaledInstance(64, 64, Image.SCALE_SMOOTH),
