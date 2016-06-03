@@ -59,6 +59,11 @@ public class ProjetBBQProf {
 			else {
 				ProjetBBQProf.settings.write(settings);
 			}
+			if(!new File(ProjetBBQProf.settings.roomDir).exists()) { // Si le dossier de salles n'existe pas, on le créé et on s'en va.
+				getRoomDirectory();
+				JOptionPane.showMessageDialog(null, "<html>Le dossier de salles a été créé et est disponible ici :<br>" + ProjetBBQProf.settings.roomDir + "<br>Veuillez consulter l'aide en ligne pour ajouter des salles.</html>", APP_NAME, JOptionPane.INFORMATION_MESSAGE);
+				System.exit(0);
+			}
 			Utils.loadMessagesInSettings();
 			if(ProjetBBQProf.settings.addSample) { // Paramètres relatifs au fichier d'exemple.
 				final File testFile = new File(getRoomDirectory(), "exemple.xml.test");
