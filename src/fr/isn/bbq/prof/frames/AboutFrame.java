@@ -4,6 +4,7 @@ import javax.swing.JFrame;
 import fr.isn.bbq.prof.ProjetBBQProf;
 import fr.isn.bbq.prof.tasks.Client;
 import fr.isn.bbq.prof.utils.GithubUpdater;
+import fr.isn.bbq.prof.utils.LanguageManager;
 import fr.isn.bbq.prof.utils.GithubUpdater.GithubUpdaterResultListener;
 
 import java.awt.Color;
@@ -57,7 +58,7 @@ public class AboutFrame extends JFrame implements GithubUpdaterResultListener {
 		final StringBuilder builder = new StringBuilder("<html>");
 		builder.append("<b>" + ProjetBBQProf.APP_NAME + "</b> ");
 		builder.append("v" + ProjetBBQProf.APP_VERSION + " ");
-		builder.append("<b>Protocole :</b> ");
+		builder.append("<b>" + LanguageManager.getString("about.protocolversion") + "</b> ");
 		builder.append("v" + Client.PROTOCOL_VERSION + "</html>");
 		
 		final JLabel lblVersion = new JLabel(builder.toString()); // Permet d'afficher les différentes versions.
@@ -66,7 +67,7 @@ public class AboutFrame extends JFrame implements GithubUpdaterResultListener {
 		final JLabel lblIcon = new JLabel(new ImageIcon(new ImageIcon(AboutFrame.class.getResource("/fr/isn/bbq/prof/res/app_icon.png")).getImage().getScaledInstance(256, 256, Image.SCALE_SMOOTH))); // Permet d'afficher l'icône du projet.
 		
 		builder.setLength(0);
-		builder.append("<html><b>Liste des contributeurs :</b> ");
+		builder.append("<html><b>" + LanguageManager.getString("about.contributors") + "</b> ");
 		builder.append("Thibault Dolley, ");
 		builder.append("Bastien Lesachey, ");
 		builder.append("Hugo Delaunay, ");
@@ -76,7 +77,7 @@ public class AboutFrame extends JFrame implements GithubUpdaterResultListener {
 		final JLabel lblContributors = new JLabel(builder.toString()); // Permet d'afficher les contributeurs.
 		
 		builder.setLength(0);
-		builder.append("<html><a href=\"https://github.com/Skyost/ProjetBBQ/wiki\">Voir licence, aide et crédits ici.</a></html> ");
+		builder.append("<html><a href=\"https://github.com/Skyost/ProjetBBQ/wiki\">" + LanguageManager.getString("about.wikilink") + "</a></html> ");
 		
 		final JLabel lblLicenceCredits = new JLabel(builder.toString()); // Permet d'afficher la licence et les crédits.
 		openLinkOnClick(lblLicenceCredits, "https://github.com/Skyost/ProjetBBQ/wiki");
@@ -123,7 +124,7 @@ public class AboutFrame extends JFrame implements GithubUpdaterResultListener {
 	@Override
 	public final void updaterStarted() {
 		lblUpdaterStatus.setFont(lblUpdaterStatus.getFont().deriveFont(Font.ITALIC));
-		lblUpdaterStatus.setText("Vérification des mises à jour..."); // On change le texte pour indiquer que l'on vérifie les nouvelles mises à jour.
+		lblUpdaterStatus.setText(LanguageManager.getString("about.updater.checking")); // On change le texte pour indiquer que l'on vérifie les nouvelles mises à jour.
 		lblUpdaterStatus.setIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/updater_loading.gif"))); // On ajoute une icône de chargement.
 	}
 	
@@ -131,7 +132,7 @@ public class AboutFrame extends JFrame implements GithubUpdaterResultListener {
 	public final void updaterException(final Exception ex) {
 		lblUpdaterStatus.setFont(lblUpdaterStatus.getFont().deriveFont(Font.PLAIN).deriveFont(Font.BOLD));
 		lblUpdaterStatus.setForeground(Color.decode("#E74C3C")); // On change la couleur.
-		lblUpdaterStatus.setText("Erreur : \"" + ex.getMessage() + "\"");
+		lblUpdaterStatus.setText(LanguageManager.getString("about.updater.error", ex.getMessage()));
 		lblUpdaterStatus.setIcon(null); // On enlève l'icône.
 	}
 	
@@ -142,7 +143,7 @@ public class AboutFrame extends JFrame implements GithubUpdaterResultListener {
 	public final void updaterUpdateAvailable(final String localVersion, final String remoteVersion) {
 		lblUpdaterStatus.setFont(lblUpdaterStatus.getFont().deriveFont(Font.PLAIN).deriveFont(Font.BOLD));
 		lblUpdaterStatus.setForeground(Color.decode("#2980B9"));
-		lblUpdaterStatus.setText("Une nouvelle version est disponible (v" + remoteVersion + ") !");
+		lblUpdaterStatus.setText(LanguageManager.getString("about.updater.updateavailable", remoteVersion));
 		lblUpdaterStatus.setIcon(null);
 	}
 	
@@ -150,7 +151,7 @@ public class AboutFrame extends JFrame implements GithubUpdaterResultListener {
 	public final void updaterNoUpdate(final String localVersion, final String remoteVersion) {
 		lblUpdaterStatus.setFont(lblUpdaterStatus.getFont().deriveFont(Font.PLAIN).deriveFont(Font.BOLD));
 		lblUpdaterStatus.setForeground(Color.decode("#27AE60"));
-		lblUpdaterStatus.setText("Le logiciel est à jour.");
+		lblUpdaterStatus.setText(LanguageManager.getString("about.updater.noupdate"));
 		lblUpdaterStatus.setIcon(null);
 	}
 	
@@ -162,7 +163,8 @@ public class AboutFrame extends JFrame implements GithubUpdaterResultListener {
 	 */
 	
 	private final void openLinkOnClick(final JLabel label, final String link) {
-		label.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Main sur le label.
+		label.setToolTipText(link); // Tooltip avec le lien.
+		label.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Curseur "main" sur le label.
 		label.addMouseListener(new MouseListener() {
 
 			@Override

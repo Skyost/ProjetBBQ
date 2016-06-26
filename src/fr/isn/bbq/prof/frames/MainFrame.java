@@ -19,6 +19,7 @@ import fr.isn.bbq.prof.ProjetBBQProf;
 import fr.isn.bbq.prof.Room;
 import fr.isn.bbq.prof.dialogs.MessageDialog;
 import fr.isn.bbq.prof.frames.tabs.RoomPane;
+import fr.isn.bbq.prof.utils.LanguageManager;
 import fr.isn.bbq.prof.utils.Request;
 import fr.isn.bbq.prof.utils.StatusBar;
 import fr.isn.bbq.prof.utils.Utils;
@@ -117,7 +118,7 @@ public class MainFrame extends JFrame {
 	 */
 	
 	private final void loadRooms() {
-		final MessageDialog message = new MessageDialog(this, "Patientez...", "Chargement des salles, veuillez patienter..."); // Message d'attente.
+		final MessageDialog message = new MessageDialog(this, LanguageManager.getString("main.loadingrooms.title"), LanguageManager.getString("main.loadingrooms.message")); // Message d'attente.
 		message.setVisible(true);
 		rooms.clear(); // On enlève toutes les salles si il y en a.
 		tabbedPane.removeAll(); // On enlève également tous les onglets affichés si il y en a.
@@ -129,19 +130,19 @@ public class MainFrame extends JFrame {
 				final Room room = new Room(); // On créé une salle de classe "blanche".
 				final XMLError result = room.load(roomFile); // On tente de la charger.
 				if(result.getInvalidParameters().length != 0) {
-					throw new IllegalArgumentException("<html>Le fichier \"" + roomFile.getName() + "\" est invalide ! Le logiciel a tenté de corriger les erreurs. Veuillez tenter de recharger le fichier.<br>Si cela échoue, veuillez consulter l'aide en ligne avant de ré-éditer le ficher.<br>Paramètres invalides : " + Utils.join(", ", result.getInvalidParameters()) + "</html>"); // Si cela échoue, on déclenche une erreur.
+					throw new IllegalArgumentException("<html>" + LanguageManager.getString("main.loadingrooms.invalidroom", roomFile.getName(), Utils.join(", ", result.getInvalidParameters())) + "</html>"); // Si cela échoue, on déclenche une erreur.
 				}
 				rooms.add(room); // Et on ajoute la classe chargée dans la liste des salles de classe.
 			}
 			catch(final Exception ex) {
 				message.dispose();
 				ex.printStackTrace();
-				JOptionPane.showMessageDialog(MainFrame.this, ex.getMessage(), "Erreur !", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(MainFrame.this, ex.getMessage(), LanguageManager.getString("error.title"), JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		if(rooms.size() == 0) { // Si il n'y a pas de salles de classe chargées, on affiche un message d'erreur.
 			message.dispose();
-			JOptionPane.showMessageDialog(MainFrame.this, "Pas de salle valide ajoutée. Veuillez consulter l'aide en ligne.", "Erreur !", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(MainFrame.this, LanguageManager.getString("main.loadingrooms.error"), LanguageManager.getString("error.title"), JOptionPane.ERROR_MESSAGE);
 			System.exit(1);
 		}
 		for(final Room room : rooms) { // Pour chaque salle de classe, on créé l'onglet correspondant.
@@ -163,7 +164,7 @@ public class MainFrame extends JFrame {
 	public final JMenuBar createMenuBar() {
 		final JMenuBar menu = new JMenuBar();
 		/* Le menu rafraîchir : */
-		final JMenuItem refresh = new JMenuItem("Rafraîchir les miniatures");
+		final JMenuItem refresh = new JMenuItem(LanguageManager.getString("common.pc.plural.refresh"));
 		refresh.addActionListener(new ActionListener() {
 			
 			/**
@@ -180,7 +181,7 @@ public class MainFrame extends JFrame {
 		});
 		refresh.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_refresh.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH))); // On doit redimensionner les icônes en 16x16.
 		/* Le menu pour envoyer un message : */
-		final JMenuItem sendMessage = new JMenuItem("Envoyer un message");
+		final JMenuItem sendMessage = new JMenuItem(LanguageManager.getString("common.pc.plural.message"));
 		sendMessage.addActionListener(new ActionListener() {
 			
 			@Override
@@ -194,7 +195,7 @@ public class MainFrame extends JFrame {
 		});
 		sendMessage.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_sendmessage.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
 		/* Le menu pour envoyer éteindre les PCs : */
-		final JMenuItem shutdown = new JMenuItem("Éteindre les PCs");
+		final JMenuItem shutdown = new JMenuItem(LanguageManager.getString("common.pc.plural.shutdown"));
 		shutdown.addActionListener(new ActionListener() {
 			
 			@Override
@@ -205,7 +206,7 @@ public class MainFrame extends JFrame {
 		});
 		shutdown.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_shutdown.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
 		/* Le menu pour redémarrer les PCs : */
-		final JMenuItem restart = new JMenuItem("Redémarrer les PCs");
+		final JMenuItem restart = new JMenuItem(LanguageManager.getString("common.pc.plural.restart"));
 		restart.addActionListener(new ActionListener() {
 			
 			@Override
@@ -216,7 +217,7 @@ public class MainFrame extends JFrame {
 		});
 		restart.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_restart.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
 		/* Le menu pour déconnecter les PCs : */
-		final JMenuItem logout = new JMenuItem("Déconnecter les PCs");
+		final JMenuItem logout = new JMenuItem(LanguageManager.getString("common.pc.plural.logout"));
 		logout.addActionListener(new ActionListener() {
 			
 			@Override
@@ -227,7 +228,7 @@ public class MainFrame extends JFrame {
 		});
 		logout.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_logout.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
 		/* Le menu pour verrouiller les PCs : */
-		final JMenuItem lock = new JMenuItem("Verrouiller les PCs");
+		final JMenuItem lock = new JMenuItem(LanguageManager.getString("common.pc.plural.lock"));
 		lock.addActionListener(new ActionListener() {
 			
 			@Override
@@ -238,7 +239,7 @@ public class MainFrame extends JFrame {
 		});
 		lock.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_lock.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
 		/* Le menu pour déverrouiller les PCs : */
-		final JMenuItem unlock = new JMenuItem("Déverrouiller les PCs");
+		final JMenuItem unlock = new JMenuItem(LanguageManager.getString("common.pc.plural.unlock"));
 		unlock.addActionListener(new ActionListener() {
 			
 			@Override
@@ -249,7 +250,7 @@ public class MainFrame extends JFrame {
 		});
 		unlock.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_unlock.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
 		/* Le menu pour ouvrir l'aide en ligne : */
-		final JMenuItem onlineHelp = new JMenuItem("Aide en ligne...");
+		final JMenuItem onlineHelp = new JMenuItem(LanguageManager.getString("main.menu.help.onlinehelp"));
 		onlineHelp.addActionListener(new ActionListener() {
 			
 			@Override
@@ -268,7 +269,7 @@ public class MainFrame extends JFrame {
 		});
 		onlineHelp.setIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_onlinehelp.png")));
 		/* Le menu pour afficher la boîte À propos : */
-		final JMenuItem about = new JMenuItem("À propos...");
+		final JMenuItem about = new JMenuItem(LanguageManager.getString("main.menu.help.about"));
 		about.addActionListener(new ActionListener() {
 			
 			@Override
@@ -278,7 +279,7 @@ public class MainFrame extends JFrame {
 			
 		});
 		about.setIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_about.png")));
-		final JMenu edit = new JMenu("Édition");
+		final JMenu edit = new JMenu(LanguageManager.getString("main.menu.edit"));
 		edit.add(refresh);
 		edit.add(sendMessage);
 		edit.addSeparator();
@@ -288,7 +289,7 @@ public class MainFrame extends JFrame {
 		edit.addSeparator();
 		edit.add(lock);
 		edit.add(unlock);
-		final JMenu help = new JMenu("Aide");
+		final JMenu help = new JMenu(LanguageManager.getString("main.menu.help"));
 		help.add(onlineHelp);
 		help.addSeparator();
 		help.add(about);

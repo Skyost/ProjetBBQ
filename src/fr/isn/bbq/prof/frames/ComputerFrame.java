@@ -17,6 +17,7 @@ import fr.isn.bbq.prof.ProjetBBQProf;
 import fr.isn.bbq.prof.dialogs.MessageDialog;
 import fr.isn.bbq.prof.tasks.Client;
 import fr.isn.bbq.prof.tasks.Client.ClientInterface;
+import fr.isn.bbq.prof.utils.LanguageManager;
 import fr.isn.bbq.prof.utils.Request;
 import fr.isn.bbq.prof.utils.Utils;
 import fr.isn.bbq.prof.utils.Request.RequestType;
@@ -115,7 +116,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			return;
 		}
 		lblScreenshot.setIcon(null);
-		lblScreenshot.setText("Chargement de la capture d'écran...");
+		lblScreenshot.setText(LanguageManager.getString("computer.status.connection"));
 	}
 
 	@Override
@@ -140,7 +141,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			return;
 		}
 		lblScreenshot.setIcon(null);
-		lblScreenshot.setText("<html>Impossible de charger la capture d'écran !<br/>Raison : " + ex.getMessage() + "</html>");
+		lblScreenshot.setText("<html>" + LanguageManager.getString("computer.status.error", ex.getMessage()) + "</html>");
 	}
 
 	@Override
@@ -150,7 +151,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			return;
 		}
 		lblScreenshot.setIcon(null);
-		lblScreenshot.setText("Chargement annulé.");
+		lblScreenshot.setText(LanguageManager.getString("computer.status.interrupted"));
 	}
 	
 	@Override
@@ -211,7 +212,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			}
 			
 		});
-		refresh.setToolTipText("Rafraîchir la capture d'écran");
+		refresh.setToolTipText(LanguageManager.getString("common.pc.singular.refresh.screenshot"));
 		/* Le bouton pour envoyer un message : */
 		final JButton sendMessage = new JButton(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_sendmessage.png")));
 		sendMessage.addActionListener(new ActionListener() {
@@ -225,7 +226,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			}
 			
 		});
-		sendMessage.setToolTipText("Envoyer un message");
+		sendMessage.setToolTipText(LanguageManager.getString("common.pc.singular.message"));
 		/* Le bouton pour envoyer éteindre le PC : */
 		final JButton shutdown = new JButton(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_shutdown.png")));
 		shutdown.addActionListener(new ActionListener() {
@@ -236,7 +237,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			}
 			
 		});
-		shutdown.setToolTipText("Éteindre le PC");
+		shutdown.setToolTipText(LanguageManager.getString("common.pc.singular.shutdown"));
 		/* Le bouton pour redémarrer le PC : */
 		final JButton restart = new JButton(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_restart.png")));
 		restart.addActionListener(new ActionListener() {
@@ -247,7 +248,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			}
 			
 		});
-		restart.setToolTipText("Redémarrer le PC");
+		restart.setToolTipText(LanguageManager.getString("common.pc.singular.restart"));
 		/* Le bouton pour déconnecter le PC : */
 		final JButton logout = new JButton(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_logout.png")));
 		logout.addActionListener(new ActionListener() {
@@ -258,7 +259,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			}
 			
 		});
-		logout.setToolTipText("Déconnecter le PC");
+		logout.setToolTipText(LanguageManager.getString("common.pc.singular.logout"));
 		/* Le bouton pour verrouiller le PC : */
 		final JButton lock = new JButton(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_lock.png")));
 		lock.addActionListener(new ActionListener() {
@@ -269,7 +270,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			}
 			
 		});
-		lock.setToolTipText("Verrouiller le PC");
+		lock.setToolTipText(LanguageManager.getString("common.pc.singular.lock"));
 		/* Le bouton pour déverrouiller le PC : */
 		final JButton unlock = new JButton(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_unlock.png")));
 		unlock.addActionListener(new ActionListener() {
@@ -280,7 +281,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			}
 			
 		});
-		unlock.setToolTipText("Déverrouiller le PC");
+		unlock.setToolTipText(LanguageManager.getString("common.pc.singular.unlock"));
 		/* Puis on ajoute les différents boutons : */
 		toolbar.add(refresh);
 		toolbar.add(sendMessage);
@@ -302,7 +303,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 	
 	public final JPopupMenu createScreenshotMenu() {
 		final JPopupMenu popup = new JPopupMenu();
-		final JMenuItem save = new JMenuItem("Enregistrer la capture d'écran...");
+		final JMenuItem save = new JMenuItem(LanguageManager.getString("computer.save.popup"));
 		save.addActionListener(new ActionListener() {
 			
 			@Override
@@ -315,11 +316,12 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 					if(addedWriters.contains(extension)) { // Si l'extension est déjà ajoutée, on ne l'ajoute pas à nouveau.
 						continue;
 					}
+					final FileNameExtensionFilter filter = new FileNameExtensionFilter(LanguageManager.getString("computer.save.format", extension.toUpperCase()), extension);
 					if(i == 0) { // On ajoute la première extension comme extension par défaut, les autres sont ajoutées après.
-						chooser.setFileFilter(new FileNameExtensionFilter("Image " + extension.toUpperCase(), extension));
+						chooser.setFileFilter(filter);
 					}
 					else {
-						chooser.addChoosableFileFilter(new FileNameExtensionFilter("Image " + extension.toUpperCase(), extension));
+						chooser.addChoosableFileFilter(filter);
 					}
 					addedWriters.add(extension); // On ajoute l'extension.
 				}
@@ -342,7 +344,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 					}
 					catch(final Exception ex) {
 						ex.printStackTrace();
-						JOptionPane.showMessageDialog(ComputerFrame.this, "Impossible d'enregistrer la capture d'écran.", "Erreur !", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(ComputerFrame.this, LanguageManager.getString("computer.save.error"), LanguageManager.getString("error.title"), JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			}
@@ -382,26 +384,20 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			private static final int DIALOG_TIME = 5;
 			
 			/**
-			 * Le message d'attente du dialogue.
-			 */
-			
-			private static final String CLOSING_MESSAGE = "Ce message se fermera dans " + DIALOG_TIME + " seconde(s)...";
-			
-			/**
 			 * Le dialogue d'attente.
 			 */
 			
-			private final MessageDialog dialog = new MessageDialog(parent, "Envoi de la requête", "");
+			private final MessageDialog dialog = new MessageDialog(parent, LanguageManager.getString("common.pc.dialog.title"), "");
 
 			@Override
 			public final void connection(final Computer computer, final long time) {
-				dialog.setMessage("<span style=\"font-weight: bold;\">[" + computer.name + "]</span><span> Connexion à l'ordinateur...</span>");
+				dialog.setMessage(LanguageManager.getString("common.pc.dialog.message.connection", computer.name));
 				dialog.setVisible(true);
 			}
 
 			@Override
 			public final void onSuccess(final Computer computer, final Object... returned) {
-				dialog.setMessage("<span style=\"font-weight: bold;\">[" + computer.name + "]</span><span> Action effectuée !</span>");
+				dialog.setMessage(LanguageManager.getString("common.pc.dialog.message.success", computer.name));
 				joinedComputers.add(computer);
 				if(computers.length == joinedComputers.size()) {
 					closeDialog();
@@ -411,7 +407,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			@Override
 			public final void onError(final Computer computer, final Exception ex, final long responseTime) {
 				ex.printStackTrace();
-				dialog.setMessage("<span style=\"font-weight: bold;\">[" + computer.name + "]</span><span> Erreur : " + ex.getMessage() + "</span>");
+				dialog.setMessage(LanguageManager.getString("common.pc.dialog.message.error", computer.name, ex.getMessage()));
 				joinedComputers.add(computer);
 				if(computers.length == joinedComputers.size()) {
 					closeDialog();
@@ -420,7 +416,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 
 			@Override
 			public final void onInterrupted(final Computer computer, final long time) {
-				dialog.setMessage("<span style=\"font-weight: bold;\">[" + computer.name + "]</span><span> Envoi interrompu.</span>");
+				dialog.setMessage(LanguageManager.getString("common.pc.dialog.message.interrupted", computer.name));
 				joinedComputers.add(computer);
 				if(computers.length == joinedComputers.size()) {
 					closeDialog();
@@ -435,7 +431,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			 */
 			
 			private final void closeDialog() {
-				dialog.setMessage(dialog.getMessage().replace("<html>", "").replace("</html>", "") + "<br>" + CLOSING_MESSAGE);
+				dialog.setMessage(dialog.getMessage().replace("<html>", "").replace("</html>", "") + "<br>" + LanguageManager.getString("common.pc.dialog.footer", DIALOG_TIME));
 				new Timer().schedule(new TimerTask() {
 					
 					@Override

@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -43,6 +44,7 @@ public class AppSettings extends XMLSettings {
 		"width",			// TAGS[8]
 		"default-messages",	// TAGS[9]
 		"message",			// TAGS[10]
+		"custom-language"	// TAGS[11]
 	};
 	
 	public String roomDir = "Salles"; // Le répertoire des salles.
@@ -56,6 +58,7 @@ public class AppSettings extends XMLSettings {
 		"Votre PC va s'éteindre dans quelques instants.<br>Veuillez enregistrer votre activité dès à présent.",
 		"Veuillez stopper votre activité immédiatement."
 	)); // Liste des messages par défaut dans la boîte de dialogue "Envoyer un message".
+	public String customLanguage = Locale.getDefault().getLanguage().toLowerCase(); // Permet de définir une autre langue.
 	
 	@Override
 	public final XMLError load(final File file) {
@@ -137,6 +140,14 @@ public class AppSettings extends XMLSettings {
 				result.addInvalidParameters(TAGS[9]);
 			}
 			
+			final String customLanguage = getObject(root, TAGS[11], String.class);
+			if(customLanguage == null) {
+				result.addInvalidParameters(TAGS[11]);
+			}
+			else {
+				this.customLanguage = customLanguage;
+			}
+			
 			if(result.getInvalidParameters().length != 0) {
 				super.write(file);
 			}
@@ -179,6 +190,8 @@ public class AppSettings extends XMLSettings {
 				node.appendChild(document.createTextNode(message));
 				defaultMessages.appendChild(node);
 			}
+			final Node customLanguage = document.createElement(TAGS[11]);
+			customLanguage.appendChild(document.createTextNode(this.customLanguage));
 			root.appendChild(roomDir); // Et on ajoute les différents noeuds au noeud principal.
 			root.appendChild(uuid);
 			root.appendChild(addSample);
@@ -186,6 +199,7 @@ public class AppSettings extends XMLSettings {
 			root.appendChild(timeOut);
 			root.appendChild(thumbnail);
 			root.appendChild(defaultMessages);
+			root.appendChild(customLanguage);
 			final Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); // On indent le fichier XML (plus joli).
 			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2"); // Deux espaces par noeud.

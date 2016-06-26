@@ -1,0 +1,91 @@
+language.name=Français
+language.version=1
+
+
+
+about.title=À propos...
+
+about.protocolversion=Protocole :
+about.contributors=Liste des contributeurs :
+about.wikilink=Voir licence, aide et crédits ici.
+
+about.updater.checking=Vérification des mises à jour...
+about.updater.error=Erreur : "%s".
+about.updater.updateavailable=Une nouvelle version est disponible (v%s) !
+about.updater.noupdate=Le logiciel est à jour.
+
+
+
+client.message.clienttooold=Ce logiciel client est trop ancien pour communiquer avec le serveur.
+client.message.servertooold=Le logiciel serveur est trop ancien pour communiquer avec ce client.
+client.message.invalidprotocol=Version du protocole invalide.
+
+client.output.connection=Connexion à l'ordinateur %s (%s) sur le port %d...
+client.output.success=Connexion réussie à %s.
+client.output.request=Envoi de la requête "%s"...
+client.output.response=Réponse du serveur "%s".
+client.output.closing=Fermeture du client...
+client.output.waiting.computers=Attente des ordinateurs...
+client.output.waiting.interval=Attente de %d secondes...
+
+
+
+computer.status.connection=Chargement de la capture d'écran...
+computer.status.error=Impossible de charger la capture d'écran !<br>Raison : + %s.
+computer.status.interrupted=Chargement annulé.
+
+computer.save.popup=Enregistrer la capture d'écran...
+computer.save.format=Image %s
+computer.save.error=Impossible d'enregistrer la capture d'écran (%s).
+
+
+
+common.pc.singular.refresh.screenshot=Rafraîchir la capture d'écran
+common.pc.singular.refresh.thumbnail=Rafraîchir la miniature
+common.pc.singular.message=Envoyer un message
+common.pc.singular.shutdown=Éteindre le PC
+common.pc.singular.restart=Redémarrer le PC
+common.pc.singular.logout=Déconnecter le PC
+common.pc.singular.lock=Verrouiller le PC
+common.pc.singular.unlock=Déverrouiller le PC
+
+common.pc.plural.refresh=Rafraîchir les miniatures
+common.pc.plural.message=Envoyer un message
+common.pc.plural.shutdown=Éteindre les PCs
+common.pc.plural.restart=Redémarrer les PCs
+common.pc.plural.logout=Déconnecter les PCs
+common.pc.plural.lock=Verrouiller les PCs
+common.pc.plural.unlock=Déverrouiller les PCs
+
+common.pc.dialog.title=Envoi de la requête
+common.pc.dialog.message.connection=<b>[%s]</b> Connexion à l'ordinateur...
+common.pc.dialog.message.success=<b>[%s]</b> Action effectuée avec succès !
+common.pc.dialog.message.error=<b>[%s]</b> Erreur : %s.
+common.pc.dialog.message.interrupted=<b>[%s]</b> Envoi interrompu.
+common.pc.dialog.footer=Ce message se fermera dans %d seconde(s)...
+
+
+
+main.loadingrooms.title=Patientez...
+main.loadingrooms.message=Chargement des salles, veuillez patienter...
+main.loadingrooms.invalidroom=Le fichier "%s" est invalide ! Le logiciel a tenté de corriger les erreurs. Veuillez tenter de recharger le fichier.<br>Si cela échoue, veuillez consulter l'aide en ligne avant de ré-éditer le ficher.<br>Paramètres invalides : %s.
+main.loadingrooms.error=Pas de salle valide ajoutée. Veuillez consulter l'aide en ligne.
+
+main.menu.edit=Édition
+main.menu.help=Aide
+main.menu.help.onlinehelp=Aide en ligne...
+main.menu.help.about=À propos...
+
+
+
+room.statusbar.connection=Connexion aux ordinateurs de la salle %s...
+room.statusbar.success=La miniature de l'ordinateur %s (%s:%d) a été récupérée avec succès.
+room.statusbar.error=L'ordinateur %s (%s:%d) n'a pas pu être joint (%s).
+room.statusbar.waiting="Attente de %d secondes avant de rafraîchir les miniatures...
+
+
+
+dialog.roomscreated=Le dossier de salles a été créé et est disponible ici :<br>%s<br>Veuillez consulter l'aide en ligne pour ajouter des salles.
+
+error.loadingapp=Erreur durant le démarrage ! Peut-être que la configuration est invalide, veuillez consulter l'aide en ligne.<br>%s
+error.invalidparameters=Paramètres invalides : "%s". Le logiciel a tenté de les corriger, veuillez relancer l'application.<br>Si cela ne fonctionne pas, consultez l'aide en ligne avant de ré-éditer la configuration.

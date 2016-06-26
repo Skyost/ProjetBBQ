@@ -31,6 +31,7 @@ import fr.isn.bbq.prof.Room;
 import fr.isn.bbq.prof.frames.ComputerFrame;
 import fr.isn.bbq.prof.tasks.Client;
 import fr.isn.bbq.prof.tasks.Client.ClientInterface;
+import fr.isn.bbq.prof.utils.LanguageManager;
 import fr.isn.bbq.prof.utils.Request;
 import fr.isn.bbq.prof.utils.StatusBar;
 import fr.isn.bbq.prof.utils.Utils;
@@ -147,7 +148,7 @@ public class RoomPane extends JPanel implements ClientInterface {
 
 	@Override
 	public final void connection(final Computer computer, final long time) {
-		bar.setText("Connexion aux ordinateurs de la salle " + name + "..."); // On change la barre de status et on met à jour l'image.
+		bar.setText(LanguageManager.getString("room.statusbar.connection", name)); // On change la barre de status et on met à jour l'image.
 		thumbnails.get(computer).setThumbnail(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/thumbnails/thumbnail_loading.gif")), time);
 	}
 
@@ -157,7 +158,7 @@ public class RoomPane extends JPanel implements ClientInterface {
 			return;
 		}
 		/* Sinon on met à jour la barre de status, le titre et l'image : */
-		bar.setText("La miniature de l'ordinateur " + computer.name + " (" + computer.ip + ":" + computer.port + ") a été récupérée avec succès.");
+		bar.setText(LanguageManager.getString("room.statusbar.success", computer.name, computer.ip, computer.port));
 		final ComputerThumbnail thumbnail = thumbnails.get(computer);
 		thumbnail.setThumbnail(new ImageIcon((BufferedImage)returned[returned.length - 1]), (long)returned[1]);
 		thumbnail.setTitle(computer.name + System.lineSeparator() + "(" + returned[0] + ")");
@@ -165,7 +166,7 @@ public class RoomPane extends JPanel implements ClientInterface {
 
 	@Override
 	public final void onError(final Computer computer, final Exception ex, final long responseTime) {
-		bar.setText("L'ordinateur " + computer.name + "(" + computer.ip + ":" + computer.port + ") n'a pas pu être joint (" + ex.getMessage() + ").");
+		bar.setText(LanguageManager.getString("room.statusbar.error", computer.name, computer.ip, computer.port, ex.getMessage()));
 		ex.printStackTrace();
 		onInterrupted(computer, responseTime);
 	}
@@ -179,7 +180,7 @@ public class RoomPane extends JPanel implements ClientInterface {
 	
 	@Override
 	public final void onWaiting() {
-		bar.setText("Attente de " + ProjetBBQProf.settings.refreshInterval + " secondes avant de rafraîchir les miniatures...");
+		bar.setText(LanguageManager.getString("room.statusbar.waiting", ProjetBBQProf.settings.refreshInterval));
 	}
 	
 	/**
@@ -331,7 +332,7 @@ public class RoomPane extends JPanel implements ClientInterface {
 		private final JPopupMenu createThumbnailPopupMenu() {
 			final JPopupMenu popup = new JPopupMenu();
 			/* Le menu pour envoyer un message : */
-			final JMenuItem sendMessage = new JMenuItem("Envoyer un message");
+			final JMenuItem sendMessage = new JMenuItem(LanguageManager.getString("common.pc.singular.message"));
 			sendMessage.addActionListener(new ActionListener() {
 				
 				@Override
@@ -345,7 +346,7 @@ public class RoomPane extends JPanel implements ClientInterface {
 			});
 			sendMessage.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_sendmessage.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
 			/* Le menu pour envoyer éteindre le PC : */
-			final JMenuItem shutdown = new JMenuItem("Éteindre le PC");
+			final JMenuItem shutdown = new JMenuItem(LanguageManager.getString("common.pc.singular.shutdown"));
 			shutdown.addActionListener(new ActionListener() {
 				
 				@Override
@@ -356,7 +357,7 @@ public class RoomPane extends JPanel implements ClientInterface {
 			});
 			shutdown.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_shutdown.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
 			/* Le menu pour redémarrer le PC : */
-			final JMenuItem restart = new JMenuItem("Redémarrer le PC");
+			final JMenuItem restart = new JMenuItem(LanguageManager.getString("common.pc.singular.restart"));
 			restart.addActionListener(new ActionListener() {
 				
 				@Override
@@ -367,7 +368,7 @@ public class RoomPane extends JPanel implements ClientInterface {
 			});
 			restart.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_restart.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
 			/* Le menu pour déconnecter le PC : */
-			final JMenuItem logout = new JMenuItem("Déconnecter le PC");
+			final JMenuItem logout = new JMenuItem(LanguageManager.getString("common.pc.singular.logout"));
 			logout.addActionListener(new ActionListener() {
 				
 				@Override
@@ -378,7 +379,7 @@ public class RoomPane extends JPanel implements ClientInterface {
 			});
 			logout.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_logout.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
 			/* Le menu pour verrouiller le PC : */
-			final JMenuItem lock = new JMenuItem("Verrouiller le PC");
+			final JMenuItem lock = new JMenuItem(LanguageManager.getString("common.pc.singular.lock"));
 			lock.addActionListener(new ActionListener() {
 				
 				@Override
@@ -389,7 +390,7 @@ public class RoomPane extends JPanel implements ClientInterface {
 			});
 			lock.setIcon(new ImageIcon(new ImageIcon(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/menu/menu_lock.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
 			/* Le menu pour déverrouiller le PC : */
-			final JMenuItem unlock = new JMenuItem("Déverrouiller le PC");
+			final JMenuItem unlock = new JMenuItem(LanguageManager.getString("common.pc.singular.unlock"));
 			unlock.addActionListener(new ActionListener() {
 				
 				@Override

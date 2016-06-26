@@ -15,6 +15,7 @@ import javax.net.ssl.SSLSocketFactory;
 
 import fr.isn.bbq.prof.Computer;
 import fr.isn.bbq.prof.ProjetBBQProf;
+import fr.isn.bbq.prof.utils.LanguageManager;
 import fr.isn.bbq.prof.utils.Request;
 import fr.isn.bbq.prof.utils.Utils;
 
@@ -100,7 +101,7 @@ public class Client extends Thread {
 					public final void run() {
 						try {
 							parent.connection(computer, System.currentTimeMillis()); // On notifie le parent de la connexion.
-							System.out.println("Connexion à l'ordinateur " + computer.name + " (" + computer.ip + ") sur le port " + computer.port + "...");
+							System.out.println(LanguageManager.getString("client.output.connection", computer.name, computer.ip, computer.port));
 							final SSLSocket client = (SSLSocket)SSLSocketFactory.getDefault().createSocket(); // On créé le client.
 							client.setEnabledCipherSuites(getEnabledCipherSuites(client)); // On ajoute les types d'encryptions supportés par le client (doivent être anonymes).
 							client.connect(new InetSocketAddress(computer.ip, computer.port), ProjetBBQProf.settings.timeOut * 1000); // On se connecte au poste élève.
@@ -109,8 +110,8 @@ public class Client extends Thread {
 								client.close();
 								return;
 							}
-							System.out.println("Connexion réussie à " + client.getRemoteSocketAddress() + ".");
-							System.out.println("Envoi de la requête \"" + request + "\"...");
+							System.out.println(LanguageManager.getString("client.output.success", client.getRemoteSocketAddress()));
+							System.out.println(LanguageManager.getString("client.output.request", request.toString()));
 							final DataOutputStream output = new DataOutputStream(new BufferedOutputStream(client.getOutputStream()));
 							output.writeUTF(request.toString()); // On prépare l'envoi.
 							output.flush(); // On envoie la requête.
@@ -121,23 +122,23 @@ public class Client extends Thread {
 							}
 							final DataInputStream input = new DataInputStream(new BufferedInputStream(client.getInputStream()));
 							final String response = input.readUTF(); // On récupère le contenu de la réponse.
-							System.out.println("Réponse du server \"" + response + "\"."); // in.readUTF() permet d'obtenir la réponse du serveur.
+							System.out.println(LanguageManager.getString("client.output.response", response)); // in.readUTF() permet d'obtenir la réponse du serveur.
 							if(running) { // Si le client n'est plus en fonctionnement, on interrompt tout.
 								final String[] parts = response.split(" "); // On sépare la réponse UTF à l'espace.
 								if(Utils.isNumeric(parts[2])) { // Si le protocole est bien un nombre, on le vérifie.
 									final int version = Integer.parseInt(parts[2]);
 									if(PROTOCOL_VERSION < version) { // Si la version du protocole du prof est inférieure à celle de l'élève, on renvoie une erreur.
 										client.close();
-										throw new Exception("Ce logiciel client est trop ancien pour communiquer avec le serveur.");
+										throw new Exception(LanguageManager.getString("client.message.clienttooold"));
 									}
 									else if(PROTOCOL_VERSION > version) { // Et si la version du protocole du prof est supérieure à celle de l'élève, on en renvoie une autre.
 										client.close();
-										throw new Exception("Le logiciel serveur est trop ancien pour communiquer avec ce client.");
+										throw new Exception(LanguageManager.getString("client.message.servertooold"));
 									}
 								}
 								else { // Si ce n'est pas un nombre, on montre une erreur.
 									client.close();
-									throw new Exception("Version du protocole invalide.");
+									throw new Exception(LanguageManager.getString("client.message.invalidprotocol"));
 								}
 								String message = null;
 								final String[] splittedMessage = Arrays.copyOfRange(parts, 4, parts.length);
@@ -163,7 +164,7 @@ public class Client extends Thread {
 							else { // On iterrompte le client.
 								parent.onInterrupted(computer, System.currentTimeMillis());
 							}
-							System.out.println("Fermeture du client...");
+							System.out.println(LanguageManager.getString("client.output.closing"));
 							client.close();
 						}
 						catch(final Exception ex) {
@@ -179,14 +180,14 @@ public class Client extends Thread {
 					System.out.println();
 					return;
 				}
-				System.out.println("Attente des ordinateurs...");
+				System.out.println(LanguageManager.getString("client.output.waiting.computers"));
 				while(computers.length != joinedComputers.size()) { // Tant que tous les ordinateurs n'ont pas tous été joints.
 					if(!running) {
 						return;
 					}
 					Thread.sleep(1000);
 				}
-				System.out.println("Attente de " + ProjetBBQProf.settings.refreshInterval + " sec...");
+				System.out.println(LanguageManager.getString("client.output.waiting.interval", ProjetBBQProf.settings.refreshInterval));
 				parent.onWaiting();
 				Thread.sleep(ProjetBBQProf.settings.refreshInterval * 1000); // Le client se connecte à chaque serveur toutes les 5 secondes.
 				System.out.println();

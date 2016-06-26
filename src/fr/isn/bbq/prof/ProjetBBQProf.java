@@ -3,6 +3,7 @@ package fr.isn.bbq.prof;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.io.File;
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,6 +16,7 @@ import javax.swing.UIManager;
 import com.jtattoo.plaf.smart.SmartLookAndFeel;
 
 import fr.isn.bbq.prof.frames.MainFrame;
+import fr.isn.bbq.prof.utils.LanguageManager;
 import fr.isn.bbq.prof.utils.Utils;
 import fr.isn.bbq.prof.utils.XMLSettings.XMLError;
 
@@ -25,7 +27,7 @@ public class ProjetBBQProf {
 	 */
 	
 	public static final String APP_NAME = "Projet BBQ";
-	public static final String APP_VERSION = "0.1.2";
+	public static final String APP_VERSION = "0.1.3";
 	
 	/*
 	 * Certaines variables comme les paramètres, la liste d'icônes (16, 32, 64, 128, 256, 512) :
@@ -42,6 +44,14 @@ public class ProjetBBQProf {
 	
 	public static final void main(final String[] args) {
 		try {
+			Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler() {
+
+				@Override
+				public final void uncaughtException(final Thread thread, final Throwable throwable) {
+					JOptionPane.showMessageDialog(null, String.format(LanguageManager.getString("error.message"), throwable.getMessage()), LanguageManager.getString("error.title"), JOptionPane.ERROR_MESSAGE);
+				}
+				
+			});
 			final Properties properties = new Properties();
 			properties.put("logoString", APP_NAME); // On change la chaîne de caractères dans les menus.
 			SmartLookAndFeel.setTheme(properties);
@@ -53,7 +63,7 @@ public class ProjetBBQProf {
 			if(settings.exists()) { // Si les paramètres existent, on les charge.
 				final XMLError result = ProjetBBQProf.settings.load(settings);
 				if(result.getInvalidParameters().length > 0) {
-					throw new IllegalArgumentException("Paramètres invalides : " + Utils.join(", ", result.getInvalidParameters()) + ". Le logiciel a tenté de les corriger, veuillez relancer l'application.<br>Si cela ne fonctionne pas, consultez l'aide en ligne avant de ré-éditer la configuration.");
+					throw new IllegalArgumentException(LanguageManager.getString("error.invalidparameters", Utils.join(", ", result.getInvalidParameters())));
 				}
 			}
 			else {
@@ -74,7 +84,7 @@ public class ProjetBBQProf {
 			}
 			if(!roomsDirExists) { // Si le dossier de salles n'existe pas, on le créé et on s'en va.
 				getRoomDirectory();
-				JOptionPane.showMessageDialog(null, "<html>Le dossier de salles a été créé et est disponible ici :<br>" + ProjetBBQProf.settings.roomDir + "<br>Veuillez consulter l'aide en ligne pour ajouter des salles.</html>", APP_NAME, JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(null, "<html>" + LanguageManager.getString("dialog.roomscreated", ProjetBBQProf.settings.roomDir) + "</html>", APP_NAME, JOptionPane.INFORMATION_MESSAGE);
 				System.exit(0);
 			}
 			Utils.loadMessagesInSettings();
@@ -91,7 +101,7 @@ public class ProjetBBQProf {
 		}
 		catch(final Exception ex) {
 			ex.printStackTrace();
-			JOptionPane.showMessageDialog(null, "<html>Erreur durant le démarrage ! Peut-être que la configuration est invalide, veuillez consulter l'aide en ligne.<br>" + ex.getMessage() + "</html>", ex.getClass().getName(), JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "<html>" + LanguageManager.getString("error.loadingapp", ex.getMessage()) + "</html>", ex.getClass().getName(), JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
