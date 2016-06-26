@@ -15,6 +15,7 @@ import javax.swing.JLabel;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 
@@ -95,8 +96,9 @@ public class LockFrame extends JFrame {
 			final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB); // On créé une nouvelle image.
 			final Graphics graphics = image.getGraphics();
 			final BufferedImage icon = ImageIO.read(ProjetBBQEleve.class.getResource(imageUrl)); // On va chercher l'image en fonction de l'url donné.
+			final Dimension iconSize = new Dimension(height / 4, height / 4);
 			graphics.drawImage(screenshot, 0, 0, this); // On ajoute le screenshot sur cette image.
-			graphics.drawImage(icon.getScaledInstance(height / 5, height / 5, Image.SCALE_SMOOTH), width / 2 - icon.getWidth() / 2, height / 2 - icon.getHeight() / 2, this); // Puis on y ajoute l'image donnée au centre.
+			graphics.drawImage(icon.getScaledInstance(iconSize.width, iconSize.height, Image.SCALE_SMOOTH), width / 2 - iconSize.width / 2, height / 2 - iconSize.height / 2, this); // Puis on y ajoute l'image donnée au centre.
 			graphics.dispose();
 			label.setIcon(new ImageIcon(image)); // Enfin, on applique cette image nouvellement créée.
 		}
