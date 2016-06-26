@@ -1,0 +1,49 @@
+language.name=Français
+language.version=1
+
+
+
+server.waiting=En attente de client sur %s:%d...
+
+server.debug.connected=Connecté à %s.
+server.debug.received=Message reçu : "%s.
+server.debug.response=Envoi de la réponse...
+server.debug.closing=Fermeture de la connexion avec le client...
+
+server.response.invalid.message=Message invalide (doit être de type "<index> <uuid> <version> <arguments>").
+server.response.invalid.servertooold=Ce logiciel serveur est trop ancien pour communiquer avec votre client.
+server.response.invalid.clienttooold=Votre logiciel client est trop ancien pour communiquer avec ce serveur.
+server.response.invalid.protocol=Version du protocole invalide.
+server.response.invalid.index=L'index est invalide.
+server.response.invalid.length=Pas de durée valide entrée.
+server.response.unauthorized=Non autorisé.
+
+
+
+lock.title.locked=Verrouillé
+lock.title.unlocked=Déverrouillé
+
+
+
+os.shutdown.unknown.title=Arrêt de l'ordinateur
+os.shutdown.unknown.message=L'arrêt à distance n'étant pas supporté sur votre ordinateur, merci de le faire de vous-même.
+os.shutdown.unknown.error=Erreur lors de l'arrêt à distance. Merci d'arrêter le système de vous-même.
+
+os.restart.unknown.title=Redémarrage de l'ordinateur
+os.restart.unknown.message=Le redémarrage à distance n'étant pas supporté sur votre ordinateur, merci de le faire de vous-même.
+os.restart.unknown.error=Erreur lors du redémarrage à distance. Merci de redémarrer le système de vous-même.
+
+os.logout.unknown.title=Déconnexion de l'ordinateur
+os.logout.unknown.message=La déconnexion à distance n'étant pas supporté sur votre ordinateur, merci de le faire de vous-même.
+os.logout.unknown.error=Erreur lors de la déconnexion à distance. Merci de vous déconnecter de vous-même.
+
+
+
+message.title=Message reçu !
+message.footer=Ce message se fermera dans %d seconde(s)...
+
+
+
+dialog.settingscreated=Les paramètres XML ont été créé et sont disponibles ici :<br>%s<br>Veuillez les modifier avant de démarrer l'application.
+
+error.loadingapp=Erreur durant le démarrage ! Peut-être que la configuration est invalide, veuillez consulter l'aide en ligne.<br>%s

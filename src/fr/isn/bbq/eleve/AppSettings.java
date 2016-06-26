@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -44,7 +45,8 @@ public class AppSettings extends XMLSettings {
 		"image-type",		// TAGS[8]
 		"thumbnail",		// TAGS[9]
 		"height",			// TAGS[10]
-		"width"				// TAGS[11]
+		"width",			// TAGS[11]
+		"custom-language"	// TAGS[12]
 	};
 	
 	public String ip = "192.168.0.1"; // L'IP de cet ordinateur.
@@ -58,6 +60,7 @@ public class AppSettings extends XMLSettings {
 	public String imageType = "JPG";
 	public int thumbnailHeight = 100; // Hauteur de la miniature.
 	public int thumbnailWidth = 100; // Largeur de la miniature.
+	public String customLanguage = Locale.getDefault().getLanguage().toLowerCase(); // Permet de définir une autre langue.
 	
 	@Override
 	public final XMLError load(final File file) {
@@ -147,6 +150,14 @@ public class AppSettings extends XMLSettings {
 				result.addInvalidParameters(TAGS[9]);
 			}
 			
+			final String customLanguage = getObject(root, TAGS[12], String.class);
+			if(customLanguage == null) {
+				result.addInvalidParameters(TAGS[12]);
+			}
+			else {
+				this.customLanguage = customLanguage;
+			}
+			
 			if(result.getInvalidParameters().length != 0) {
 				super.write(file);
 			}
@@ -190,6 +201,8 @@ public class AppSettings extends XMLSettings {
 			final Node thumbnailWidth = document.createElement(TAGS[11]);
 			thumbnailWidth.appendChild(document.createTextNode(String.valueOf(this.thumbnailWidth)));
 			thumbnail.appendChild(thumbnailWidth);
+			final Node customLanguage = document.createElement(TAGS[12]);
+			customLanguage.appendChild(document.createTextNode(this.customLanguage));
 			root.appendChild(ip);
 			root.appendChild(backlog);
 			root.appendChild(port);
@@ -198,6 +211,7 @@ public class AppSettings extends XMLSettings {
 			root.appendChild(uuids);
 			root.appendChild(imageType);
 			root.appendChild(thumbnail);
+			root.appendChild(customLanguage);
 			final Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); // On indent le fichier XML (plus joli).
 			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2"); // Deux espaces par noeud.

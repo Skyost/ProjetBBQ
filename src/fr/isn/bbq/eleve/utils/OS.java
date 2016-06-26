@@ -62,13 +62,13 @@ public class OS {
 				Runtime.getRuntime().exec("shutdown now -h -f"); // Idem ici.
 				break;
 			case UNKNOWN: // Sinon on affiche une boîte de dialogue demandant à l'utilisateur d'effectuer l'action de lui-même.
-				JOptionPane.showMessageDialog(null, "L'arrêt à distance n'étant pas supporté sur votre ordinateur, merci de le faire de vous-même.", "Arrêt de l'ordinateur", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(null, LanguageManager.getString("os.shutdown.unknown.message"), LanguageManager.getString("os.shutdown.unknown.title"), JOptionPane.INFORMATION_MESSAGE);
 				break;
 			}
 		}
 		catch(final Exception ex) { // Si une erreur se produit, on demande à l'utilisateur d'effectuer l'action de lui-même.
 			ex.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Erreur lors de l'arrêt à distance. Merci d'arrêter le système de vous-même.", "Erreur !", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, LanguageManager.getString("os.shutdown.unknown.error"), LanguageManager.getString("error.title"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
@@ -89,13 +89,13 @@ public class OS {
 				Runtime.getRuntime().exec("shutdown now -r -f");
 				break;
 			case UNKNOWN:
-				JOptionPane.showMessageDialog(null, "Le redémarrage à distance n'étant pas supporté sur votre ordinateur, merci de le faire de vous-même.", "Redémarrage de l'ordinateur", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(null, LanguageManager.getString("os.restart.unknown.message"), LanguageManager.getString("os.restart.unknown.title"), JOptionPane.INFORMATION_MESSAGE);
 				break;
 			}
 		}
 		catch(final Exception ex) {
 			ex.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Erreur lors du redémarrage à distance. Merci de redémarrer le système de vous-même.", "Erreur !", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, LanguageManager.getString("os.restart.unknown.error"), LanguageManager.getString("error.title"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
@@ -116,13 +116,13 @@ public class OS {
 				new ProcessBuilder(new String[]{"pkill", "-KILL", "-u", getUserName()}).start(); // On kill la session de l'utilisateur.
 				break;
 			case UNKNOWN:
-				JOptionPane.showMessageDialog(null, "La déconnexion à distance n'étant pas supporté sur votre ordinateur, merci de le faire de vous-même.", "Déconnexion de l'ordinateur", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(null, LanguageManager.getString("os.logout.unknown.message"), LanguageManager.getString("os.logout.unknown.title"), JOptionPane.INFORMATION_MESSAGE);
 				break;
 			}
 		}
 		catch(final Exception ex) {
 			ex.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Erreur lors de la déconnexion à distance. Merci de vous déconnecter de vous-même.", "Erreur !", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, LanguageManager.getString("os.logout.unknown.error"), LanguageManager.getString("error.title"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	

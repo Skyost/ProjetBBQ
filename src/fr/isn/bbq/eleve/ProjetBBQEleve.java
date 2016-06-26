@@ -20,6 +20,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import fr.isn.bbq.eleve.tasks.HandleClient;
+import fr.isn.bbq.eleve.utils.LanguageManager;
 import fr.isn.bbq.eleve.utils.Utils;
 
 public class ProjetBBQEleve {
@@ -29,7 +30,7 @@ public class ProjetBBQEleve {
 	*/
 	
 	public static final String APP_NAME = "Projet BBQ";
-	public static final String APP_VERSION = "0.1.2";
+	public static final String APP_VERSION = "0.1.3";
 	
 	/*
 	 * Certaines variables comme les paramètres, la liste d'icônes (16, 32, 64, 128, 256, 512) :
@@ -55,7 +56,7 @@ public class ProjetBBQEleve {
 			}
 			else { // Sinon on le créé et on applique des paramètres par défaut puis on quitte le programme.
 				ProjetBBQEleve.settings.write(settings);
-				JOptionPane.showMessageDialog(null, "<html>Les paramètres XML ont été enregistré ici :<br>" + settings.getPath() + "<br>Veuillez les modifier avant de démarrer l'application.</html>");
+				JOptionPane.showMessageDialog(null, "<html>" + LanguageManager.getString("dialog.settingscreated", settings.getPath()) + "</html>");
 				System.exit(0);
 			}
 			server = (SSLServerSocket)SSLServerSocketFactory.getDefault().createServerSocket(ProjetBBQEleve.settings.port, ProjetBBQEleve.settings.backlog, InetAddress.getByName(ProjetBBQEleve.settings.ip)); // On créé le serveur en fonction des paramètres XML.
@@ -68,7 +69,7 @@ public class ProjetBBQEleve {
 		}
 		catch(final Exception ex) {
 			ex.printStackTrace();
-			JOptionPane.showMessageDialog(null, "<html>Impossible de démarrer " + APP_NAME + " en tâche de fond !<br/>Raison : " + ex.getMessage() + "</html>", "Erreur !", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "<html>" + LanguageManager.getString("error.loadingapp", ex.getMessage()) + "</html>", ex.getClass().getName(), JOptionPane.ERROR_MESSAGE);
 		}
 		if(server == null) { // Si il y a une erreur durant l'initialisation de l'application, on s'en va.
 			System.exit(0);
@@ -77,7 +78,7 @@ public class ProjetBBQEleve {
 		while(true) { // Le serveur boucle infiniment.
 			try {
 				if(!waitingMessageDisplayed) {
-					System.out.println("En attente de client sur " + server.getInetAddress().getHostAddress() + ":" + server.getLocalPort() + "...");
+					System.out.println(LanguageManager.getString("server.waiting", server.getInetAddress().getHostAddress(), server.getLocalPort()));
 					waitingMessageDisplayed = true;
 				}
 				final Socket client = server.accept(); // On attend pendant la durée de timeout si un client se connecte.
@@ -146,7 +147,7 @@ public class ProjetBBQEleve {
 			icon.getScaledInstance(64, 64, Image.SCALE_SMOOTH),
 			icon.getScaledInstance(128, 128, Image.SCALE_SMOOTH),
 			icon.getScaledInstance(256, 256, Image.SCALE_SMOOTH),
-			icon/*.getScaledInstance(512, 512, Image.SCALE_SMOOTH) // L'icône est déjà en 512x512 */
+			icon//.getScaledInstance(512, 512, Image.SCALE_SMOOTH) // L'icône est déjà en 512x512.
 		));
 	}
 	

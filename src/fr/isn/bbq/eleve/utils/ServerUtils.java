@@ -34,7 +34,7 @@ public class ServerUtils {
 	 */
 	
 	public static final void sendMessage(final Socket client, final String message, final DataOutputStream output, final boolean close) throws IOException {
-		System.out.println("Envoi de la réponse...");
+		System.out.println(LanguageManager.getString("server.debug.response"));
 		System.out.println(message);
 		output.writeUTF(message); // On prépare l'envoi.
 		output.flush(); // On envoie le message.

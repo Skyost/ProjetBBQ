@@ -9,12 +9,14 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 import fr.isn.bbq.eleve.ProjetBBQEleve;
+import fr.isn.bbq.eleve.utils.LanguageManager;
 
 import javax.swing.JLabel;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Image;
 
 public class LockFrame extends JFrame {
 	
@@ -45,7 +47,7 @@ public class LockFrame extends JFrame {
 	 */
 	
 	public LockFrame(final BufferedImage screenshot) {
-		this.setTitle("Locked"); // Titre par défaut de la fenêtre (invisible)
+		this.setTitle(LanguageManager.getString("lock.title.locked")); // Titre par défaut de la fenêtre (invisible)
 		this.setIconImages(ProjetBBQEleve.icons); // Icône invisible également.
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // On refuse de la fermer.
 		this.setLocationRelativeTo(null); // On la centre.
@@ -67,7 +69,7 @@ public class LockFrame extends JFrame {
 	 */
 	
 	public final void unlockAndClose() {
-		this.setTitle("Unlocked");
+		this.setTitle(LanguageManager.getString("lock.title.unlocked"));
 		mergeImageWithScreenshot("/fr/isn/bbq/eleve/res/icons/icon_unlocked.png"); // On applique l'image de déverrouillage au screenshot.
 		new Timer().schedule(new TimerTask() {
 
@@ -94,7 +96,7 @@ public class LockFrame extends JFrame {
 			final Graphics graphics = image.getGraphics();
 			final BufferedImage icon = ImageIO.read(ProjetBBQEleve.class.getResource(imageUrl)); // On va chercher l'image en fonction de l'url donné.
 			graphics.drawImage(screenshot, 0, 0, this); // On ajoute le screenshot sur cette image.
-			graphics.drawImage(icon, width / 2 - icon.getWidth() / 2, height / 2 - icon.getHeight() / 2, this); // Puis on y ajoute l'image donnée au centre.
+			graphics.drawImage(icon.getScaledInstance(height / 5, height / 5, Image.SCALE_SMOOTH), width / 2 - icon.getWidth() / 2, height / 2 - icon.getHeight() / 2, this); // Puis on y ajoute l'image donnée au centre.
 			graphics.dispose();
 			label.setIcon(new ImageIcon(image)); // Enfin, on applique cette image nouvellement créée.
 		}

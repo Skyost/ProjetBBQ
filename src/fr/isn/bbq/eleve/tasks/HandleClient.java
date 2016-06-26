@@ -19,6 +19,7 @@ import javax.imageio.ImageIO;
 import fr.isn.bbq.eleve.ProjetBBQEleve;
 import fr.isn.bbq.eleve.frames.LockFrame;
 import fr.isn.bbq.eleve.frames.MessageFrame;
+import fr.isn.bbq.eleve.utils.LanguageManager;
 import fr.isn.bbq.eleve.utils.OS;
 import fr.isn.bbq.eleve.utils.ServerUtils;
 import fr.isn.bbq.eleve.utils.Utils;
@@ -61,38 +62,38 @@ public class HandleClient extends Thread {
 	@Override
 	public final void run() {
 		try {
-			System.out.println("Connecté à " + client.getRemoteSocketAddress() + ".");
+			System.out.println(LanguageManager.getString("server.debug.connected", client.getRemoteSocketAddress()));
 			final DataInputStream input = new DataInputStream(new BufferedInputStream(client.getInputStream()));
 			final String message = input.readUTF(); // On récupère le contenu de la requête.
-			System.out.println("Message reçu : \"" + message + "\".");
+			System.out.println(LanguageManager.getString("server.debug.received", message));
 			final DataOutputStream output = new DataOutputStream(new BufferedOutputStream(client.getOutputStream())); // Pour renvoyer des messages au client.
 			final String[] parts = message.split(" "); // On sépare la requête à l'espace.
 			if(parts.length < 2) { // Il faut qu'il y ai au moins deux arguments (l'index et l'UUID).
-				ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "Message invalide (doit être de type \"<index> <uuid> <version> <arguments>\")."), output);
+				ServerUtils.sendMessage(client, ServerUtils.createResponse(false, LanguageManager.getString("server.response.invalid.message")), output);
 				return;
 			}
 			if(Utils.isNumeric(parts[2])) { // Si le protocole est bien un nombre, on le vérifie.
 				final int version = Integer.parseInt(parts[2]);
 				if(PROTOCOL_VERSION < version) { // Si la version du protocole de l'élève est inférieure à celle du prof, on renvoie une erreur.
-					ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "Ce logiciel serveur est trop ancien pour communiquer avec votre client."), output);
+					ServerUtils.sendMessage(client, ServerUtils.createResponse(false, LanguageManager.getString("server.response.invalid.servertooold")), output);
 					return;
 				}
 				else if(PROTOCOL_VERSION > version) { // Et si la version du protocole de l'élève est supérieure à celle du prof, on en renvoie une autre.
-					ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "Votre logiciel client est trop ancien pour communiquer avec ce serveur."), output);
+					ServerUtils.sendMessage(client, ServerUtils.createResponse(false, LanguageManager.getString("server.response.invalid.clienttooold")), output);
 					return;
 				}
 			}
 			else { // Sinon on renvoie une erreur.
-				ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "Version du protocole invalide."), output);
+				ServerUtils.sendMessage(client, ServerUtils.createResponse(false, LanguageManager.getString("server.response.invalid.protocol")), output);
 				return;
 			}
 			RequestType type = null;
 			if(!Utils.isNumeric(parts[0]) || (type = RequestType.getFromIndex(Integer.valueOf(parts[0]))) == null) { // Si l'index n'est pas numérique ou est invalide, on renvoie une erreur.
-				ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "L'index est invalide."), output);
+				ServerUtils.sendMessage(client, ServerUtils.createResponse(false, LanguageManager.getString("server.response.invalid.index")), output);
 				return;
 			}
 			if(!ProjetBBQEleve.settings.uuids.contains(parts[1])) { // Si l'UUID n'est pas dans la liste, on renvoie une erreur.
-				ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "Non autorisé."), output);
+				ServerUtils.sendMessage(client, ServerUtils.createResponse(false, LanguageManager.getString("server.response.unauthorized")), output);
 				return;
 			}
 			switch(type) {
@@ -115,7 +116,7 @@ public class HandleClient extends Thread {
 					new MessageFrame(Utils.join(" ", Arrays.copyOfRange(parts, 3, parts.length - 1)), Integer.valueOf(parts[parts.length - 1])).setVisible(true);
 				}
 				else { // Si ce n'est pas un chiffre, on renvoie une erreur.
-					ServerUtils.sendMessage(client, ServerUtils.createResponse(false, "Pas de durée valide entrée."), output, false);
+					ServerUtils.sendMessage(client, ServerUtils.createResponse(false, LanguageManager.getString("server.response.invalid.length")), output, false);
 				}
 				break;
 			case LOCK:
@@ -147,7 +148,7 @@ public class HandleClient extends Thread {
 			default:
 				break;
 			}
-			System.out.println("Fermeture de la connexion avec le client...");
+			System.out.println(LanguageManager.getString("server.debug.closing"));
 			client.close(); // On ferme la connexion avec le client.
 			System.out.println();
 		}
