@@ -48,7 +48,7 @@ public class ProjetBBQProf {
 
 				@Override
 				public final void uncaughtException(final Thread thread, final Throwable throwable) {
-					JOptionPane.showMessageDialog(null, String.format(LanguageManager.getString("error.message"), throwable.getMessage()), LanguageManager.getString("error.title"), JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, LanguageManager.getString("error.message", throwable.getMessage()), LanguageManager.getString("error.title"), JOptionPane.ERROR_MESSAGE);
 				}
 				
 			});
