@@ -86,6 +86,10 @@ room.statusbar.waiting="Attente de %d secondes avant de rafraîchir les miniatur
 
 
 dialog.roomscreated=Le dossier de salles a été créé et est disponible ici :<br>%s<br>Veuillez consulter l'aide en ligne pour ajouter des salles.
+dialog.message.title=Envoyer un message
+dialog.message.enter=Entrez votre message :
+dialog.message.select=Ou sélectionnez le depuis la liste ci-dessous :
+dialog.message.duration=Durée d'affichage (en secondes) :
 
 error.loadingapp=Erreur durant le démarrage ! Peut-être que la configuration est invalide, veuillez consulter l'aide en ligne.<br>%s
 error.invalidparameters=Paramètres invalides : "%s". Le logiciel a tenté de les corriger, veuillez relancer l'application.<br>Si cela ne fonctionne pas, consultez l'aide en ligne avant de ré-éditer la configuration.

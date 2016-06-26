@@ -60,6 +60,7 @@ public class LanguageManager {
 			}
 		}
 		catch(final Exception ex) {
+			ex.printStackTrace();
 			JOptionPane.showMessageDialog(null, String.format(DEFAULT_STRINGS.get("error.message"), ex.getMessage()), DEFAULT_STRINGS.get("error.title"), JOptionPane.ERROR_MESSAGE);
 		}
 	}

@@ -22,18 +22,6 @@ import fr.isn.bbq.prof.ProjetBBQProf;
 public class Utils {
 	
 	private static final List<Component> MESSAGE_COMPONENTS = new ArrayList<Component>(); // Composants de la boîte de dialogue "message".
-	static {
-		final JSpinner spinner = new JSpinner();
-		MESSAGE_COMPONENTS.add(new JLabel("Entrez votre message :"));
-		MESSAGE_COMPONENTS.add(new JTextField());
-		MESSAGE_COMPONENTS.add(new JLabel("Ou sélectionnez le depuis la liste ci-dessous :"));
-		MESSAGE_COMPONENTS.add(new JComboBox<String>());
-		MESSAGE_COMPONENTS.add(new JLabel("Durée d'affichage (en secondes) :"));
-		MESSAGE_COMPONENTS.add(spinner);
-		spinner.setModel(new SpinnerNumberModel(5, 1, Integer.MAX_VALUE, 1));
-		final JFormattedTextField field = ((NumberEditor)spinner.getEditor()).getTextField();
-		((NumberFormatter)field.getFormatter()).setAllowsInvalid(false);
-	}
 	
 	/**
 	 * Permet d'obtenir le chemin du fichier JAR.
@@ -85,6 +73,26 @@ public class Utils {
 	}
 	
 	/**
+	 * Chargement des composants de la boîte de message.
+	 */
+	
+	public static final void loadMessagesComponents() {
+		if(!MESSAGE_COMPONENTS.isEmpty()) {
+			return;
+		}
+		final JSpinner spinner = new JSpinner();
+		MESSAGE_COMPONENTS.add(new JLabel(LanguageManager.getString("dialog.message.enter")));
+		MESSAGE_COMPONENTS.add(new JTextField());
+		MESSAGE_COMPONENTS.add(new JLabel(LanguageManager.getString("dialog.message.select")));
+		MESSAGE_COMPONENTS.add(new JComboBox<String>());
+		MESSAGE_COMPONENTS.add(new JLabel(LanguageManager.getString("dialog.message.duration")));
+		MESSAGE_COMPONENTS.add(spinner);
+		spinner.setModel(new SpinnerNumberModel(5, 1, Integer.MAX_VALUE, 1));
+		final JFormattedTextField field = ((NumberEditor)spinner.getEditor()).getTextField();
+		((NumberFormatter)field.getFormatter()).setAllowsInvalid(false);
+	}
+	
+	/**
 	 * Chargement des messages contenus dans les paramètres "settings.xml".
 	 */
 	
@@ -105,7 +113,7 @@ public class Utils {
 	
 	@SuppressWarnings("unchecked")
 	public static final Object[] createMessageDialog(final JFrame parent) {
-		final boolean result = JOptionPane.showConfirmDialog(parent, MESSAGE_COMPONENTS.toArray(new Component[MESSAGE_COMPONENTS.size()]), "Envoyer un message", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION;
+		final boolean result = JOptionPane.showConfirmDialog(parent, MESSAGE_COMPONENTS.toArray(new Component[MESSAGE_COMPONENTS.size()]), LanguageManager.getString("dialog.message.title"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION;
 		final List<Object> returned = new ArrayList<Object>();
 		returned.add(result);
 		final JComboBox<String> comboBox = (JComboBox<String>)MESSAGE_COMPONENTS.get(3);

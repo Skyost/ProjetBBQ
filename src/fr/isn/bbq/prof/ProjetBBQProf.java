@@ -87,6 +87,7 @@ public class ProjetBBQProf {
 				JOptionPane.showMessageDialog(null, "<html>" + LanguageManager.getString("dialog.roomscreated", ProjetBBQProf.settings.roomDir) + "</html>", APP_NAME, JOptionPane.INFORMATION_MESSAGE);
 				System.exit(0);
 			}
+			Utils.loadMessagesComponents(); // Chargement des utilitaires pour envoyer des messages.
 			Utils.loadMessagesInSettings();
 			final Image icon = Toolkit.getDefaultToolkit().getImage(ProjetBBQProf.class.getResource("/fr/isn/bbq/prof/res/app_icon.png")); // On récupère l'icône par défaut de l'application.
 			icons.addAll(Arrays.asList( // On ajoute l'icône de différentes tailles pour que le système choisisse la plus appropriée.
@@ -95,7 +96,7 @@ public class ProjetBBQProf {
 				icon.getScaledInstance(64, 64, Image.SCALE_SMOOTH),
 				icon.getScaledInstance(128, 128, Image.SCALE_SMOOTH),
 				icon.getScaledInstance(256, 256, Image.SCALE_SMOOTH),
-				icon/*.getScaledInstance(512, 512, Image.SCALE_SMOOTH) // L'icône est déjà en 512x512 */
+				icon//.getScaledInstance(512, 512, Image.SCALE_SMOOTH) // L'icône est déjà en 512x512.
 			));
 			new MainFrame().setVisible(true); // On créé la première fenêtre du programme et on la rend visible.
 		}
