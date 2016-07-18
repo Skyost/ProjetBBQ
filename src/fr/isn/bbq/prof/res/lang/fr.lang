@@ -31,12 +31,14 @@ client.output.waiting.interval=Attente de %d secondes...
 
 
 computer.status.connection=Chargement de la capture d'écran...
-computer.status.error=Impossible de charger la capture d'écran !<br>Raison : + %s.
+computer.status.error=Impossible de charger la capture d'écran !<br>Raison : %s.
 computer.status.interrupted=Chargement annulé.
 
 computer.save.popup=Enregistrer la capture d'écran...
 computer.save.format=Image %s
 computer.save.error=Impossible d'enregistrer la capture d'écran (%s).
+
+computer.zoom=%d%%
 
 
 

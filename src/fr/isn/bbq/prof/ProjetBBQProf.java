@@ -48,6 +48,7 @@ public class ProjetBBQProf {
 
 				@Override
 				public final void uncaughtException(final Thread thread, final Throwable throwable) {
+					throwable.printStackTrace();
 					JOptionPane.showMessageDialog(null, LanguageManager.getString("error.message", throwable.getMessage()), LanguageManager.getString("error.title"), JOptionPane.ERROR_MESSAGE);
 				}
 				

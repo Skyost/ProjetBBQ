@@ -10,6 +10,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSlider;
 import javax.swing.JToolBar;
 
 import fr.isn.bbq.prof.Computer;
@@ -32,8 +33,12 @@ import javax.swing.JLabel;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
@@ -42,6 +47,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
@@ -78,6 +85,13 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 	private long refreshTime;
 	
 	/**
+	 * Ci-dessous, les différents champs utilisés pour le redimensionnement :
+	 */
+	
+	private final float defaultFontSize;
+	private BufferedImage currentScreenshot;
+	
+	/**
 	 * Construction de cet IHM.
 	 * 
 	 * @param computer L'ordinateur correspondant.
@@ -104,6 +118,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 		if(ImageIO.getWriterFormatNames().length > 0) { // Si il n'est pas possible d'enregistrer une image, on n'ajoute pas de menu popup.
 			lblScreenshot.setComponentPopupMenu(createScreenshotMenu());
 		}
+		defaultFontSize = lblScreenshot.getFont().getSize2D();
 		final Container container = this.getContentPane();
 		container.add(createToolbar(), BorderLayout.NORTH);
 		container.add(new JScrollPane(lblScreenshot), BorderLayout.CENTER);
@@ -129,7 +144,8 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 		if(!(returned[returned.length - 1] instanceof Image)) {
 			return;
 		}
-		lblScreenshot.setIcon(new ImageIcon((BufferedImage)returned[returned.length - 1]));
+		currentScreenshot = (BufferedImage)returned[returned.length - 1];
+		lblScreenshot.setIcon(new ImageIcon(currentScreenshot));
 		lblScreenshot.setText(null);
 		this.setTitle(buildTitle(returned[0].toString()));
 	}
@@ -282,6 +298,46 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			
 		});
 		unlock.setToolTipText(LanguageManager.getString("common.pc.singular.unlock"));
+		/* Zoom sur la capture d'écran : */
+		final int minimum = 0; // Le minimum est 0.
+		final int maximum = 100; // Le maximum est 100.
+		final int defaultValue = maximum / 2; // 50 par défaut (on affichera 50*2=100), ce qui nous autorise à avoir une image deux fois plus grandes.
+		final int pas = 5; // De combien est augmenté ou diminué le zoom avec la molette.
+		
+		
+		final JLabel zoomDisplayed = new JLabel();
+		final JSlider zoom = new JSlider(minimum, maximum, defaultValue);
+		zoom.addChangeListener(new ChangeListener() {
+
+			@Override
+			public final void stateChanged(final ChangeEvent event) {
+				/* Le facteur de zoom. Par défaut, égal à 50/(100/2)=50/50=1. Le facteur sera donc toujours compris entre 0 et 2 (1 étant la valeur par défaut). */
+				final float factor = (float)zoom.getValue() / (float)defaultValue;
+				
+				zoomDisplayed.setText(LanguageManager.getString("computer.zoom", zoom.getValue() * 2)); // On met à jour le texte en fonction du facteur de zoom.
+				if(factor == 0f) { // On a pas envie de faire disparaitre complétement le texte ou l'image.
+					return;
+				}
+				if(lblScreenshot.getIcon() == null) { // Pas de screen téléchargé, que du texte.
+					lblScreenshot.setFont(lblScreenshot.getFont().deriveFont(defaultFontSize * factor)); // On applique une taille (par défaut) de 12f * facteur.
+					return;
+				} // Un screen et donc pas de texte :
+				final AffineTransform transform = new AffineTransform();
+				transform.scale(factor, factor); // On transforme l'image avec notre facteur.
+				lblScreenshot.setIcon(new ImageIcon(new AffineTransformOp(transform, AffineTransformOp.TYPE_NEAREST_NEIGHBOR).filter(currentScreenshot, null))); // Et on applique l'image.
+			}
+			
+		});
+		this.addMouseWheelListener(new MouseWheelListener() { // On ajoute un évènement global qui écoute la molette de la souris :
+
+			@Override
+			public final void mouseWheelMoved(final MouseWheelEvent event) {
+				/* event.getWheelRotation() est supérieur à 0 si il y a une rotation vers le haut et inférieur à 0 si vers le bas. En fonction de ceci, on applique un pas positif ou négatif pour zoomer ou dézoomer. */
+				zoom.setValue(zoom.getValue() + (event.getWheelRotation() < 0 ? pas : (-1) * pas));
+			}
+			
+		});
+		zoomDisplayed.setText(LanguageManager.getString("computer.zoom", zoom.getValue() * 2));
 		/* Puis on ajoute les différents boutons : */
 		toolbar.add(refresh);
 		toolbar.add(sendMessage);
@@ -292,6 +348,9 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 		toolbar.addSeparator();
 		toolbar.add(lock);
 		toolbar.add(unlock);
+		toolbar.addSeparator();
+		toolbar.add(zoom);
+		toolbar.add(zoomDisplayed);
 		return toolbar;
 	}
 	
