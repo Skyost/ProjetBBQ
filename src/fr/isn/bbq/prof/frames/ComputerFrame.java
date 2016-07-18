@@ -322,6 +322,10 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 					lblScreenshot.setFont(lblScreenshot.getFont().deriveFont(defaultFontSize * factor)); // On applique une taille (par défaut) de 12f * facteur.
 					return;
 				} // Un screen et donc pas de texte :
+				if(factor == 1f) { // Si on a un facteur de 1, pas besoin de redimensionner :
+					lblScreenshot.setIcon(new ImageIcon(currentScreenshot));
+					return;
+				}
 				final AffineTransform transform = new AffineTransform();
 				transform.scale(factor, factor); // On transforme l'image avec notre facteur.
 				lblScreenshot.setIcon(new ImageIcon(new AffineTransformOp(transform, AffineTransformOp.TYPE_NEAREST_NEIGHBOR).filter(currentScreenshot, null))); // Et on applique l'image.
