@@ -43,7 +43,7 @@ public class AboutFrame extends JFrame implements GithubUpdaterResultListener {
 	 */
 	
 	public AboutFrame() {
-		this.setTitle("À propos...");
+		this.setTitle(LanguageManager.getString("about.title"));
 		this.setIconImages(ProjetBBQProf.icons);
 		this.setSize(600, 500); // Par défaut, une taille de 600x500.
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
