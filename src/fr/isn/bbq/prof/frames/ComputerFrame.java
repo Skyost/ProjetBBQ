@@ -42,6 +42,7 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -82,7 +83,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 	 * La dernière fois que la capture d'écran a été rafraichie.
 	 */
 	
-	private long refreshTime;
+	private long refreshTime = -1l;
 	
 	/**
 	 * Ci-dessous, les différents champs utilisés pour le redimensionnement :
@@ -142,8 +143,10 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			return;
 		}
 		if(!(returned[returned.length - 1] instanceof Image)) {
+			onError(computer, new IllegalArgumentException("Pas d'image renvoyée.") ,responseTime);
 			return;
 		}
+		refreshTime = responseTime;
 		currentScreenshot = (BufferedImage)returned[returned.length - 1];
 		lblScreenshot.setIcon(new ImageIcon(currentScreenshot));
 		lblScreenshot.setText(null);
@@ -156,8 +159,10 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 		if(responseTime < refreshTime) {
 			return;
 		}
+		refreshTime = responseTime;
 		lblScreenshot.setIcon(null);
 		lblScreenshot.setText("<html>" + LanguageManager.getString("computer.status.error", ex.getMessage()) + "</html>");
+		this.setTitle(buildTitle(null));
 	}
 
 	@Override
@@ -166,8 +171,10 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 		if(time < refreshTime) {
 			return;
 		}
+		refreshTime = time;
 		lblScreenshot.setIcon(null);
 		lblScreenshot.setText(LanguageManager.getString("computer.status.interrupted"));
+		this.setTitle(buildTitle(null));
 	}
 	
 	@Override
@@ -205,7 +212,22 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 	 */
 	
 	private final String buildTitle(final String username) {
-		return computer.name + " (" + computer.ip + ":" + computer.port + ")" + (username == null ? "" : " → " + username);
+		final StringBuilder builder = new StringBuilder();
+		builder.append(computer.name + " (" + computer.ip + ":" + computer.port + ")");
+		if(username != null) {
+			builder.append(" → " + username);
+		}
+		if(refreshTime != -1l) {
+			final Calendar current = Calendar.getInstance();
+			current.setTimeInMillis(refreshTime);
+			builder.append(" (" + Utils.addZeroIfMissing(current.get(Calendar.DAY_OF_MONTH)) + "/");
+			builder.append(Utils.addZeroIfMissing(current.get(Calendar.MONTH) + 1) + "/"); 
+			builder.append(Utils.addZeroIfMissing(current.get(Calendar.YEAR)) + " ");
+			builder.append(Utils.addZeroIfMissing(current.get(Calendar.HOUR_OF_DAY)) + ":");
+			builder.append(Utils.addZeroIfMissing(current.get(Calendar.MINUTE)) + ":");
+			builder.append(Utils.addZeroIfMissing(current.get(Calendar.SECOND)) + ")");
+		}
+		return builder.toString();
 	}
 	
 	/**

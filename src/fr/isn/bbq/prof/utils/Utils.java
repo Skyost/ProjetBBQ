@@ -121,5 +121,18 @@ public class Utils {
 		returned.add(((JSpinner)MESSAGE_COMPONENTS.get(5)).getValue().toString());
 		return returned.toArray(new Object[returned.size()]);
 	}
+	
+	/**
+	 * Ajout d'un zéro devant un nombre pour les nombres dont la "longueur" est inférieure à 2 (1 -> 01, 4 -> 04, 12 -> 12).
+	 * 
+	 * @param number Le nombre.
+	 * 
+	 * @return Le nombre sous forme d'une chaîne de caractètres.
+	 */
+	
+	public static final String addZeroIfMissing(final int number) {
+		final String value = String.valueOf(number);
+		return value.length() < 2 ? "0" + value : value;
+	}
 
 }
