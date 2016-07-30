@@ -299,18 +299,13 @@ public class MainFrame extends JFrame {
 	}
 	
 	/**
-	 * Permet d'obtenir tous les ordinateurs gérées par le logiciel, indépendemment de la salle.
+	 * Permet d'obtenir tous les ordinateurs gérées par le logiciel et qui sont dans la salle sélectionnée.
 	 * 
 	 * @return Les ordinateurs gérées par le logiciel.
 	 */
 	
 	private final Computer[] getComputers() {
-		final List<Computer> computers = new ArrayList<Computer>();
-		for(final Room room : rooms) {
-			for(final Computer computer : room.computers) {
-				computers.add(computer);
-			}
-		}
+		final List<Computer> computers = rooms.get(currentIndex).computers;
 		return computers.toArray(new Computer[computers.size()]);
 	}
 	

@@ -1,6 +1,8 @@
 package fr.isn.bbq.prof.frames;
 
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -29,6 +31,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 
 import javax.swing.JLabel;
+import javax.swing.JList;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -42,6 +45,7 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Timer;
@@ -51,6 +55,8 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import com.jtattoo.plaf.smart.SmartLookAndFeel;
 
 /**
  * IHM d'un poste élève.
@@ -459,6 +465,32 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 	 */
 	
 	public static final void createClientDialog(final Request request, final JFrame parent, final Computer... computers) {
+		final JList<String> log = computers.length > 1 ? new JList<String>() : null; // Utilisé pour afficher des informations (si plusieurs ordinateurs).
+		final DefaultListModel<String> model = new DefaultListModel<String>() {
+			
+			private static final long serialVersionUID = 1L;
+			
+			/* On souhaite utiliser du HTML dans la liste : */
+
+			@Override
+			public final void addElement(final String element) {
+				super.addElement("<html>" + element + "</html>");
+			}
+			
+			@Override
+			public final void setElementAt(final String element, final int index) {
+				super.setElementAt("<html>" + element + "</html>", index);
+			}
+			
+		};
+		if(log != null) {
+			log.setBorder(BorderFactory.createLineBorder(SmartLookAndFeel.getWindowTitleBackground().darker())); // Une bordure sur la liste.
+			log.setModel(model); // Swing utilise MVC.
+			for(final Computer computer : computers) {
+				model.addElement(LanguageManager.getString("common.pc.dialog.message.preparing", computer.name)); // Texte par défaut.
+			}
+		}
+		
 		final List<Computer> joinedComputers = new ArrayList<Computer>(); // La liste des ordinateurs joints.
 		new Client(new ClientInterface() { // On créé le client.
 			
@@ -469,20 +501,31 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			private static final int DIALOG_TIME = 5;
 			
 			/**
-			 * Le dialogue d'attente.
+			 * Le dialogue d'attente (message différent si il y a plusieurs ordinateurs ou non).
 			 */
 			
-			private final MessageDialog dialog = new MessageDialog(parent, LanguageManager.getString("common.pc.dialog.title"), "");
+			private final MessageDialog dialog = new MessageDialog(parent, LanguageManager.getString("common.pc.dialog.title"), log == null ? LanguageManager.getString("common.pc.dialog.message.preparing", computers[0].name) : LanguageManager.getString("common.pc.dialog.message.plural"), log);
 
 			@Override
 			public final void connection(final Computer computer, final long time) {
-				dialog.setMessage(LanguageManager.getString("common.pc.dialog.message.connection", computer.name));
+				if(log == null) { // Si il n'y a qu'un ordinateur :
+					dialog.setMessage(LanguageManager.getString("common.pc.dialog.message.connection", computer.name));
+				}
+				else {
+					model.setElementAt(LanguageManager.getString("common.pc.dialog.message.connection", computer.name), Arrays.asList(computers).indexOf(computer));
+				}
 				dialog.setVisible(true);
 			}
 
 			@Override
 			public final void onSuccess(final Computer computer, final Object... returned) {
-				dialog.setMessage(LanguageManager.getString("common.pc.dialog.message.success", computer.name));
+				if(log == null) { 
+					dialog.setMessage(LanguageManager.getString("common.pc.dialog.message.success", computer.name));
+				}
+				else {
+					model.setElementAt(LanguageManager.getString("common.pc.dialog.message.success", computer.name), Arrays.asList(computers).indexOf(computer));
+					dialog.pack(); // On doit adapter la taille du dialogue à chaque fois qu'on change un élément de la liste.
+				}
 				joinedComputers.add(computer);
 				if(computers.length == joinedComputers.size()) {
 					closeDialog();
@@ -492,7 +535,13 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			@Override
 			public final void onError(final Computer computer, final Exception ex, final long responseTime) {
 				ex.printStackTrace();
-				dialog.setMessage(LanguageManager.getString("common.pc.dialog.message.error", computer.name, ex.getMessage()));
+				if(log == null) { 
+					dialog.setMessage(LanguageManager.getString("common.pc.dialog.message.error", computer.name, ex.getMessage()));
+				}
+				else {
+					model.setElementAt(LanguageManager.getString("common.pc.dialog.message.error", computer.name, ex.getMessage()), Arrays.asList(computers).indexOf(computer));
+					dialog.pack();
+				}
 				joinedComputers.add(computer);
 				if(computers.length == joinedComputers.size()) {
 					closeDialog();
@@ -501,7 +550,13 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 
 			@Override
 			public final void onInterrupted(final Computer computer, final long time) {
-				dialog.setMessage(LanguageManager.getString("common.pc.dialog.message.interrupted", computer.name));
+				if(log == null) { 
+					dialog.setMessage(LanguageManager.getString("common.pc.dialog.message.interrupted", computer.name));
+				}
+				else {
+					model.setElementAt(LanguageManager.getString("common.pc.dialog.message.interrupted", computer.name), Arrays.asList(computers).indexOf(computer));
+					dialog.pack();
+				}
 				joinedComputers.add(computer);
 				if(computers.length == joinedComputers.size()) {
 					closeDialog();
@@ -516,7 +571,7 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			 */
 			
 			private final void closeDialog() {
-				dialog.setMessage(dialog.getMessage().replace("<html>", "").replace("</html>", "") + "<br>" + LanguageManager.getString("common.pc.dialog.footer", DIALOG_TIME));
+				dialog.setMessage((log == null ? dialog.getMessage().replace("<html>", "").replace("</html>", "") + "<br>" : "") + LanguageManager.getString("common.pc.dialog.footer", DIALOG_TIME));
 				new Timer().schedule(new TimerTask() {
 					
 					@Override

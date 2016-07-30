@@ -215,7 +215,7 @@ public class RoomPane extends JPanel implements ClientInterface {
 			thumbnail.setOpaque(true); // Opaque.
 			thumbnail.setHorizontalTextPosition(JLabel.CENTER); // Texte centrée horizonatalement.
 			thumbnail.setVerticalTextPosition(JLabel.BOTTOM); // Et en dessous de l'image.
-			thumbnail.setBorder(new CompoundBorder(BorderFactory.createLineBorder(Color.BLACK), new EmptyBorder(10, 10, 10, 10))); // Avec une bordure noire de 10px.
+			thumbnail.setBorder(new CompoundBorder(BorderFactory.createLineBorder(SmartLookAndFeel.getWindowBorderColor()), new EmptyBorder(10, 10, 10, 10))); // Avec une bordure noire de 10px.
 			setTitle(computer.name); // On affecte un titre par défaut.
 			this.add(thumbnail, BorderLayout.CENTER); // La miniature est ajoutée au centre du panel.
 			this.addMouseListener(new MouseListener() {
