@@ -6,10 +6,14 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
+import javax.swing.BorderFactory;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
+
+import com.jtattoo.plaf.smart.SmartLookAndFeel;
 
 import fr.isn.bbq.prof.ProjetBBQProf;
 
@@ -55,7 +59,7 @@ public class MessageDialog extends JDialog {
 		this.setLocationRelativeTo(parent);
 		this.setAlwaysOnTop(true);
 		this.setResizable(false);
-		this.getContentPane().setLayout(new GridBagLayout());
+		this.getContentPane().setLayout(new GridBagLayout()); // Tutoriel sur le GridBagLayout : https://docs.oracle.com/javase/tutorial/uiswing/layout/gridbag.html.
 		
 		final GridBagConstraints constraints = new GridBagConstraints();
 		constraints.gridx = 0;
@@ -71,9 +75,13 @@ public class MessageDialog extends JDialog {
 			
 			constraints.gridy++;
 			constraints.fill = GridBagConstraints.HORIZONTAL;
-			this.add(additionalComponent, constraints);
+			
+			final JScrollPane scrollPane = new JScrollPane(additionalComponent);
+			scrollPane.setBorder(BorderFactory.createLineBorder(SmartLookAndFeel.getWindowTitleBackground().darker())); // Une bordure sur le scrollpane.
+			
+			this.add(scrollPane, constraints);
 		}
-		setMessage(message);
+		setMessage(message); // On affiche le message.
 	}
 	
 	/**
@@ -83,7 +91,7 @@ public class MessageDialog extends JDialog {
 	 */
 	
 	public final void setMessage(final String message) {
-		this.message.setText("<html>" + message + "</html>");
+		this.message.setText("<html>" + message + "</html>"); // Le message est formaté en HTML.
 		this.message.setHorizontalAlignment(SwingConstants.CENTER);
 		this.message.setFont(this.message.getFont().deriveFont(Font.ITALIC));
 		this.pack(); // On adapte la taille du dialogue au message.

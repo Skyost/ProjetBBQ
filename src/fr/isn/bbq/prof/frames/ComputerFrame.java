@@ -1,7 +1,6 @@
 package fr.isn.bbq.prof.frames;
 
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -55,8 +54,6 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
-import com.jtattoo.plaf.smart.SmartLookAndFeel;
 
 /**
  * IHM d'un poste élève.
@@ -484,7 +481,6 @@ public class ComputerFrame extends JFrame implements ClientInterface {
 			
 		};
 		if(log != null) {
-			log.setBorder(BorderFactory.createLineBorder(SmartLookAndFeel.getWindowTitleBackground().darker())); // Une bordure sur la liste.
 			log.setModel(model); // Swing utilise MVC.
 			for(final Computer computer : computers) {
 				model.addElement(LanguageManager.getString("common.pc.dialog.message.preparing", computer.name)); // Texte par défaut.
