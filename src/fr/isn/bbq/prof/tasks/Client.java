@@ -161,13 +161,16 @@ public class Client extends Thread {
 									parent.onError(computer, new Exception(message), Long.valueOf(parts[3]));
 								}
 							}
-							else { // On iterrompte le client.
+							else { // On interrompt le client.
 								parent.onInterrupted(computer, System.currentTimeMillis());
 							}
 							System.out.println(LanguageManager.getString("client.output.closing"));
 							client.close();
 						}
 						catch(final Exception ex) {
+							if(!running) { // Si le client on ne renvoie rien.
+								return;
+							}
 							parent.onError(computer, ex, System.currentTimeMillis());
 						}
 						joinedComputers.add(computer); // On ajoute l'ordinateur aux ordinateurs joints.
