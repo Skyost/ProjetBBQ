@@ -2,6 +2,7 @@ package fr.isn.bbq.eleve.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,7 +44,7 @@ public abstract class XMLSettings {
 	 */
 	
 	public final void write(final File file) throws IOException {
-		Files.write(file.toPath(), toXML().getBytes());
+		Files.write(file.toPath(), toXML().getBytes(StandardCharsets.UTF_8));
 	}
 	
 	/**
@@ -97,7 +98,7 @@ public abstract class XMLSettings {
 	 * Class permettant de renvoyer des erreurs pendant le chargement du XML.
 	 */
 	
-	public class XMLError {
+	public static class XMLError {
 		
 		private final List<String> invalidParameters = new ArrayList<String>();
 		
