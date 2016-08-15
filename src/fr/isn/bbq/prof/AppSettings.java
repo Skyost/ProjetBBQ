@@ -65,7 +65,7 @@ public class AppSettings extends XMLSettings {
 		final XMLError result = new XMLError();
 		try {
 			final DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			final Document document = builder.parse(new InputSource(new StringReader(new String(Files.readAllBytes(file.toPath()))))); // On parse le contenu XML.
+			final Document document = builder.parse(new InputSource(new StringReader(new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8)))); // On parse le contenu XML.
 			final Element root = document.getDocumentElement();
 			
 			final String roomDir = getObject(root, TAGS[1], String.class); // On récupère le paramètre.

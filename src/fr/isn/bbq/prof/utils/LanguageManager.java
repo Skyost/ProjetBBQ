@@ -45,13 +45,13 @@ public class LanguageManager {
 	 * Les langues disponibles.
 	 */
 	
-	public static final HashMap<String, String> AVAILABLE_LANGUAGES = new HashMap<String, String>();
+	private static final HashMap<String, String> AVAILABLE_LANGUAGES = new HashMap<String, String>();
 	
 	private static final HashMap<String, String> strings = new HashMap<String, String>();
 	static {
 		try {
 			AVAILABLE_LANGUAGES.put("fr", "Français"); // Une seule langue disponible : le français.
-			if(AVAILABLE_LANGUAGES != null && AVAILABLE_LANGUAGES.size() > 0) {
+			if(AVAILABLE_LANGUAGES.size() > 0) {
 				final Properties properties = new Properties();
 				properties.load(new InputStreamReader(ProjetBBQProf.class.getResourceAsStream(PACKAGE + (AVAILABLE_LANGUAGES.get(ProjetBBQProf.settings.customLanguage) == null ? "fr" : ProjetBBQProf.settings.customLanguage) + ".lang"), StandardCharsets.UTF_8));
 				for(final Entry<Object, Object> entry : properties.entrySet()) {
